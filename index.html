@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#101821">
+    <meta
+      name="description"
+      content="Find the Markers — uma aventura 2D de exploração, Markers escondidos e ovos colecionáveis."
+    >
+    <title>Find the Markers — 2D Adventure</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <main id="app" aria-label="Find the Markers">
+      <div id="game-container" aria-label="Área do jogo"></div>
+
+      <section id="loading-screen" class="screen is-active" aria-live="polite">
+        <div class="loading-card">
+          <div class="marker-logo" aria-hidden="true"><span></span></div>
+          <p>LOADING THE MAP</p>
+          <div class="loading-track"><i></i></div>
+          <small>Preparing placeholders and PNG assets…</small>
+        </div>
+      </section>
+
+      <section id="menu-screen" class="screen" aria-labelledby="game-title">
+        <div class="menu-grid">
+          <div class="menu-copy">
+            <p class="eyebrow">HIDDEN OBJECT · TOP-DOWN ADVENTURE</p>
+            <h1 id="game-title">FIND THE<br><em>MARKERS</em></h1>
+            <p class="subtitle">2D Adventure</p>
+            <p class="menu-description">
+              Explore três lugares, encontre cinco Markers e recupere cinco ovos escondidos.
+            </p>
+            <div class="menu-actions">
+              <button id="play-button" class="button button-primary" type="button">PLAY <span>→</span></button>
+              <button id="credits-button" class="button button-ghost" type="button">CREDITS</button>
+            </div>
+          </div>
+          <div class="menu-art" aria-hidden="true">
+            <div class="radar-ring ring-one"></div>
+            <div class="radar-ring ring-two"></div>
+            <div class="radar-line"></div>
+            <div class="art-marker art-red"><i></i></div>
+            <div class="art-marker art-blue"><i></i></div>
+            <span class="coordinate coordinate-a">03 · STREET</span>
+            <span class="coordinate coordinate-b">05 OBJECTS LEFT</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="credits-screen" class="screen" aria-labelledby="credits-title">
+        <div class="dialog-card credits-card">
+          <p class="eyebrow">PROJECT FILE 001</p>
+          <h2 id="credits-title">CREDITS</h2>
+          <div class="credit-lines">
+            <p><span>GAME</span><strong>Find the Markers</strong></p>
+            <p><span>ENGINE</span><strong>Phaser 3</strong></p>
+            <p><span>ART</span><strong>PNG assets supplied by the creator</strong></p>
+            <p><span>BUILD</span><strong>Web · HTML5 · JavaScript</strong></p>
+          </div>
+          <button class="button button-ghost" type="button" data-back-to-menu>BACK</button>
+        </div>
+      </section>
+
+      <section id="setup-screen" class="screen" aria-labelledby="made-by-title">
+        <div class="dialog-card setup-card">
+          <div class="setup-heading">
+            <div>
+              <p class="eyebrow">PLAYER PROFILE</p>
+              <h2 id="made-by-title">Made by</h2>
+            </div>
+            <span class="setup-step">01 / 01</span>
+          </div>
+
+          <label class="name-field" for="creator-name">
+            <span>Feito por:</span>
+            <input
+              id="creator-name"
+              name="creator-name"
+              type="text"
+              maxlength="28"
+              autocomplete="nickname"
+              placeholder="Insira seu nome"
+            >
+          </label>
+
+          <fieldset class="difficulty-picker">
+            <legend>SELECT DIFFICULTY</legend>
+            <div class="difficulty-options">
+              <button type="button" data-difficulty="easy"><span>EASY</span><small>Fast & visible</small></button>
+              <button type="button" data-difficulty="medium" class="is-selected"><span>MEDIUM</span><small>Balanced hunt</small></button>
+              <button type="button" data-difficulty="hard"><span>HARD</span><small>More hidden</small></button>
+              <button type="button" data-difficulty="challenging"><span>CHALLENGING</span><small>Short clues</small></button>
+              <button type="button" data-difficulty="insane"><span>INSANE</span><small>Expert search</small></button>
+            </div>
+          </fieldset>
+
+          <div class="setup-actions">
+            <button class="button button-ghost" type="button" data-back-to-menu>BACK</button>
+            <button id="start-button" class="button button-primary" type="button">START <span>→</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section id="game-ui" aria-label="Interface da partida">
+        <header id="hud">
+          <div class="hud-brand">
+            <span class="mini-marker" aria-hidden="true"></span>
+            <div><strong>FIND THE MARKERS</strong><small id="player-label">Explorer</small></div>
+          </div>
+          <div class="hud-objectives">
+            <div class="hud-counter marker-counter"><i aria-hidden="true"></i><span>Markers</span><strong id="markers-count">0/5</strong></div>
+            <div class="hud-counter egg-counter"><i aria-hidden="true"></i><span>Ovos</span><strong id="eggs-count">0/5</strong></div>
+          </div>
+          <div class="hud-location">
+            <span>CURRENT AREA</span>
+            <strong id="level-name">Street</strong>
+          </div>
+          <button id="menu-button" class="icon-button" type="button" aria-label="Voltar ao menu">MENU</button>
+        </header>
+
+        <aside id="difficulty-panel" aria-labelledby="difficulty-title">
+          <p id="difficulty-title">DIFFICULTY</p>
+          <div class="difficulty-list">
+            <button type="button" data-difficulty="easy"><i></i><span>Easy</span></button>
+            <button type="button" data-difficulty="medium" class="is-selected"><i></i><span>Medium</span></button>
+            <button type="button" data-difficulty="hard"><i></i><span>Hard</span></button>
+            <button type="button" data-difficulty="challenging"><i></i><span>Challenging</span></button>
+            <button type="button" data-difficulty="insane"><i></i><span>Insane</span></button>
+          </div>
+          <div class="controls-hint">
+            <span>MOVE</span>
+            <strong>WASD · ARROWS</strong>
+          </div>
+        </aside>
+
+        <div id="feedback-message" role="status" aria-live="polite"></div>
+
+        <button id="interaction-prompt" type="button" aria-live="polite">
+          <kbd>E</kbd><span>Interact</span>
+        </button>
+
+        <div id="mobile-controls" aria-label="Controles de movimento">
+          <button type="button" data-direction="up" aria-label="Mover para cima">↑</button>
+          <button type="button" data-direction="left" aria-label="Mover para a esquerda">←</button>
+          <button type="button" data-direction="down" aria-label="Mover para baixo">↓</button>
+          <button type="button" data-direction="right" aria-label="Mover para a direita">→</button>
+        </div>
+      </section>
+
+      <section id="shop-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="shop-title">
+        <div class="modal-card shop-card">
+          <button class="modal-close" type="button" data-close-shop aria-label="Fechar loja">×</button>
+          <p class="eyebrow">STREET STORE</p>
+          <h2 id="shop-title">Gatssino</h2>
+          <p>A loja já está aberta. Os produtos chegarão em uma atualização futura.</p>
+          <div class="shop-grid">
+            <article><span>FRUIT</span><strong>Coming soon</strong><small>Food and temporary boosts</small></article>
+            <article><span>UPGRADES</span><strong>Coming soon</strong><small>Movement and exploration</small></article>
+            <article><span>COSMETICS</span><strong>Coming soon</strong><small>Player and Marker styles</small></article>
+          </div>
+          <button class="button button-primary" type="button" data-close-shop>LEAVE STORE</button>
+        </div>
+      </section>
+
+      <section id="victory-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="victory-title">
+        <div class="modal-card victory-card">
+          <div class="victory-symbol" aria-hidden="true">✓</div>
+          <p class="eyebrow">COLLECTION COMPLETE</p>
+          <h2 id="victory-title">YOU FOUND EVERYTHING!</h2>
+          <div class="victory-stats">
+            <p><span>Markers</span><strong>5/5</strong></p>
+            <p><span>Ovos</span><strong>5/5</strong></p>
+          </div>
+          <p>Congratulations, <strong id="winner-name">Explorer</strong>!</p>
+          <div class="victory-actions">
+            <button id="play-again-button" class="button button-primary" type="button">PLAY AGAIN</button>
+            <button id="victory-menu-button" class="button button-ghost" type="button">MENU</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="fatal-error" class="screen" role="alert">
+        <div class="dialog-card error-card">
+          <p class="eyebrow">STARTUP ERROR</p>
+          <h2>O jogo não pôde iniciar.</h2>
+          <p id="fatal-error-message">Phaser 3 não foi carregado. Verifique sua conexão e tente novamente.</p>
+        </div>
+      </section>
+    </main>
+
+    <noscript>Find the Markers precisa de JavaScript para funcionar.</noscript>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
+    <script src="./levels.js"></script>
+    <script src="./main.js"></script>
+  </body>
+</html>
