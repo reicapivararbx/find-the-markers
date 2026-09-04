@@ -101,3 +101,27 @@ test("cada sala com markers tem seus próprios markers registrados", () => {
     inRoom.forEach((m) => assert.equal(m.room, roomId));
   }
 });
+
+test("Jardim: 10 markers com silhuetas únicas e layout orgânico", () => {
+  const garden = markersForRoom("room_11_garden").filter((m) => m.mode === "touch");
+  assert.equal(garden.length, 10);
+  const styles = garden.map((m) => m.style);
+  assert.equal(new Set(styles).size, 10, "cada marker do jardim deve ter silhueta própria");
+  const expected = [
+    "moss",
+    "vine",
+    "bloom",
+    "trellis",
+    "pond",
+    "bee",
+    "lantern",
+    "root",
+    "petal",
+    "greenhouse"
+  ];
+  assert.deepEqual(styles, expected);
+  const xs = garden.map((m) => m.x);
+  assert.ok(Math.max(...xs) - Math.min(...xs) > 400, "layout espalhado no eixo X");
+  const ys = garden.map((m) => m.y);
+  assert.ok(Math.max(...ys) - Math.min(...ys) > 200, "layout espalhado no eixo Y");
+});

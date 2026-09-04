@@ -28,7 +28,48 @@ const STYLES = Object.freeze([
   "8ball",
   "brick",
   "shark",
-  "note"
+  "note",
+  "moss",
+  "vine",
+  "bloom",
+  "trellis",
+  "pond",
+  "bee",
+  "lantern",
+  "root",
+  "petal",
+  "greenhouse",
+  "crystal",
+  "sewer",
+  "ice",
+  "neon_emit",
+  "null_void"
+]);
+
+const GARDEN_STYLES = Object.freeze([
+  "moss",
+  "vine",
+  "bloom",
+  "trellis",
+  "pond",
+  "bee",
+  "lantern",
+  "root",
+  "petal",
+  "greenhouse"
+]);
+
+const GARDEN_LAYOUT = Object.freeze([
+  { x: 180, y: 420 },
+  { x: 340, y: 620 },
+  { x: 520, y: 380 },
+  { x: 680, y: 680 },
+  { x: 860, y: 500 },
+  { x: 1040, y: 360 },
+  { x: 1180, y: 640 },
+  { x: 420, y: 720 },
+  { x: 960, y: 720 },
+  { x: 1280, y: 480 }
 ]);
 
 const AREA_SPECS = Object.freeze([
@@ -47,7 +88,9 @@ const AREA_SPECS = Object.freeze([
       "Petal Marker",
       "Greenhouse Marker"
     ],
-    count: 10
+    count: 10,
+    styles: GARDEN_STYLES,
+    layout: GARDEN_LAYOUT
   },
   {
     room: "room_12_harbor",
@@ -231,7 +274,8 @@ function buildAreaMarkers() {
   const out = [];
   for (const spec of AREA_SPECS) {
     for (let i = 0; i < spec.count; i += 1) {
-      const pos = layoutPoint(i, spec.count);
+      const pos = spec.layout?.[i] || layoutPoint(i, spec.count);
+      const styleList = spec.styles || STYLES;
       out.push({
         id: `${spec.prefix}_${String(i + 1).padStart(2, "0")}`,
         name: spec.names[i] || `${spec.prefix} Marker ${i + 1}`,
@@ -240,7 +284,7 @@ function buildAreaMarkers() {
         x: pos.x,
         y: pos.y,
         mode: "touch",
-        style: STYLES[i % STYLES.length]
+        style: styleList[i % styleList.length]
       });
     }
   }
@@ -304,12 +348,10 @@ export const MUSIC_NOTE_DEFS = Object.freeze([
 ]);
 
 export const COIN_DEFS = Object.freeze([
-  ...Array.from({ length: 4 }, (_, i) => ({
-    id: `coin_garden_${String(i + 1).padStart(2, "0")}`,
-    room: "room_11_garden",
-    x: 300 + i * 220,
-    y: 700
-  })),
+  { id: "coin_garden_01", room: "room_11_garden", x: 260, y: 540 },
+  { id: "coin_garden_02", room: "room_11_garden", x: 620, y: 460 },
+  { id: "coin_garden_03", room: "room_11_garden", x: 980, y: 580 },
+  { id: "coin_garden_04", room: "room_11_garden", x: 1120, y: 720 },
   ...Array.from({ length: 4 }, (_, i) => ({
     id: `coin_harbor_${String(i + 1).padStart(2, "0")}`,
     room: "room_12_harbor",

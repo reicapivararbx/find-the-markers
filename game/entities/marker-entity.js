@@ -9,6 +9,32 @@ import { ensureMarkerTexture } from "../assets/textures.js";
 
 const STAND_OFFSET = 40; // centro visual do sprite acima dos pés
 
+function idleTweenFor(style, def) {
+  const y = def.y;
+  if (style === "glitch" || style === "null_void") {
+    return { y: y - 8, angle: { from: -4, to: 4 }, duration: 720, delay: 0 };
+  }
+  if (style === "neon_emit" || style === "neon" || style === "lantern") {
+    return { y: y - 6, alpha: { from: 0.82, to: 1 }, duration: 700 };
+  }
+  if (style === "ice" || style === "crystal") {
+    return { y: y - 4, angle: { from: -2, to: 2 }, duration: 1400 };
+  }
+  if (style === "sewer" || style === "pond") {
+    return { y: y - 3, scaleX: { from: 0.97, to: 1.03 }, duration: 1100 };
+  }
+  if (style === "bee" || style === "bloom" || style === "petal") {
+    return { y: y - 10, angle: { from: -6, to: 6 }, duration: 800 };
+  }
+  if (style === "vine" || style === "moss" || style === "root") {
+    return { y: y - 4, angle: { from: -1.5, to: 1.5 }, duration: 1300 };
+  }
+  if (style === "miku") {
+    return { y: y - 7, duration: 1100 };
+  }
+  return { y: y - 5, duration: 950 };
+}
+
 function attachShadow(scene, x, baseY) {
   return scene.add
     .ellipse(x, baseY - 2, 34, 14, 0x1a1a22, 0.26)
@@ -65,27 +91,15 @@ export class MarkerEntity {
       );
       this.scene.physics.add.existing(this.zone, true);
 
-      if (def.style === "glitch") {
-        this.scene.tweens.add({
-          targets: this.sprite,
-          y: def.y - 8,
-          angle: { from: -3, to: 3 },
-          duration: 900,
-          ease: "Sine.inOut",
-          yoyo: true,
-          repeat: -1
-        });
-      } else {
-        this.scene.tweens.add({
-          targets: this.sprite,
-          y: def.y - 5,
-          duration: 950,
-          delay: (def.x * 7) % 400,
-          ease: "Sine.inOut",
-          yoyo: true,
-          repeat: -1
-        });
-      }
+      const idle = idleTweenFor(def.style, def);
+      this.scene.tweens.add({
+        targets: this.sprite,
+        ...idle,
+        ease: "Sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        delay: idle.delay ?? (def.x * 7) % 400
+      });
     }
 
     if (this.hidden) this.sprite.setVisible(false);
