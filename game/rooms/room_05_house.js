@@ -7,11 +7,13 @@ export default {
 
   spawns: {
     default: { x: 180, y: 600 },
-    from_room_07: { x: 180, y: 600 }
+    from_room_07: { x: 180, y: 600 },
+    from_room_08: { x: 180, y: 600 }
   },
 
   gates: [
-    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } }
+    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } },
+    { key: "right", x: 1400, arrowY: 520, zone: { x: 1370, y: 400, width: 70, height: 240 } }
   ],
 
   build(ctx) {

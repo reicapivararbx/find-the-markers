@@ -32,7 +32,8 @@ export const ROOM_CONNECTIONS = Object.freeze({
   },
 
   room_05_house: {
-    left: { to: "room_07_forest", requiredMarkers: 0, arriveAt: "from_room_05" }
+    left: { to: "room_08_orchard_difficulty", requiredMarkers: 0, arriveAt: "from_room_05" },
+    right: { to: "room_07_forest", requiredMarkers: 0, arriveAt: "from_room_05" }
   },
 
   room_04_city_casino: {
