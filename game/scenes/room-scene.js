@@ -95,9 +95,13 @@ export class RoomScene extends Phaser.Scene {
       }
     });
 
-    // markers da área
     markersForRoom(this.roomId)
       .filter((def) => !save.collectedMarkerIds.includes(def.id))
+      .filter((def) => {
+        if (def.mode === "menu_champion") return Boolean(save.menuSecrets?.championSolved);
+        if (def.mode === "slot") return false;
+        return true;
+      })
       .forEach((def) => {
         const entity = new MarkerEntity(this, def, state.saveManager, hud);
         this.markerEntities.set(def.id, entity);

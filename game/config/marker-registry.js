@@ -15,7 +15,7 @@
 import { EXPANSION_MARKERS } from "./expansion-markers.js";
 
 export const MARKERS = Object.freeze([
-  // ---- room_09_spawn (7) ----
+  // ---- room_09_spawn (7 + menu champion) ----
   { id: "spawn_effortless", name: "Pendulum Marker", difficulty: "Effortless", room: "room_09_spawn", x: 720, y: 500, mode: "touch", style: "pendulum" },
   { id: "spawn_easy", name: "Shy Marker", difficulty: "Easy", room: "room_09_spawn", x: 240, y: 640, mode: "touch", style: "classic" },
   { id: "spawn_medium", name: "Signpost Marker", difficulty: "Medium", room: "room_09_spawn", x: 1150, y: 580, mode: "touch", style: "classic" },
@@ -29,9 +29,21 @@ export const MARKERS = Object.freeze([
   { id: "credits_medium", name: "Frame Marker", difficulty: "Medium", room: "room_10_credits", x: 900, y: 560, mode: "touch", style: "classic" },
   { id: "credits_box_marker", name: "This is not a marker", difficulty: "Hard", room: "room_10_credits", x: 1205, y: 620, mode: "hidden", style: "classic" },
 
-  // O marker Insane do spawn fica FORA dos 10 primeiros de propósito:
+  // Spawn Insane + Menu Champion ficam FORA dos 10 primeiros de propósito:
   // a ordem canônica 1..10 deve ser exatamente a sequência do medidor.
   { id: "spawn_insane", name: "Rooftop Marker", difficulty: "Insane", room: "room_09_spawn", x: 540, y: 480, mode: "touch", style: "classic" },
+  {
+    id: "menu_champion_marker",
+    name: "Menu Champion Marker",
+    difficulty: "Champion",
+    room: "room_09_spawn",
+    x: 200,
+    y: 360,
+    mode: "menu_champion",
+    style: "menu_champion",
+    hint: "Some secrets exist before the game even begins.",
+    area: "Start"
+  },
 
   // ---- room_08_orchard_difficulty (6) ----
   { id: "orchard_easy_1", name: "Picnic Marker", difficulty: "Easy", room: "room_08_orchard_difficulty", x: 180, y: 640, mode: "touch", style: "classic" },
@@ -108,6 +120,8 @@ export function isCollectible(marker, save) {
       return false;
     case "miku":
       return Boolean(save.mikuMarkerUnlocked || save.puzzleStates?.mikuPuzzleSolved);
+    case "menu_champion":
+      return Boolean(save.menuSecrets?.championSolved);
     default:
       return true;
   }
@@ -125,6 +139,8 @@ export function lockedReason(marker, save) {
       return "Ganhe na slot machine do casino.";
     case "miku":
       return "Acerte o ritmo no Digital Stage primeiro.";
+    case "menu_champion":
+      return "Algo ainda não despertou…";
     default:
       return null;
   }

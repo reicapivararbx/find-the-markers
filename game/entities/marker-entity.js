@@ -103,6 +103,24 @@ function idleTweenFor(style, def) {
   if (style === "miku") {
     return { y: y - 7, duration: 1100 };
   }
+  if (style === "orchid" || style === "bloom") {
+    return { y: y - 9, angle: { from: -5, to: 5 }, duration: 850 };
+  }
+  if (style === "beacon" || style === "steam" || style === "packet") {
+    return { y: y - 5, alpha: { from: 0.85, to: 1 }, duration: 800 };
+  }
+  if (style === "prism" || style === "starchart") {
+    return { y: y - 6, angle: { from: -3, to: 3 }, duration: 1200 };
+  }
+  if (style === "mummy" || style === "combination" || style === "blade") {
+    return { y: y - 4, duration: 1100 };
+  }
+  if (style === "hiddencrown" || style === "yellowroom" || style === "debug") {
+    return { y: y - 6, alpha: { from: 0.88, to: 1 }, duration: 950 };
+  }
+  if (style === "menu_champion" || style === "champion") {
+    return { y: y - 7, alpha: { from: 0.9, to: 1 }, duration: 1100 };
+  }
   return { y: y - 5, duration: 950 };
 }
 
@@ -124,7 +142,8 @@ export class MarkerEntity {
       (def.mode === "hidden" && !saveManager.save.puzzleStates.creditsBoxesSolved) ||
       (def.mode === "miku" &&
         !saveManager.save.mikuMarkerUnlocked &&
-        !saveManager.save.puzzleStates.mikuPuzzleSolved);
+        !saveManager.save.puzzleStates.mikuPuzzleSolved) ||
+      (def.mode === "menu_champion" && !saveManager.save.menuSecrets?.championSolved);
     this.blockFeedbackAt = 0;
 
     const key = ensureMarkerTexture(scene, def.difficulty, def.style);
@@ -179,6 +198,19 @@ export class MarkerEntity {
     } else if (def.mode === "slot") {
       this.sprite.setVisible(false);
       if (this.shadow) this.shadow.setVisible(false);
+    }
+
+    if ((def.style === "menu_champion" || def.style === "champion") && !this.hidden) {
+      const aura = scene.add.circle(def.x, def.y - 6, 40, 0xf2c94c, 0.14).setDepth(depth - 2);
+      scene.tweens.add({
+        targets: aura,
+        alpha: { from: 0.1, to: 0.28 },
+        scale: { from: 0.92, to: 1.15 },
+        duration: 1400,
+        yoyo: true,
+        repeat: -1
+      });
+      this.aura = aura;
     }
 
     if (def.style === "miku" && !this.hidden) {
@@ -287,6 +319,11 @@ export class MarkerEntity {
         });
       }
       this.hud.toast("🎤 Hatsune Miku Marker encontrado!", { icon: "♪", duration: 3200 });
+    } else if (this.def.mode === "menu_champion") {
+      this.hud.toast("🏆 Menu Champion Marker encontrado! Difficulty: Champion", {
+        icon: "♛",
+        duration: 3200
+      });
     }
     this.sm.collectMarker(this.def.id);
     this.hud.notifyMarker(this.def);

@@ -1378,16 +1378,25 @@ function gMarkerSilhouette(g, color, style) {
     faceDots(g, 24, 32, 52);
     return true;
   }
-  if (style === "champion") {
-    markerFeet(g, 0xf2c94c);
+  if (style === "champion" || style === "menu_champion") {
+    markerFeet(g, 0x2a2418);
+    g.fillStyle(0xffffff, 0.95);
+    g.fillRoundedRect(14, 22, 28, 36, 10);
     g.fillStyle(0xf2c94c, 1);
-    g.fillCircle(28, 34, 18);
+    g.fillRoundedRect(16, 24, 24, 18, 6);
+    g.fillTriangle(14, 24, 18, 10, 24, 24);
+    g.fillTriangle(24, 24, 28, 6, 32, 24);
+    g.fillTriangle(32, 24, 38, 10, 42, 24);
+    g.fillStyle(0x1a1410, 1);
+    g.fillCircle(22, 34, 2.2);
+    g.fillCircle(34, 34, 2.2);
     g.fillStyle(0xd1495b, 1);
-    g.fillRect(20, 28, 16, 12);
-    g.fillStyle(0xffffff, 0.8);
-    g.fillCircle(28, 34, 5);
+    g.fillCircle(28, 14, 3.5);
+    g.fillStyle(0xf6efdd, 0.9);
+    g.fillCircle(40, 20, 3);
+    g.fillCircle(16, 28, 2.5);
     g.fillStyle(color, 1);
-    g.fillCircle(28, 52, 9);
+    g.fillCircle(28, 52, 10);
     faceDots(g, 24, 32, 52);
     return true;
   }
@@ -1403,6 +1412,171 @@ function gMarkerSilhouette(g, color, style) {
     g.fillStyle(color, 1);
     g.fillCircle(28, 52, 9);
     faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "orchid") {
+    markerFeet(g, 0x7cae62);
+    g.fillStyle(0xf2a0c8, 1);
+    g.fillEllipse(28, 34, 28, 22);
+    g.fillStyle(0xffffff, 1);
+    g.fillEllipse(28, 34, 12, 10);
+    g.fillStyle(0xd1495b, 1);
+    g.fillCircle(28, 34, 5);
+    g.fillStyle(0x5d8f46, 1);
+    g.fillRect(26, 44, 4, 18);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 58, 8);
+    faceDots(g, 24, 32, 58);
+    return true;
+  }
+  if (style === "beacon") {
+    markerFeet(g, 0x8a8070);
+    g.fillStyle(0x6a7080, 1);
+    g.fillRect(20, 28, 16, 36);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(28, 18, 12);
+    g.fillStyle(0xffffff, 0.7);
+    g.fillCircle(28, 18, 6);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 8);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "steam") {
+    markerFeet(g, 0x6a6058);
+    g.fillStyle(0x8a8070, 1);
+    g.fillRoundedRect(14, 30, 28, 32, 4);
+    g.fillStyle(0xd0d0d8, 0.85);
+    g.fillCircle(18, 18, 8);
+    g.fillCircle(28, 12, 10);
+    g.fillCircle(40, 18, 7);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 48, 9);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "prism") {
+    markerFeet(g, 0xb48cff);
+    g.fillStyle(0x9b6dff, 1);
+    g.fillTriangle(28, 8, 8, 48, 48, 48);
+    g.fillStyle(0xe0c8ff, 0.7);
+    g.fillTriangle(28, 14, 16, 42, 28, 42);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 8);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "packet") {
+    markerFeet(g, 0x3a8a9a);
+    g.fillStyle(0x2a3a48, 1);
+    g.fillRoundedRect(10, 22, 36, 28, 3);
+    g.fillStyle(0x39c5bb, 1);
+    for (let i = 0; i < 4; i += 1) g.fillRect(14 + i * 8, 28, 5, 4);
+    g.fillStyle(0x62c462, 1);
+    g.fillCircle(40, 42, 3);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 56, 8);
+    faceDots(g, 24, 32, 56);
+    return true;
+  }
+  if (style === "mummy") {
+    markerFeet(g, 0xe8d8b0);
+    g.fillStyle(0xe8d8b0, 1);
+    g.fillRoundedRect(14, 18, 28, 46, 6);
+    g.lineStyle(2, 0xc4a574, 1);
+    for (let y = 24; y < 60; y += 8) g.lineBetween(16, y, 40, y);
+    g.fillStyle(INK, 1);
+    g.fillEllipse(22, 34, 5, 6);
+    g.fillEllipse(34, 34, 5, 6);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 7);
+    return true;
+  }
+  if (style === "starchart") {
+    markerFeet(g, 0x3a4a6a);
+    g.fillStyle(0x1a2a48, 1);
+    g.fillCircle(28, 36, 22);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(20, 28, 2.5);
+    g.fillCircle(34, 24, 2);
+    g.fillCircle(30, 40, 3);
+    g.fillCircle(18, 42, 2);
+    g.lineStyle(1.5, 0x8ab4ff, 0.8);
+    g.lineBetween(20, 28, 34, 24);
+    g.lineBetween(34, 24, 30, 40);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 56, 8);
+    faceDots(g, 24, 32, 56);
+    return true;
+  }
+  if (style === "combination") {
+    markerFeet(g, 0x6a7080);
+    g.fillStyle(0x5a6070, 1);
+    g.fillCircle(28, 36, 20);
+    g.fillStyle(0x3a3a48, 1);
+    g.fillCircle(28, 36, 12);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(28, 24, 3);
+    g.fillCircle(40, 36, 3);
+    g.fillCircle(28, 48, 3);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 56, 7);
+    faceDots(g, 24, 32, 56);
+    return true;
+  }
+  if (style === "blade") {
+    markerFeet(g, 0x8a8070);
+    g.fillStyle(0xd0d4d8, 1);
+    g.fillTriangle(28, 8, 22, 48, 34, 48);
+    g.fillStyle(0x6a5a48, 1);
+    g.fillRect(24, 48, 8, 14);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(28, 50, 3);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 58, 7);
+    faceDots(g, 24, 32, 58);
+    return true;
+  }
+  if (style === "hiddencrown") {
+    markerFeet(g, 0xf2c94c);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillRect(12, 28, 32, 14);
+    g.fillTriangle(12, 28, 18, 14, 24, 28);
+    g.fillTriangle(24, 28, 28, 10, 32, 28);
+    g.fillTriangle(32, 28, 38, 14, 44, 28);
+    g.fillStyle(0xd1495b, 1);
+    g.fillCircle(28, 18, 4);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 9);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "yellowroom") {
+    markerFeet(g, 0xf2c94c);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillRoundedRect(10, 16, 36, 48, 4);
+    g.fillStyle(0xe0b830, 1);
+    g.fillRect(10, 28, 36, 4);
+    g.fillRect(10, 44, 36, 4);
+    g.fillStyle(0x8a8070, 1);
+    g.fillRect(24, 40, 8, 24);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 56, 7);
+    faceDots(g, 24, 32, 30);
+    return true;
+  }
+  if (style === "debug") {
+    markerFeet(g, 0x62c462);
+    g.fillStyle(0x1a1a22, 1);
+    g.fillRoundedRect(8, 18, 40, 40, 4);
+    g.fillStyle(0x62c462, 1);
+    g.fillText?.("{}", 18, 42) || g.fillRect(16, 30, 8, 16);
+    g.fillRect(28, 30, 8, 16);
+    g.fillStyle(0x62c462, 0.5);
+    g.fillRect(12, 22, 32, 4);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 58, 8);
+    faceDots(g, 24, 32, 58);
     return true;
   }
   return false;

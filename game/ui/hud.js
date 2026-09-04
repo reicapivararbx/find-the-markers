@@ -167,19 +167,33 @@ export class Hud {
   }
 
   renderCollection() {
-    const collected = state.saveManager?.save.collectedMarkerIds || [];
+    const save = state.saveManager?.save;
+    const collected = save?.collectedMarkerIds || [];
     this.collectionGrid.innerHTML = "";
     MARKERS.forEach((def) => {
       const has = collected.includes(def.id);
+      const isMenuChamp = def.mode === "menu_champion";
+      const solved = Boolean(save?.menuSecrets?.championSolved);
+      let name = has ? def.name : "???";
+      let areaHint = "";
+      if (isMenuChamp && !has) {
+        name = solved ? def.name : "???";
+        areaHint = solved
+          ? `<span class="chip-area">Area: Start</span>`
+          : `<span class="chip-area chip-hint">Some secrets exist before the game even begins.</span>`;
+      } else if (has && def.area) {
+        areaHint = `<span class="chip-area">Area: ${def.area}</span>`;
+      }
       const chip = document.createElement("div");
-      chip.className = `marker-chip ${has ? "is-collected" : "is-locked"}`;
+      chip.className = `marker-chip ${has ? "is-collected" : "is-locked"}${isMenuChamp ? " is-menu-champion" : ""}`;
       chip.innerHTML = `
         <span class="chip-body" style="--diff-color:${hex(def.difficulty)}">
           <span class="chip-cap"></span>
           <span class="chip-face">${has ? "·‿·" : "·_·"}</span>
         </span>
-        <span class="chip-name">${has ? def.name : "???"}</span>
+        <span class="chip-name">${name}</span>
         <span class="chip-diff">${def.difficulty}</span>
+        ${areaHint}
         <span class="chip-check">${has ? "✓" : ""}</span>
       `;
       this.collectionGrid.appendChild(chip);
