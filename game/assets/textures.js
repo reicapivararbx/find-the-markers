@@ -681,6 +681,730 @@ function gMarkerSilhouette(g, color, style) {
     faceDots(g, 24, 32, 36);
     return true;
   }
+  if (style === "beaker") {
+    markerFeet(g, 0xd0e0e8);
+    g.fillStyle(0xd0e0e8, 0.95);
+    g.fillRect(18, 18, 20, 10);
+    g.fillStyle(0xa8c8d8, 1);
+    g.fillTriangle(14, 28, 42, 28, 36, 62);
+    g.fillTriangle(14, 28, 42, 28, 20, 62);
+    g.fillStyle(color, 0.85);
+    g.fillTriangle(18, 42, 38, 42, 34, 60);
+    g.fillTriangle(18, 42, 38, 42, 22, 60);
+    faceDots(g, 24, 30, 38);
+    return true;
+  }
+  if (style === "circuit") {
+    markerFeet(g, 0x3a3a48);
+    g.fillStyle(0x2a2a38, 1);
+    g.fillRoundedRect(12, 18, 32, 46, 4);
+    g.lineStyle(2, 0x56ccf2, 1);
+    g.lineBetween(18, 28, 38, 28);
+    g.lineBetween(28, 28, 28, 52);
+    g.lineBetween(18, 40, 38, 40);
+    g.fillStyle(0x62c462, 1);
+    g.fillCircle(18, 28, 3);
+    g.fillCircle(38, 40, 3);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 36, 9);
+    faceDots(g, 24, 32, 36);
+    return true;
+  }
+  if (style === "clone") {
+    markerFeet(g, color);
+    g.fillStyle(color, 0.55);
+    g.fillRoundedRect(8, 20, 20, 42, 8);
+    g.fillStyle(color, 1);
+    g.fillRoundedRect(24, 16, 22, 48, 9);
+    faceDots(g, 30, 34, 32);
+    g.fillStyle(0x1a1a22, 0.5);
+    g.fillCircle(14, 34, 2);
+    g.fillCircle(18, 34, 2);
+    return true;
+  }
+  if (style === "laser") {
+    markerFeet(g, 0x4a4a58);
+    g.fillStyle(0x3a3a48, 1);
+    g.fillRect(20, 30, 16, 28);
+    g.fillStyle(0xff5d5d, 1);
+    g.fillRect(26, 12, 4, 22);
+    g.fillCircle(28, 12, 5);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 44, 10);
+    faceDots(g, 24, 32, 44);
+    return true;
+  }
+  if (style === "microscope") {
+    markerFeet(g, 0x5a5a68);
+    g.fillStyle(0x4a4a58, 1);
+    g.fillRect(22, 48, 12, 16);
+    g.fillRect(18, 28, 8, 24);
+    g.fillStyle(0x8a8a98, 1);
+    g.fillCircle(22, 22, 10);
+    g.fillStyle(color, 1);
+    g.fillCircle(34, 40, 10);
+    faceDots(g, 30, 38, 40);
+    return true;
+  }
+  if (style === "petri") {
+    markerFeet(g, 0xd0e0e8);
+    g.fillStyle(0xe8f0f4, 1);
+    g.fillEllipse(28, 48, 36, 24);
+    g.fillStyle(color, 0.7);
+    g.fillCircle(22, 46, 5);
+    g.fillCircle(32, 50, 4);
+    g.fillCircle(28, 42, 3);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 32, 10);
+    faceDots(g, 24, 32, 32);
+    return true;
+  }
+  if (style === "plasma") {
+    markerFeet(g, 0xb37feb);
+    g.fillStyle(0x8b5cf6, 0.85);
+    g.fillCircle(28, 40, 20);
+    g.fillStyle(0xd8b4fe, 0.6);
+    g.fillCircle(22, 34, 8);
+    g.fillCircle(34, 44, 7);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 38, 10);
+    faceDots(g, 24, 32, 38);
+    return true;
+  }
+  if (style === "sample") {
+    markerFeet(g, 0xd0d8e0);
+    g.fillStyle(0xc8d0d8, 1);
+    g.fillRoundedRect(14, 24, 28, 40, 4);
+    g.fillStyle(color, 0.8);
+    g.fillRect(18, 40, 20, 16);
+    g.lineStyle(2, 0x8a9aa8, 1);
+    g.strokeRoundedRect(14, 24, 28, 40, 4);
+    faceDots(g, 24, 32, 34);
+    return true;
+  }
+  if (style === "scope") {
+    markerFeet(g, 0x3a3a48);
+    g.fillStyle(0x2a2a38, 1);
+    g.fillCircle(28, 36, 18);
+    g.fillStyle(0x56ccf2, 0.5);
+    g.fillCircle(28, 36, 12);
+    g.lineStyle(2, 0x62c462, 1);
+    g.strokeCircle(28, 36, 8);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 36, 6);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "testtube") {
+    markerFeet(g, 0xd0e0e8);
+    g.fillStyle(0xd0e0e8, 0.95);
+    g.fillRoundedRect(20, 14, 16, 48, 8);
+    g.fillStyle(color, 0.8);
+    g.fillRoundedRect(22, 36, 12, 22, 6);
+    g.fillStyle(0xffffff, 0.35);
+    g.fillRect(24, 18, 4, 20);
+    faceDots(g, 24, 32, 30);
+    return true;
+  }
+  if (style === "arch") {
+    markerFeet(g, 0xc4b8a0);
+    g.fillStyle(0xb8a888, 1);
+    g.fillRect(10, 28, 12, 36);
+    g.fillRect(34, 28, 12, 36);
+    g.fillRect(10, 18, 36, 14);
+    g.fillStyle(0x1a1810, 0.5);
+    g.fillEllipse(28, 44, 18, 22);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 36, 9);
+    faceDots(g, 24, 32, 36);
+    return true;
+  }
+  if (style === "column") {
+    markerFeet(g, 0xc4b8a0);
+    g.fillStyle(0xb8a888, 1);
+    g.fillRect(18, 16, 20, 48);
+    g.fillRect(14, 12, 28, 10);
+    g.fillRect(14, 58, 28, 8);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 36, 9);
+    faceDots(g, 24, 32, 36);
+    return true;
+  }
+  if (style === "glyph") {
+    markerFeet(g, 0xd4b888);
+    g.fillStyle(0xc4a574, 1);
+    g.fillRoundedRect(12, 18, 32, 46, 4);
+    g.fillStyle(0x8a6238, 1);
+    g.fillRect(20, 28, 4, 16);
+    g.fillRect(28, 24, 4, 20);
+    g.fillRect(18, 40, 16, 4);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 48, 8);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "idol") {
+    markerFeet(g, 0xb8a888);
+    g.fillStyle(0xa89870, 1);
+    g.fillTriangle(28, 14, 12, 58, 44, 58);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 32, 11);
+    faceDots(g, 24, 32, 32);
+    g.fillStyle(0xf2c94c, 0.8);
+    g.fillCircle(28, 18, 5);
+    return true;
+  }
+  if (style === "mosaic") {
+    markerFeet(g, 0xd1495b);
+    g.fillStyle(0xd1495b, 1);
+    g.fillRect(12, 20, 14, 14);
+    g.fillStyle(0x56ccf2, 1);
+    g.fillRect(28, 20, 14, 14);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillRect(12, 36, 14, 14);
+    g.fillStyle(0x62c462, 1);
+    g.fillRect(28, 36, 14, 14);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 48, 9);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "obelisk") {
+    markerFeet(g, 0xb8a888);
+    g.fillStyle(0xa89870, 1);
+    g.fillTriangle(28, 10, 16, 28, 40, 28);
+    g.fillRect(18, 28, 20, 36);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 42, 9);
+    faceDots(g, 24, 32, 42);
+    return true;
+  }
+  if (style === "relic") {
+    markerFeet(g, 0xf2c94c);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillEllipse(28, 40, 28, 36);
+    g.fillStyle(0xffe08a, 0.7);
+    g.fillEllipse(24, 34, 12, 14);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 38, 9);
+    faceDots(g, 24, 32, 38);
+    return true;
+  }
+  if (style === "sand") {
+    markerFeet(g, 0xd4b888);
+    g.fillStyle(0xe8d8b0, 1);
+    g.fillEllipse(28, 52, 36, 22);
+    g.fillStyle(0xd4b888, 1);
+    g.fillEllipse(28, 44, 28, 16);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 34, 11);
+    faceDots(g, 24, 32, 34);
+    return true;
+  }
+  if (style === "scroll") {
+    markerFeet(g, 0xe8d8b0);
+    g.fillStyle(0xf0e8d0, 1);
+    g.fillRoundedRect(14, 20, 28, 44, 6);
+    g.fillStyle(0xc4a574, 1);
+    g.fillEllipse(14, 42, 8, 40);
+    g.fillEllipse(42, 42, 8, 40);
+    g.lineStyle(2, 0x8a6238, 0.7);
+    g.lineBetween(20, 32, 36, 32);
+    g.lineBetween(20, 40, 36, 40);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 50, 8);
+    faceDots(g, 24, 32, 50);
+    return true;
+  }
+  if (style === "statue") {
+    markerFeet(g, 0xa8a090);
+    g.fillStyle(0xb8b0a0, 1);
+    g.fillRect(18, 28, 20, 36);
+    g.fillCircle(28, 20, 12);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 40, 9);
+    faceDots(g, 24, 32, 40);
+    return true;
+  }
+  if (style === "avalanche") {
+    markerFeet(g, 0xd8e8f0);
+    g.fillStyle(0xf0f8ff, 1);
+    g.fillTriangle(28, 16, 8, 58, 48, 58);
+    g.fillStyle(0xc0d0e0, 1);
+    g.fillTriangle(20, 36, 10, 58, 32, 58);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 34, 10);
+    faceDots(g, 24, 32, 34);
+    return true;
+  }
+  if (style === "cliff") {
+    markerFeet(g, 0x8a9aa8);
+    g.fillStyle(0x7a8a98, 1);
+    g.fillRect(10, 20, 36, 44);
+    g.fillStyle(0x5a6a78, 1);
+    g.fillTriangle(10, 20, 28, 20, 10, 40);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 42, 10);
+    faceDots(g, 24, 32, 42);
+    return true;
+  }
+  if (style === "flag") {
+    markerFeet(g, 0x8a8070);
+    g.fillStyle(0x8a8070, 1);
+    g.fillRect(24, 14, 4, 50);
+    g.fillStyle(0xd1495b, 1);
+    g.fillTriangle(28, 14, 48, 24, 28, 34);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 48, 10);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "frost") {
+    markerFeet(g, 0xd0e8ff);
+    g.fillStyle(0xe8f4ff, 0.9);
+    g.fillCircle(28, 40, 18);
+    g.lineStyle(2, 0xa8c8e8, 1);
+    g.lineBetween(28, 22, 28, 58);
+    g.lineBetween(14, 40, 42, 40);
+    g.lineBetween(18, 28, 38, 52);
+    g.lineBetween(38, 28, 18, 52);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 40, 9);
+    faceDots(g, 24, 32, 40);
+    return true;
+  }
+  if (style === "glacier") {
+    markerFeet(g, 0xd0e8ff);
+    g.fillStyle(0xc0d8f0, 1);
+    g.fillTriangle(28, 12, 8, 56, 48, 56);
+    g.fillStyle(0xffffff, 0.5);
+    g.fillTriangle(28, 20, 16, 48, 28, 48);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 38, 10);
+    faceDots(g, 24, 32, 38);
+    return true;
+  }
+  if (style === "summit") {
+    markerFeet(g, 0x8a9aa8);
+    g.fillStyle(0x9aaab8, 1);
+    g.fillTriangle(28, 10, 6, 58, 50, 58);
+    g.fillStyle(0xf0f8ff, 1);
+    g.fillTriangle(28, 10, 20, 28, 36, 28);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 40, 10);
+    faceDots(g, 24, 32, 40);
+    return true;
+  }
+  if (style === "wind") {
+    markerFeet(g, 0xc0d0e0);
+    g.lineStyle(3, 0xa8c0d8, 1);
+    g.beginPath();
+    g.arc(28, 36, 14, 0.2, 2.5);
+    g.strokePath();
+    g.beginPath();
+    g.arc(28, 36, 8, 0.5, 2.8);
+    g.strokePath();
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 40, 10);
+    faceDots(g, 24, 32, 40);
+    return true;
+  }
+  if (style === "yeti") {
+    markerFeet(g, 0xf0f8ff);
+    g.fillStyle(0xf0f8ff, 1);
+    g.fillEllipse(28, 42, 34, 40);
+    g.fillCircle(16, 30, 8);
+    g.fillCircle(40, 30, 8);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 40, 11);
+    faceDots(g, 24, 32, 40);
+    return true;
+  }
+  if (style === "zenith") {
+    markerFeet(g, 0xf2c94c);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillStar?.(28, 28, 5, 14, 6) || g.fillCircle(28, 28, 12);
+    g.fillStyle(0xffe08a, 1);
+    g.fillCircle(28, 28, 6);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 48, 10);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "barcode") {
+    markerFeet(g, 0x2a2a38);
+    g.fillStyle(0x1a1a22, 1);
+    g.fillRect(12, 20, 32, 40);
+    g.fillStyle(0xffffff, 1);
+    for (let i = 0; i < 6; i += 1) {
+      g.fillRect(16 + i * 4, 26, i % 2 === 0 ? 2 : 3, 28);
+    }
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 48, 8);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "cipher") {
+    markerFeet(g, 0x3a3a48);
+    g.fillStyle(0x2a2a38, 1);
+    g.fillRoundedRect(12, 18, 32, 46, 4);
+    g.fillStyle(0x62c462, 1);
+    g.fillText?.("", 0, 0);
+    g.fillRect(18, 28, 6, 6);
+    g.fillRect(28, 28, 6, 6);
+    g.fillRect(18, 40, 6, 6);
+    g.fillRect(28, 40, 6, 6);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 8);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "goldbar") {
+    markerFeet(g, 0xf2c94c);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillRoundedRect(10, 32, 36, 24, 4);
+    g.fillStyle(0xffe08a, 1);
+    g.fillRect(14, 36, 28, 6);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 28, 10);
+    faceDots(g, 24, 32, 28);
+    return true;
+  }
+  if (style === "keycard") {
+    markerFeet(g, 0x56ccf2);
+    g.fillStyle(0x4ab8e0, 1);
+    g.fillRoundedRect(12, 24, 32, 36, 4);
+    g.fillStyle(0x2a2a38, 1);
+    g.fillRect(16, 30, 16, 12);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillRect(34, 32, 6, 8);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 8);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "ledger") {
+    markerFeet(g, 0x8a6238);
+    g.fillStyle(0xf0e8d0, 1);
+    g.fillRect(14, 18, 28, 44);
+    g.fillStyle(0x8a6238, 1);
+    g.fillRect(14, 18, 6, 44);
+    g.lineStyle(1, 0xc4a574, 1);
+    g.lineBetween(24, 28, 38, 28);
+    g.lineBetween(24, 36, 38, 36);
+    g.lineBetween(24, 44, 38, 44);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 8);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "lockbox") {
+    markerFeet(g, 0x4a4a58);
+    g.fillStyle(0x3a3a48, 1);
+    g.fillRoundedRect(12, 26, 32, 36, 4);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(28, 42, 7);
+    g.fillStyle(0x2a2a38, 1);
+    g.fillCircle(28, 42, 3);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 24, 9);
+    faceDots(g, 24, 32, 24);
+    return true;
+  }
+  if (style === "safe") {
+    markerFeet(g, 0x4a4a58);
+    g.fillStyle(0x3a3a48, 1);
+    g.fillRoundedRect(10, 18, 36, 46, 4);
+    g.fillStyle(0x5a5a68, 1);
+    g.fillCircle(28, 40, 12);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(36, 40, 4);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 28, 8);
+    faceDots(g, 24, 32, 28);
+    return true;
+  }
+  if (style === "sealstamp") {
+    markerFeet(g, 0xd1495b);
+    g.fillStyle(0xd1495b, 1);
+    g.fillCircle(28, 36, 18);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(28, 36, 10);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 36, 7);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "vaultdoor") {
+    markerFeet(g, 0x5a5a68);
+    g.fillStyle(0x4a4a58, 1);
+    g.fillCircle(28, 38, 20);
+    g.fillStyle(0x3a3a48, 1);
+    g.fillCircle(28, 38, 10);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(36, 38, 4);
+    for (let i = 0; i < 6; i += 1) {
+      const a = (i / 6) * Math.PI * 2;
+      g.fillStyle(0x8a8a98, 0.8);
+      g.fillCircle(28 + Math.cos(a) * 15, 38 + Math.sin(a) * 15, 3);
+    }
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 38, 6);
+    faceDots(g, 24, 32, 56);
+    return true;
+  }
+  if (style === "wire") {
+    markerFeet(g, 0x62c462);
+    g.lineStyle(3, 0x62c462, 1);
+    g.lineBetween(14, 24, 42, 24);
+    g.lineBetween(14, 24, 14, 50);
+    g.lineBetween(42, 24, 42, 50);
+    g.lineBetween(14, 36, 42, 36);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 44, 10);
+    faceDots(g, 24, 32, 44);
+    return true;
+  }
+  if (style === "banner") {
+    markerFeet(g, 0x8a8070);
+    g.fillStyle(0x8a8070, 1);
+    g.fillRect(24, 12, 4, 52);
+    g.fillStyle(0x8b5cf6, 1);
+    g.fillRect(28, 14, 20, 28);
+    g.fillTriangle(28, 42, 48, 42, 38, 52);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 9);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "barricade") {
+    markerFeet(g, 0x8a6238);
+    g.fillStyle(0x8a6238, 1);
+    g.fillRect(10, 36, 36, 12);
+    g.fillRect(14, 24, 8, 28);
+    g.fillRect(34, 24, 8, 28);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 30, 10);
+    faceDots(g, 24, 32, 30);
+    return true;
+  }
+  if (style === "drawbridge") {
+    markerFeet(g, 0x8a6238);
+    g.fillStyle(0xa9805a, 1);
+    g.fillRoundedRect(10, 40, 36, 16, 2);
+    g.lineStyle(2, 0x6d4a2a, 1);
+    g.lineBetween(18, 40, 18, 56);
+    g.lineBetween(28, 40, 28, 56);
+    g.lineBetween(38, 40, 38, 56);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 28, 11);
+    faceDots(g, 24, 32, 28);
+    return true;
+  }
+  if (style === "guard") {
+    markerFeet(g, 0x5a4a78);
+    g.fillStyle(0x6a5a88, 1);
+    g.fillRect(16, 28, 24, 32);
+    g.fillStyle(0x8a8a98, 1);
+    g.fillTriangle(28, 12, 14, 30, 42, 30);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 40, 10);
+    faceDots(g, 24, 32, 40);
+    return true;
+  }
+  if (style === "herald") {
+    markerFeet(g, 0xf2c94c);
+    g.fillStyle(0x8b5cf6, 1);
+    g.fillTriangle(28, 14, 12, 48, 44, 48);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(28, 32, 6);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 9);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "moat") {
+    markerFeet(g, 0x3a5a8a);
+    g.fillStyle(0x3a5a8a, 0.9);
+    g.fillEllipse(28, 48, 36, 24);
+    g.fillStyle(0x5a8ab0, 0.6);
+    g.fillEllipse(28, 44, 24, 14);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 34, 11);
+    faceDots(g, 24, 32, 34);
+    return true;
+  }
+  if (style === "portcullis") {
+    markerFeet(g, 0x5a5a68);
+    g.fillStyle(0x4a4a58, 1);
+    g.fillRect(12, 16, 32, 48);
+    g.lineStyle(3, 0x8a8a98, 1);
+    for (let i = 0; i < 4; i += 1) g.lineBetween(16 + i * 8, 20, 16 + i * 8, 60);
+    g.lineBetween(12, 32, 44, 32);
+    g.lineBetween(12, 44, 44, 44);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 36, 9);
+    faceDots(g, 24, 32, 36);
+    return true;
+  }
+  if (style === "rampart") {
+    markerFeet(g, 0x7a6a98);
+    g.fillStyle(0x6a5a88, 1);
+    g.fillRect(10, 28, 36, 36);
+    g.fillRect(10, 16, 10, 16);
+    g.fillRect(23, 16, 10, 16);
+    g.fillRect(36, 16, 10, 16);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 42, 10);
+    faceDots(g, 24, 32, 42);
+    return true;
+  }
+  if (style === "shield") {
+    markerFeet(g, 0x8b5cf6);
+    g.fillStyle(0x7c3aed, 1);
+    g.fillEllipse(28, 36, 28, 36);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillTriangle(28, 22, 20, 36, 36, 36);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 42, 8);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "watchtower") {
+    markerFeet(g, 0x6a5a88);
+    g.fillStyle(0x5a4a78, 1);
+    g.fillRect(18, 24, 20, 40);
+    g.fillRect(12, 14, 32, 14);
+    g.fillStyle(0x8b5cf6, 0.7);
+    g.fillRect(22, 32, 12, 10);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 48, 9);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "crown") {
+    markerFeet(g, 0xf2c94c);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillRect(12, 28, 32, 14);
+    g.fillTriangle(12, 28, 18, 14, 24, 28);
+    g.fillTriangle(24, 28, 28, 10, 32, 28);
+    g.fillTriangle(32, 28, 38, 14, 44, 28);
+    g.fillStyle(0xd1495b, 1);
+    g.fillCircle(28, 18, 4);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 48, 11);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "throne") {
+    markerFeet(g, 0x8b5cf6);
+    g.fillStyle(0x7c3aed, 1);
+    g.fillRect(14, 36, 28, 24);
+    g.fillRect(16, 16, 24, 24);
+    g.fillTriangle(28, 8, 16, 18, 40, 18);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(28, 10, 5);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 40, 10);
+    faceDots(g, 24, 32, 40);
+    return true;
+  }
+  if (style === "scepter") {
+    markerFeet(g, 0xf2c94c);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillRect(26, 20, 4, 40);
+    g.fillCircle(28, 16, 8);
+    g.fillStyle(0xd1495b, 1);
+    g.fillCircle(28, 16, 4);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 48, 10);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "knight") {
+    markerFeet(g, 0x8a8a98);
+    g.fillStyle(0x7a7a88, 1);
+    g.fillRect(16, 28, 24, 32);
+    g.fillStyle(0x9a9aa8, 1);
+    g.fillRect(18, 14, 20, 16);
+    g.fillStyle(0x5a5a68, 1);
+    g.fillRect(22, 18, 12, 6);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 40, 10);
+    faceDots(g, 24, 32, 40);
+    return true;
+  }
+  if (style === "oracle") {
+    markerFeet(g, 0xb37feb);
+    g.fillStyle(0x8b5cf6, 0.85);
+    g.fillCircle(28, 36, 18);
+    g.fillStyle(0xf2c94c, 0.7);
+    g.fillCircle(28, 36, 8);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 48, 9);
+    faceDots(g, 24, 32, 48);
+    return true;
+  }
+  if (style === "spire") {
+    markerFeet(g, 0x6a5a88);
+    g.fillStyle(0x5a4a78, 1);
+    g.fillTriangle(28, 8, 16, 58, 40, 58);
+    g.fillStyle(0x8b5cf6, 0.6);
+    g.fillTriangle(28, 8, 22, 30, 34, 30);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 40, 9);
+    faceDots(g, 24, 32, 40);
+    return true;
+  }
+  if (style === "legacy") {
+    markerFeet(g, 0xf2c94c);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillEllipse(28, 40, 30, 36);
+    g.fillStyle(0x8b5cf6, 1);
+    g.fillCircle(28, 36, 10);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 36, 7);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "finale") {
+    markerFeet(g, 0xd1495b);
+    g.fillStyle(0xd1495b, 1);
+    g.fillCircle(28, 36, 20);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillStar?.(28, 36, 5, 12, 5) || g.fillCircle(28, 36, 8);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 9);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "champion") {
+    markerFeet(g, 0xf2c94c);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(28, 34, 18);
+    g.fillStyle(0xd1495b, 1);
+    g.fillRect(20, 28, 16, 12);
+    g.fillStyle(0xffffff, 0.8);
+    g.fillCircle(28, 34, 5);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 9);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
+  if (style === "banner_royal") {
+    markerFeet(g, 0x8a8070);
+    g.fillStyle(0x8a8070, 1);
+    g.fillRect(24, 12, 4, 52);
+    g.fillStyle(0xd1495b, 1);
+    g.fillRect(28, 14, 22, 30);
+    g.fillTriangle(28, 44, 50, 44, 39, 54);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillCircle(39, 28, 5);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 52, 9);
+    faceDots(g, 24, 32, 52);
+    return true;
+  }
   return false;
 }
 
