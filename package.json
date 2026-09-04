@@ -1,0 +1,11 @@
+{
+  "name": "find-the-markers-reuters-mix",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Find the Markers (Reuter's Mix) — Phaser 3, sem build",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node --test tests/*.test.js"
+  }
+}

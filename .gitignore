@@ -1,0 +1,24 @@
+# Agent / local tooling
+.omo/
+.opencode/
+.claude/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Node (if ever used)
+node_modules/
+npm-debug.log*
+.pnpm-store/
+
+# Test capture output
+tests/artifacts/
+
+# Env / secrets
+.env
+.env.*
