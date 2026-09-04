@@ -11,24 +11,329 @@ function graphics(scene) {
   return scene.make.graphics({ x: 0, y: 0, add: false });
 }
 
-function gMarker(g, color, style) {
-  // pernas
+function markerFeet(g, color, ox = 0) {
   g.lineStyle(4, INK, 1);
-  g.lineBetween(22, 68, 20, 75);
-  g.lineBetween(34, 68, 36, 75);
+  g.lineBetween(22 + ox, 68, 20 + ox, 75);
+  g.lineBetween(34 + ox, 68, 36 + ox, 75);
   g.fillStyle(INK, 1);
-  g.fillEllipse(18, 76, 9, 4);
-  g.fillEllipse(38, 76, 9, 4);
+  g.fillEllipse(18 + ox, 76, 9, 4);
+  g.fillEllipse(38 + ox, 76, 9, 4);
+  if (color != null) {
+    g.fillStyle(color, 1);
+    g.fillCircle(5 + ox, 59, 3.4);
+    g.fillCircle(51 + ox, 59, 3.4);
+  }
+}
 
-  // braços
+function markerArms(g, color) {
   g.lineStyle(4, INK, 1);
   g.lineBetween(12, 50, 6, 58);
   g.lineBetween(44, 50, 50, 58);
   g.fillStyle(color, 1);
   g.fillCircle(5, 59, 3.4);
   g.fillCircle(51, 59, 3.4);
+}
 
-  // corpo
+function faceDots(g, lx = 23, rx = 34, ey = 44) {
+  g.fillStyle(INK, 1);
+  g.fillEllipse(lx, ey, 6, 8);
+  g.fillEllipse(rx, ey, 6, 8);
+  g.fillStyle(0xffffff, 1);
+  g.fillCircle(lx + 1.2, ey - 1.4, 1.5);
+  g.fillCircle(rx + 1.2, ey - 1.4, 1.5);
+}
+
+function gMarkerSilhouette(g, color, style) {
+  if (style === "moss") {
+    markerFeet(g, color);
+    g.fillStyle(0x4a7a3a, 1);
+    g.fillEllipse(28, 48, 38, 44);
+    g.fillStyle(0x6fae5a, 1);
+    g.fillEllipse(18, 40, 18, 16);
+    g.fillEllipse(38, 42, 16, 14);
+    g.fillEllipse(28, 58, 22, 18);
+    g.fillStyle(0x8fba6a, 0.7);
+    g.fillCircle(22, 34, 8);
+    g.fillCircle(36, 36, 7);
+    g.fillStyle(color, 1);
+    g.fillTriangle(28, 8, 12, 28, 44, 28);
+    g.fillStyle(0x3d6b2e, 1);
+    g.fillCircle(16, 22, 5);
+    g.fillCircle(40, 20, 4);
+    g.fillCircle(28, 14, 6);
+    g.lineStyle(2.5, INK, 0.85);
+    g.strokeEllipse(28, 48, 38, 44);
+    faceDots(g, 22, 34, 46);
+    return true;
+  }
+  if (style === "vine") {
+    markerFeet(g, 0x5d8f46);
+    g.fillStyle(0x6b4a2a, 1);
+    g.fillRoundedRect(22, 28, 12, 42, 4);
+    g.lineStyle(3.5, 0x4a7a3a, 1);
+    g.beginPath();
+    g.moveTo(28, 30);
+    g.lineTo(10, 18);
+    g.lineTo(6, 8);
+    g.moveTo(28, 34);
+    g.lineTo(46, 22);
+    g.lineTo(50, 10);
+    g.moveTo(28, 50);
+    g.lineTo(8, 48);
+    g.moveTo(28, 54);
+    g.lineTo(48, 56);
+    g.strokePath();
+    g.fillStyle(0x7cae62, 1);
+    g.fillEllipse(8, 10, 12, 8);
+    g.fillEllipse(48, 12, 12, 8);
+    g.fillEllipse(6, 48, 10, 7);
+    g.fillEllipse(50, 56, 10, 7);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 24, 10);
+    faceDots(g, 24, 32, 24);
+    return true;
+  }
+  if (style === "bloom") {
+    markerFeet(g, color);
+    const petals = 6;
+    for (let i = 0; i < petals; i += 1) {
+      const a = (i / petals) * Math.PI * 2 - Math.PI / 2;
+      g.fillStyle(i % 2 ? color : 0xffb0c8, 1);
+      g.fillEllipse(28 + Math.cos(a) * 16, 40 + Math.sin(a) * 14, 14, 10);
+    }
+    g.fillStyle(0xfff0a0, 1);
+    g.fillCircle(28, 40, 12);
+    g.lineStyle(2.5, INK, 0.8);
+    g.strokeCircle(28, 40, 12);
+    faceDots(g, 24, 32, 40);
+    return true;
+  }
+  if (style === "trellis") {
+    markerFeet(g, 0x8a6238);
+    g.lineStyle(3, 0x8a6238, 1);
+    g.strokeRect(14, 14, 28, 54);
+    g.lineBetween(14, 28, 42, 28);
+    g.lineBetween(14, 42, 42, 42);
+    g.lineBetween(14, 56, 42, 56);
+    g.lineBetween(28, 14, 28, 68);
+    g.fillStyle(0xd1495b, 1);
+    g.fillCircle(20, 22, 4);
+    g.fillCircle(36, 34, 4);
+    g.fillCircle(22, 48, 3.5);
+    g.fillStyle(color, 1);
+    g.fillRoundedRect(18, 30, 20, 28, 4);
+    faceDots(g, 23, 33, 42);
+    return true;
+  }
+  if (style === "pond") {
+    markerFeet(g, 0x3a9088);
+    g.fillStyle(0x5eb8b0, 0.95);
+    g.fillEllipse(28, 48, 40, 36);
+    g.fillStyle(0x7ed4cc, 0.5);
+    g.fillEllipse(22, 42, 16, 10);
+    g.fillStyle(color, 1);
+    g.fillRoundedRect(18, 28, 20, 30, 10);
+    g.lineStyle(2.5, INK, 0.75);
+    g.strokeEllipse(28, 48, 40, 36);
+    g.fillStyle(0xffffff, 0.35);
+    g.fillEllipse(20, 40, 10, 5);
+    g.fillStyle(0x5d8f46, 1);
+    g.fillEllipse(40, 58, 14, 8);
+    faceDots(g, 23, 33, 40);
+    return true;
+  }
+  if (style === "bee") {
+    markerFeet(g, 0xf2c94c);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillEllipse(28, 46, 28, 36);
+    g.fillStyle(INK, 1);
+    g.fillRect(14, 36, 28, 5);
+    g.fillRect(14, 48, 28, 5);
+    g.fillRect(14, 58, 28, 4);
+    g.fillStyle(0xffffff, 0.85);
+    g.fillEllipse(8, 34, 14, 10);
+    g.fillEllipse(48, 34, 14, 10);
+    g.lineStyle(2, INK, 0.5);
+    g.strokeEllipse(8, 34, 14, 10);
+    g.strokeEllipse(48, 34, 14, 10);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 22, 10);
+    g.fillStyle(INK, 1);
+    g.fillTriangle(24, 8, 28, 2, 32, 8);
+    faceDots(g, 24, 32, 22);
+    return true;
+  }
+  if (style === "lantern") {
+    markerFeet(g, 0x8a6238);
+    g.fillStyle(0x5a4030, 1);
+    g.fillRect(25, 6, 6, 14);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillRoundedRect(12, 18, 32, 40, 6);
+    g.fillStyle(0xffe08a, 0.55);
+    g.fillRoundedRect(16, 24, 24, 28, 4);
+    g.lineStyle(3, INK, 0.9);
+    g.strokeRoundedRect(12, 18, 32, 40, 6);
+    g.lineBetween(12, 30, 44, 30);
+    g.lineBetween(28, 18, 28, 58);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 38, 8);
+    faceDots(g, 24, 32, 38);
+    return true;
+  }
+  if (style === "root") {
+    markerFeet(g, 0x6b4a2a);
+    g.fillStyle(0x8a6238, 1);
+    g.fillEllipse(28, 40, 24, 32);
+    g.lineStyle(4, 0x6b4a2a, 1);
+    g.beginPath();
+    g.moveTo(20, 55);
+    g.lineTo(8, 72);
+    g.moveTo(28, 58);
+    g.lineTo(28, 76);
+    g.moveTo(36, 55);
+    g.lineTo(48, 72);
+    g.moveTo(16, 48);
+    g.lineTo(4, 58);
+    g.moveTo(40, 48);
+    g.lineTo(52, 58);
+    g.strokePath();
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 28, 12);
+    g.fillStyle(0x4a7a3a, 0.7);
+    g.fillCircle(18, 22, 5);
+    faceDots(g, 24, 32, 28);
+    return true;
+  }
+  if (style === "petal") {
+    markerFeet(g, 0xe884b5);
+    g.fillStyle(0xffb0c8, 1);
+    g.fillTriangle(28, 12, 8, 48, 48, 48);
+    g.fillStyle(0xe884b5, 1);
+    g.fillTriangle(28, 20, 14, 52, 42, 52);
+    g.fillStyle(color, 1);
+    g.fillEllipse(28, 44, 18, 24);
+    g.lineStyle(2.5, INK, 0.75);
+    g.strokeTriangle(28, 12, 8, 48, 48, 48);
+    faceDots(g, 24, 32, 44);
+    return true;
+  }
+  if (style === "greenhouse") {
+    markerFeet(g, 0x7ed4cc);
+    g.fillStyle(0xbfe8f7, 0.95);
+    g.fillTriangle(28, 6, 6, 36, 50, 36);
+    g.fillRect(10, 36, 36, 32);
+    g.lineStyle(3, 0x5a8a9a, 1);
+    g.strokeTriangle(28, 6, 6, 36, 50, 36);
+    g.strokeRect(10, 36, 36, 32);
+    g.lineBetween(28, 6, 28, 68);
+    g.lineBetween(10, 52, 46, 52);
+    g.fillStyle(0x5d8f46, 1);
+    g.fillEllipse(20, 58, 10, 8);
+    g.fillEllipse(36, 60, 10, 8);
+    g.fillStyle(color, 1);
+    g.fillCircle(28, 44, 9);
+    faceDots(g, 24, 32, 44);
+    return true;
+  }
+  if (style === "crystal") {
+    markerFeet(g, color);
+    g.fillStyle(color, 0.85);
+    g.fillTriangle(28, 4, 10, 36, 46, 36);
+    g.fillStyle(0xffffff, 0.35);
+    g.fillTriangle(28, 10, 18, 32, 28, 32);
+    g.fillStyle(color, 0.7);
+    g.fillTriangle(14, 34, 28, 72, 8, 68);
+    g.fillTriangle(42, 34, 28, 72, 48, 68);
+    g.fillStyle(color, 0.9);
+    g.fillTriangle(20, 34, 36, 34, 28, 70);
+    g.lineStyle(2.5, INK, 0.8);
+    g.strokeTriangle(28, 4, 10, 36, 46, 36);
+    g.strokeTriangle(20, 34, 36, 34, 28, 70);
+    faceDots(g, 23, 33, 48);
+    return true;
+  }
+  if (style === "sewer") {
+    markerFeet(g, 0x5a7a3a);
+    g.fillStyle(0x6a7060, 1);
+    g.fillRoundedRect(10, 20, 30, 48, 10);
+    g.fillStyle(0x4a8a3a, 0.9);
+    g.fillEllipse(40, 50, 18, 28);
+    g.fillCircle(44, 68, 6);
+    g.fillCircle(48, 74, 3);
+    g.fillStyle(0x3a6a2a, 0.7);
+    g.fillEllipse(16, 58, 12, 10);
+    g.lineStyle(2.5, INK, 0.85);
+    g.strokeRoundedRect(10, 20, 30, 48, 10);
+    g.fillStyle(color, 1);
+    g.fillCircle(24, 34, 10);
+    faceDots(g, 20, 28, 34);
+    return true;
+  }
+  if (style === "ice") {
+    markerFeet(g, 0xa8d4f0);
+    g.fillStyle(0xd0e8ff, 0.95);
+    g.fillRoundedRect(14, 18, 28, 50, 4);
+    g.fillStyle(0xffffff, 0.5);
+    g.fillTriangle(18, 22, 28, 8, 38, 22);
+    g.fillTriangle(12, 40, 8, 28, 16, 36);
+    g.fillTriangle(44, 40, 48, 28, 40, 36);
+    g.lineStyle(2.5, 0x7ab0d0, 0.9);
+    g.strokeRoundedRect(14, 18, 28, 50, 4);
+    g.fillStyle(color, 0.85);
+    g.fillCircle(28, 42, 10);
+    faceDots(g, 24, 32, 42);
+    return true;
+  }
+  if (style === "neon_emit") {
+    markerFeet(g, color);
+    const bands = [0xff5d5d, 0xf2c94c, 0x62c462, 0x56ccf2, 0xb37feb];
+    g.fillStyle(0x1a1a28, 1);
+    g.fillRoundedRect(12, 16, 32, 52, 6);
+    bands.forEach((band, i) => {
+      g.fillStyle(band, 1);
+      g.fillRect(14, 20 + i * 8, 28, 6);
+    });
+    g.fillStyle(color, 0.4);
+    g.fillCircle(28, 42, 22);
+    g.lineStyle(3, color, 1);
+    g.strokeRoundedRect(12, 16, 32, 52, 6);
+    faceDots(g, 23, 33, 44);
+    return true;
+  }
+  if (style === "null_void") {
+    markerFeet(g, 0x62c462, -4);
+    g.fillStyle(0x2a2a38, 1);
+    g.fillRoundedRect(8, 20, 28, 44, 4);
+    g.fillStyle(0x62c462, 1);
+    g.fillRect(4, 28, 8, 8);
+    g.fillStyle(0xf2c94c, 1);
+    g.fillRect(40, 36, 10, 6);
+    g.fillStyle(0x56ccf2, 1);
+    g.fillRect(36, 52, 12, 8);
+    g.fillStyle(PAPER, 1);
+    g.fillRoundedRect(18, 26, 28, 40, 6);
+    g.fillStyle(0xff5d5d, 0.7);
+    g.fillRect(42, 22, 6, 20);
+    g.lineStyle(2, 0x62c462, 1);
+    g.strokeRoundedRect(8, 20, 28, 44, 4);
+    g.lineStyle(2, INK, 0.7);
+    g.strokeRoundedRect(18, 26, 28, 40, 6);
+    faceDots(g, 26, 36, 42);
+    g.fillStyle(0x62c462, 1);
+    g.fillRect(22, 40, 4, 4);
+    g.fillStyle(0xff5d5d, 1);
+    g.fillRect(34, 44, 4, 4);
+    return true;
+  }
+  return false;
+}
+
+function gMarker(g, color, style) {
+  if (gMarkerSilhouette(g, color, style)) return;
+
+  markerFeet(g, null);
+  markerArms(g, color);
+
   g.fillStyle(PAPER, 1);
   g.fillRoundedRect(12, 22, 32, 46, 8);
   g.lineStyle(3, color, 1);
