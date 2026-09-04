@@ -1,4 +1,4 @@
-import { makeExpansionRoom, makeSecretRoom } from "./expansion-room-factory.js";
+import { makeExpansionRoom, makeSecretRoom, buildOrganicGarden } from "./expansion-room-factory.js";
 import { MultiSwitchPuzzle } from "../puzzles/multi-switch.js";
 import { SlotMachine } from "../entities/slot-machine.js";
 
@@ -27,16 +27,18 @@ export const room_11_garden = makeExpansionRoom({
   id: "room_11_garden",
   theme: "garden",
   sealId: "seal_garden",
+  customBuild: buildOrganicGarden,
+  sealPos: { x: 620, y: 560 },
   gates: [
-    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } },
-    { key: "right", x: 1400, arrowY: 520, zone: { x: 1370, y: 400, width: 70, height: 240 } },
-    { key: "secret", x: 720, arrowY: 280, zone: { x: 680, y: 200, width: 80, height: 120 } }
+    { key: "left", x: 40, arrowY: 560, zone: { x: 0, y: 440, width: 70, height: 240 } },
+    { key: "right", x: 1400, arrowY: 560, zone: { x: 1370, y: 440, width: 70, height: 240 } },
+    { key: "secret", x: 720, arrowY: 240, zone: { x: 680, y: 180, width: 80, height: 100 } }
   ],
   spawns: {
-    default: { x: 200, y: 600 },
-    from_room_01: { x: 200, y: 600 },
-    from_room_12: { x: 1280, y: 600 },
-    from_secret: { x: 720, y: 500 }
+    default: { x: 160, y: 600 },
+    from_room_01: { x: 160, y: 600 },
+    from_room_12: { x: 1280, y: 580 },
+    from_secret: { x: 720, y: 360 }
   }
 });
 

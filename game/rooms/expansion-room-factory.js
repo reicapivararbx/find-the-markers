@@ -38,6 +38,102 @@ function spawnCoins(ctx, roomId) {
   });
 }
 
+function buildOrganicGarden(ctx, t) {
+  const { scene } = ctx;
+  kit.sky(scene, t.skyTop, t.skyBottom);
+  kit.cloud(scene, 220, 110, 1.05);
+  kit.cloud(scene, 680, 80, 0.75);
+  kit.cloud(scene, 1180, 130, 0.95);
+  kit.ground(scene, ctx, t.ground);
+
+  kit.stonePath(scene, [
+    [40, 560],
+    [180, 540],
+    [320, 500],
+    [480, 520],
+    [620, 560],
+    [760, 540],
+    [920, 500],
+    [1100, 520],
+    [1280, 540],
+    [1400, 560]
+  ], 64);
+  kit.dirtPath(scene, [
+    [480, 520],
+    [520, 420],
+    [580, 340],
+    [720, 300],
+    [720, 240]
+  ], 48);
+  kit.dirtPath(scene, [
+    [760, 540],
+    [820, 620],
+    [900, 700],
+    [1040, 740]
+  ], 44);
+  kit.dirtPath(scene, [
+    [320, 500],
+    [280, 620],
+    [240, 700],
+    [180, 740]
+  ], 40);
+
+  kit.fountain(scene, ctx, 620, 480);
+  kit.greenhouse(scene, ctx, 1080, 380, 180, 120);
+  kit.hedgeWall(scene, ctx, 400, 300, 140, 52);
+  kit.hedgeWall(scene, ctx, 560, 280, 100, 48);
+  kit.hedgeWall(scene, ctx, 720, 300, 130, 50);
+  kit.ruinPillar(scene, ctx, 200, 380, 100);
+  kit.ruinPillar(scene, ctx, 280, 400, 72);
+  kit.ruinPillar(scene, ctx, 1320, 420, 88);
+  kit.fallenLog(scene, ctx, 860, 680, 130);
+  kit.fallenLog(scene, ctx, 140, 680, 90);
+
+  kit.tree(scene, ctx, 120, 360, { scale: 1.05, canopy: 0x5d8f46 });
+  kit.tree(scene, ctx, 360, 320, { scale: 0.85, canopy: 0x7cae62 });
+  kit.tree(scene, ctx, 980, 300, { scale: 0.95, canopy: 0x6fae5a });
+  kit.tree(scene, ctx, 1280, 340, { scale: 1.1, canopy: 0x86b45e });
+  kit.tree(scene, ctx, 520, 700, { scale: 0.75, canopy: 0x5d8f46 });
+  kit.tree(scene, ctx, 1180, 720, { scale: 0.8, canopy: 0x7cae62 });
+
+  kit.bush(scene, ctx, 90, 620, 1.1);
+  kit.bush(scene, ctx, 450, 640, 0.9);
+  kit.bush(scene, ctx, 780, 360, 1.0);
+  kit.bush(scene, ctx, 1020, 660, 0.85);
+  kit.bush(scene, ctx, 1360, 620, 1.05);
+
+  kit.rocks(scene, ctx, 340, 460, 1.1);
+  kit.rocks(scene, ctx, 880, 420, 0.9);
+  kit.rocks(scene, ctx, 1240, 580, 1.0);
+
+  kit.flowerBed(scene, 240, 560, [0xd1495b, 0xf2c94c, 0xe884b5]);
+  kit.flowerBed(scene, 700, 640, [0xb37feb, 0x62c462, 0xf2c94c]);
+  kit.flowerBed(scene, 1000, 500, [0xd1495b, 0x56ccf2, 0xe884b5]);
+  kit.flowerBed(scene, 400, 740, [0xf2c94c, 0x7cae62, 0xb37feb]);
+
+  kit.bench(scene, ctx, 480, 580, 100);
+  kit.bench(scene, ctx, 900, 560, 90);
+  kit.lampPost(scene, ctx, 300, 540);
+  kit.lampPost(scene, ctx, 1050, 540);
+  kit.signBoard(scene, ctx, 160, 500, 120, 48, ["Jardim", "Abandonado"]);
+
+  kit.grassTufts(scene, [
+    [100, 720],
+    [200, 760],
+    [380, 700],
+    [560, 740],
+    [740, 720],
+    [920, 760],
+    [1100, 700],
+    [1300, 740],
+    [150, 440],
+    [800, 400],
+    [1200, 460]
+  ]);
+
+  kit.water(scene, 560, 440, 120, 50);
+}
+
 export function makeExpansionRoom({
   id,
   theme = "garden",
@@ -46,9 +142,13 @@ export function makeExpansionRoom({
   gates = [],
   spawns = {},
   wireExtra = null,
-  decor = null
+  decor = null,
+  customBuild = null,
+  sealPos = null
 }) {
   const t = THEMES[theme] || THEMES.garden;
+  const sealX = sealPos?.x ?? 720;
+  const sealY = sealPos?.y ?? 400;
   return {
     id,
     panelMarkerIds: panelIdsFor(id),
@@ -59,7 +159,9 @@ export function makeExpansionRoom({
     gates,
     build(ctx) {
       const { scene } = ctx;
-      if (interior) {
+      if (typeof customBuild === "function") {
+        customBuild(ctx, t);
+      } else if (interior) {
         kit.interiorWall(scene, ctx, t.wall, t.floor);
       } else {
         kit.sky(scene, t.skyTop, t.skyBottom);
@@ -73,13 +175,13 @@ export function makeExpansionRoom({
           [1100, 560],
           [1360, 520]
         ]);
+        kit.crate(scene, ctx, 200, 580, 100, 40, 0x8a6238);
+        kit.crate(scene, ctx, 1100, 600, 120, 44, 0xa9805a);
       }
-      kit.crate(scene, ctx, 200, 580, 100, 40, 0x8a6238);
-      kit.crate(scene, ctx, 1100, 600, 120, 44, 0xa9805a);
       if (typeof decor === "function") decor(ctx, t);
       if (sealId && !ctx.save.areaSeals?.includes(sealId)) {
         scene.add
-          .text(720, 120, "SELO DA ÁREA", {
+          .text(sealX, 100, "SELO DA ÁREA", {
             fontFamily: '"Comic Sans MS", sans-serif',
             fontSize: "18px",
             fontStyle: "bold",
@@ -97,8 +199,8 @@ export function makeExpansionRoom({
       if (sealId && !ctx.sm.save.areaSeals.includes(sealId)) {
         const sealPad = new Interactable(scene, {
           id: `seal_${id}`,
-          x: 720,
-          y: 400,
+          x: sealX,
+          y: sealY,
           radius: 100,
           prompt: "[E] Coletar selo da área",
           once: true,
@@ -110,7 +212,7 @@ export function makeExpansionRoom({
         });
         ctx.addUpdatable(sealPad);
         scene.add
-          .circle(720, 400, 28, 0xf2c94c, 0.9)
+          .circle(sealX, sealY, 28, 0xf2c94c, 0.9)
           .setDepth(400)
           .setStrokeStyle(3, 0x33333d, 0.8);
       }
@@ -118,6 +220,8 @@ export function makeExpansionRoom({
     }
   };
 }
+
+export { buildOrganicGarden };
 
 export function makeSecretRoom({ id, parentKey = "exit", parentRoom }) {
   return makeExpansionRoom({

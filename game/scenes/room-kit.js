@@ -700,7 +700,6 @@ export const kit = {
     if (ctx) ctx.solid(x - 10, baseY - 16, 20, 16);
   },
 
-  // Banco de parque.
   bench(scene, ctx, x, baseY, w = 90) {
     groundShadow(scene, x + w / 2, baseY, w * 0.9, 16, 0.22);
     const gfx = g(scene, baseY);
@@ -710,5 +709,126 @@ export const kit = {
     gfx.fillRect(x + 8, baseY - 14, 10, 14);
     gfx.fillRect(x + w - 18, baseY - 14, 10, 14);
     if (ctx) ctx.solid(x + 4, baseY - 16, w - 8, 16);
+  },
+
+  stonePath(scene, points, width = 56) {
+    const gfx = g(scene, -47);
+    gfx.lineStyle(width, 0x9a9590, 0.92);
+    gfx.beginPath();
+    gfx.moveTo(points[0][0], points[0][1]);
+    for (let i = 1; i < points.length; i += 1) gfx.lineTo(points[i][0], points[i][1]);
+    gfx.strokePath();
+    gfx.lineStyle(width * 0.55, 0xb0aba6, 0.45);
+    gfx.beginPath();
+    gfx.moveTo(points[0][0], points[0][1]);
+    for (let i = 1; i < points.length; i += 1) gfx.lineTo(points[i][0], points[i][1]);
+    gfx.strokePath();
+    gfx.fillStyle(0x7a7568, 0.35);
+    points.forEach(([x, y], i) => {
+      if (i % 2 === 0) gfx.fillEllipse(x + 14, y + 6, 18, 10);
+      if (i % 3 === 0) gfx.fillEllipse(x - 16, y - 4, 14, 8);
+    });
+  },
+
+  fountain(scene, ctx, x, baseY) {
+    groundShadow(scene, x, baseY, 90, 28, 0.32);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0xb0aba6);
+    gfx.fillEllipse(x, baseY - 8, 88, 36);
+    gfx.strokeEllipse(x, baseY - 8, 88, 36);
+    gfx.fillStyle(0x5eb8b0, 0.88);
+    gfx.fillEllipse(x, baseY - 10, 64, 24);
+    gfx.fillStyle(0x9a9590, 1);
+    gfx.fillRoundedRect(x - 10, baseY - 52, 20, 40, 4);
+    gfx.strokeRoundedRect(x - 10, baseY - 52, 20, 40, 4);
+    gfx.fillStyle(0x7ed4cc, 0.7);
+    gfx.fillCircle(x, baseY - 56, 10);
+    gfx.fillStyle(0xffffff, 0.35);
+    gfx.fillEllipse(x - 12, baseY - 16, 22, 8);
+    if (ctx) ctx.solid(x - 36, baseY - 18, 72, 22);
+  },
+
+  greenhouse(scene, ctx, x, baseY, w = 160, h = 110) {
+    groundShadow(scene, x + w / 2, baseY + 4, w * 1.05, 26, 0.3);
+    const gfx = g(scene, baseY);
+    const top = baseY - h;
+    outlined(gfx, 0xbfe8f7);
+    gfx.fillStyle(0xbfe8f7, 0.82);
+    gfx.fillRect(x, top + 28, w, h - 28);
+    gfx.strokeRect(x, top + 28, w, h - 28);
+    gfx.fillStyle(0xd8f0f8, 0.9);
+    gfx.fillTriangle(x - 6, top + 28, x + w + 6, top + 28, x + w / 2, top - 8);
+    gfx.lineStyle(3, INK, 0.85);
+    gfx.beginPath();
+    gfx.moveTo(x - 6, top + 28);
+    gfx.lineTo(x + w / 2, top - 8);
+    gfx.lineTo(x + w + 6, top + 28);
+    gfx.strokePath();
+    gfx.lineStyle(2.5, 0x5a8a9a, 0.75);
+    gfx.lineBetween(x + w / 2, top - 8, x + w / 2, baseY - 4);
+    gfx.lineBetween(x, top + 55, x + w, top + 55);
+    gfx.lineBetween(x + w * 0.33, top + 28, x + w * 0.33, baseY - 4);
+    gfx.lineBetween(x + w * 0.66, top + 28, x + w * 0.66, baseY - 4);
+    gfx.fillStyle(0x8a6238, 1);
+    gfx.fillRect(x + w / 2 - 14, baseY - 36, 28, 32);
+    gfx.lineStyle(2.5, INK, 0.8);
+    gfx.strokeRect(x + w / 2 - 14, baseY - 36, 28, 32);
+    gfx.fillStyle(0x5d8f46, 0.85);
+    gfx.fillEllipse(x + 28, baseY - 20, 22, 14);
+    gfx.fillEllipse(x + w - 28, baseY - 18, 20, 12);
+    if (ctx) ctx.solid(x + 8, baseY - 28, w - 16, 28);
+  },
+
+  hedgeWall(scene, ctx, x, baseY, w = 120, h = 48) {
+    groundShadow(scene, x + w / 2, baseY, w * 0.95, 18, 0.26);
+    const gfx = g(scene, baseY);
+    gfx.fillStyle(0x4a6e3a, 1);
+    gfx.fillRoundedRect(x, baseY - h, w, h, 10);
+    gfx.fillStyle(0x5d8f46, 1);
+    gfx.fillRoundedRect(x + 4, baseY - h - 6, w - 8, h * 0.55, 12);
+    gfx.fillStyle(0x7cae62, 0.7);
+    gfx.fillCircle(x + 18, baseY - h + 4, 12);
+    gfx.fillCircle(x + w - 18, baseY - h + 6, 14);
+    gfx.fillCircle(x + w / 2, baseY - h - 4, 16);
+    if (ctx) ctx.solid(x + 4, baseY - 20, w - 8, 20);
+  },
+
+  ruinPillar(scene, ctx, x, baseY, h = 90) {
+    groundShadow(scene, x, baseY, 36, 14, 0.28);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0xc4b8a0);
+    gfx.fillRoundedRect(x - 12, baseY - h, 24, h, 4);
+    gfx.strokeRoundedRect(x - 12, baseY - h, 24, h, 4);
+    gfx.fillStyle(0xd8d0bc, 1);
+    gfx.fillRect(x - 18, baseY - h - 8, 36, 12);
+    gfx.fillStyle(0x5d8f46, 0.55);
+    gfx.fillEllipse(x + 8, baseY - h * 0.4, 14, 10);
+    if (ctx) ctx.solid(x - 14, baseY - 18, 28, 18);
+  },
+
+  flowerBed(scene, x, baseY, colors = [0xd1495b, 0xf2c94c, 0xb37feb]) {
+    const gfx = g(scene, baseY - 1);
+    gfx.fillStyle(0x6b4a2a, 0.85);
+    gfx.fillEllipse(x, baseY, 70, 22);
+    colors.forEach((c, i) => {
+      const ox = (i - 1) * 18;
+      gfx.fillStyle(0x5d8f46, 1);
+      gfx.fillTriangle(x + ox - 3, baseY - 2, x + ox + 3, baseY - 2, x + ox, baseY - 18);
+      gfx.fillStyle(c, 1);
+      gfx.fillCircle(x + ox, baseY - 20, 6);
+    });
+  },
+
+  fallenLog(scene, ctx, x, baseY, w = 110) {
+    groundShadow(scene, x + w / 2, baseY, w * 0.9, 16, 0.26);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0x8a6238);
+    gfx.fillRoundedRect(x, baseY - 22, w, 24, 10);
+    gfx.strokeRoundedRect(x, baseY - 22, w, 24, 10);
+    gfx.fillStyle(0xd4b888, 1);
+    gfx.fillEllipse(x + 6, baseY - 10, 14, 16);
+    gfx.lineStyle(2, 0x6d4a2a, 0.7);
+    gfx.strokeEllipse(x + 6, baseY - 10, 14, 16);
+    if (ctx) ctx.solid(x + 8, baseY - 16, w - 16, 16);
   }
 };
