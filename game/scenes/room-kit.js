@@ -1092,5 +1092,255 @@ export const kit = {
     gfx.fillCircle(x + 8, baseY - 12, 7);
     gfx.fillStyle(0x5a7ab0, 0.6);
     gfx.fillCircle(x + 2, baseY - 18, 5);
+  },
+
+  labBench(scene, ctx, x, baseY, w = 140) {
+    groundShadow(scene, x + w / 2, baseY, w * 0.95, 18, 0.26);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0xd0d8e0);
+    gfx.fillRoundedRect(x, baseY - 36, w, 38, 4);
+    gfx.strokeRoundedRect(x, baseY - 36, w, 38, 4);
+    gfx.fillStyle(0x8a9aa8, 1);
+    gfx.fillRect(x + 8, baseY - 2, 12, 14);
+    gfx.fillRect(x + w - 20, baseY - 2, 12, 14);
+    gfx.fillStyle(0x56ccf2, 0.55);
+    gfx.fillCircle(x + 30, baseY - 48, 10);
+    gfx.fillStyle(0x62c462, 0.55);
+    gfx.fillCircle(x + 60, baseY - 52, 8);
+    gfx.fillStyle(0xb37feb, 0.5);
+    gfx.fillCircle(x + 90, baseY - 46, 9);
+    if (ctx) ctx.solid(x + 4, baseY - 16, w - 8, 16);
+  },
+
+  serverRack(scene, ctx, x, baseY, h = 100) {
+    groundShadow(scene, x, baseY, 40, 16, 0.28);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0x3a3a48);
+    gfx.fillRect(x - 18, baseY - h, 36, h);
+    gfx.strokeRect(x - 18, baseY - h, 36, h);
+    for (let i = 0; i < 5; i += 1) {
+      gfx.fillStyle(i % 2 === 0 ? 0x56ccf2 : 0x62c462, 0.85);
+      gfx.fillRect(x - 12, baseY - h + 12 + i * 16, 8, 6);
+      gfx.fillStyle(0xf2c94c, 0.7);
+      gfx.fillRect(x + 2, baseY - h + 14 + i * 16, 6, 4);
+    }
+    if (ctx) ctx.solid(x - 16, baseY - 18, 32, 18);
+  },
+
+  beakerProp(scene, x, baseY, color = 0x56ccf2) {
+    const gfx = g(scene, baseY);
+    gfx.fillStyle(0xd0e0e8, 0.9);
+    gfx.fillRect(x - 8, baseY - 36, 16, 28);
+    gfx.fillStyle(color, 0.75);
+    gfx.fillRect(x - 6, baseY - 20, 12, 12);
+    gfx.lineStyle(2, INK, 0.7);
+    gfx.strokeRect(x - 8, baseY - 36, 16, 28);
+  },
+
+  laserBeam(scene, x1, y1, x2, y2, color = 0xff5d5d) {
+    const gfx = g(scene, -45);
+    gfx.lineStyle(4, color, 0.7);
+    gfx.lineBetween(x1, y1, x2, y2);
+    gfx.lineStyle(2, 0xffffff, 0.4);
+    gfx.lineBetween(x1, y1, x2, y2);
+  },
+
+  sandDune(scene, x, baseY, w = 120) {
+    const gfx = g(scene, -48);
+    gfx.fillStyle(0xd4b888, 0.9);
+    gfx.fillEllipse(x, baseY, w, 40);
+    gfx.fillStyle(0xe8d8b0, 0.5);
+    gfx.fillEllipse(x - w * 0.15, baseY - 8, w * 0.5, 22);
+  },
+
+  stoneArch(scene, ctx, x, baseY, w = 100, h = 90) {
+    groundShadow(scene, x, baseY, w * 0.9, 20, 0.3);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0xc4b8a0);
+    gfx.fillRect(x - w / 2, baseY - h, 18, h);
+    gfx.fillRect(x + w / 2 - 18, baseY - h, 18, h);
+    gfx.fillRect(x - w / 2, baseY - h - 14, w, 18);
+    gfx.strokeRect(x - w / 2, baseY - h, 18, h);
+    gfx.strokeRect(x + w / 2 - 18, baseY - h, 18, h);
+    gfx.fillStyle(0x1a1810, 0.55);
+    gfx.fillEllipse(x, baseY - h * 0.4, w - 40, h * 0.7);
+    if (ctx) {
+      ctx.solid(x - w / 2, baseY - 18, 18, 18);
+      ctx.solid(x + w / 2 - 18, baseY - 18, 18, 18);
+    }
+  },
+
+  obelisk(scene, ctx, x, baseY, h = 110) {
+    groundShadow(scene, x, baseY, 32, 14, 0.28);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0xb8a888);
+    gfx.fillTriangle(x, baseY - h - 12, x - 14, baseY - h + 10, x + 14, baseY - h + 10);
+    gfx.fillRect(x - 12, baseY - h + 10, 24, h - 10);
+    gfx.strokeRect(x - 12, baseY - h + 10, 24, h - 10);
+    gfx.fillStyle(0x8a7050, 0.6);
+    gfx.fillRect(x - 6, baseY - h * 0.5, 12, 8);
+    if (ctx) ctx.solid(x - 12, baseY - 18, 24, 18);
+  },
+
+  mosaicTile(scene, x, baseY, colors = [0xd1495b, 0x56ccf2, 0xf2c94c]) {
+    const gfx = g(scene, -49);
+    colors.forEach((c, i) => {
+      gfx.fillStyle(c, 0.7);
+      gfx.fillRect(x + (i % 2) * 16, baseY + Math.floor(i / 2) * 16, 14, 14);
+    });
+  },
+
+  snowPatch(scene, x, baseY, w = 80) {
+    const gfx = g(scene, -48);
+    gfx.fillStyle(0xf0f8ff, 0.85);
+    gfx.fillEllipse(x, baseY, w, 28);
+    gfx.fillStyle(0xffffff, 0.5);
+    gfx.fillEllipse(x - 10, baseY - 4, w * 0.4, 14);
+  },
+
+  iceSpike(scene, x, baseY, h = 50) {
+    const gfx = g(scene, baseY);
+    gfx.fillStyle(0xd0e8ff, 0.9);
+    gfx.fillTriangle(x, baseY - h, x - 10, baseY, x + 10, baseY);
+    gfx.fillStyle(0xffffff, 0.4);
+    gfx.fillTriangle(x - 2, baseY - h + 8, x - 6, baseY - 10, x + 2, baseY - 10);
+  },
+
+  mountainPeak(scene, x, baseY, h = 120, w = 100) {
+    const gfx = g(scene, -49);
+    gfx.fillStyle(0x8a9aa8, 1);
+    gfx.fillTriangle(x, baseY - h, x - w / 2, baseY, x + w / 2, baseY);
+    gfx.fillStyle(0xf0f8ff, 0.9);
+    gfx.fillTriangle(x, baseY - h, x - w * 0.15, baseY - h * 0.55, x + w * 0.15, baseY - h * 0.55);
+  },
+
+  flagPole(scene, ctx, x, baseY, h = 80, color = 0xd1495b) {
+    groundShadow(scene, x, baseY, 20, 10, 0.2);
+    const gfx = g(scene, baseY);
+    gfx.fillStyle(0x8a8070, 1);
+    gfx.fillRect(x - 2, baseY - h, 4, h);
+    gfx.fillStyle(color, 1);
+    gfx.fillTriangle(x + 2, baseY - h, x + 28, baseY - h + 12, x + 2, baseY - h + 24);
+    if (ctx) ctx.solid(x - 4, baseY - 12, 8, 12);
+  },
+
+  vaultDoor(scene, ctx, x, baseY, r = 50) {
+    groundShadow(scene, x, baseY, r * 1.6, 20, 0.3);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0x5a5a68);
+    gfx.fillCircle(x, baseY - r * 0.6, r);
+    gfx.strokeCircle(x, baseY - r * 0.6, r);
+    gfx.fillStyle(0x3a3a48, 1);
+    gfx.fillCircle(x, baseY - r * 0.6, r * 0.35);
+    gfx.fillStyle(0xf2c94c, 0.9);
+    gfx.fillCircle(x + r * 0.25, baseY - r * 0.6, 6);
+    for (let i = 0; i < 8; i += 1) {
+      const a = (i / 8) * Math.PI * 2;
+      gfx.fillStyle(0x8a8a98, 0.7);
+      gfx.fillCircle(x + Math.cos(a) * r * 0.7, baseY - r * 0.6 + Math.sin(a) * r * 0.7, 4);
+    }
+    if (ctx) ctx.solid(x - r * 0.7, baseY - 18, r * 1.4, 18);
+  },
+
+  goldBar(scene, x, baseY) {
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0xf2c94c);
+    gfx.fillRoundedRect(x - 16, baseY - 14, 32, 16, 3);
+    gfx.strokeRoundedRect(x - 16, baseY - 14, 32, 16, 3);
+    gfx.fillStyle(0xffe08a, 0.7);
+    gfx.fillRect(x - 12, baseY - 12, 24, 4);
+  },
+
+  safeBox(scene, ctx, x, baseY) {
+    groundShadow(scene, x, baseY, 44, 16, 0.26);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0x4a4a58);
+    gfx.fillRoundedRect(x - 22, baseY - 40, 44, 42, 4);
+    gfx.strokeRoundedRect(x - 22, baseY - 40, 44, 42, 4);
+    gfx.fillStyle(0xf2c94c, 1);
+    gfx.fillCircle(x, baseY - 22, 8);
+    gfx.fillStyle(0x2a2a38, 1);
+    gfx.fillCircle(x, baseY - 22, 3);
+    if (ctx) ctx.solid(x - 18, baseY - 16, 36, 16);
+  },
+
+  terminal(scene, ctx, x, baseY) {
+    groundShadow(scene, x, baseY, 36, 14, 0.24);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0x2a2a38);
+    gfx.fillRect(x - 16, baseY - 36, 32, 24);
+    gfx.fillStyle(0x62c462, 0.8);
+    gfx.fillRect(x - 12, baseY - 32, 24, 16);
+    gfx.fillStyle(0x3a3a48, 1);
+    gfx.fillRect(x - 14, baseY - 12, 28, 12);
+    if (ctx) ctx.solid(x - 14, baseY - 14, 28, 14);
+  },
+
+  rampart(scene, ctx, x, baseY, w = 160, h = 70) {
+    groundShadow(scene, x + w / 2, baseY, w * 0.95, 20, 0.3);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0x7a6a98);
+    gfx.fillRect(x, baseY - h, w, h);
+    gfx.strokeRect(x, baseY - h, w, h);
+    for (let i = 0; i < Math.floor(w / 28); i += 1) {
+      gfx.fillRect(x + 6 + i * 28, baseY - h - 14, 18, 16);
+    }
+    gfx.fillStyle(0x5a4a78, 0.5);
+    gfx.fillRect(x + 4, baseY - h * 0.5, w - 8, 10);
+    if (ctx) ctx.solid(x + 4, baseY - 20, w - 8, 20);
+  },
+
+  watchtower(scene, ctx, x, baseY, h = 140) {
+    groundShadow(scene, x, baseY, 44, 18, 0.3);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0x6a5a88);
+    gfx.fillRect(x - 18, baseY - h, 36, h);
+    gfx.strokeRect(x - 18, baseY - h, 36, h);
+    gfx.fillRect(x - 26, baseY - h - 20, 52, 24);
+    gfx.strokeRect(x - 26, baseY - h - 20, 52, 24);
+    gfx.fillStyle(0x8b5cf6, 0.6);
+    gfx.fillRect(x - 10, baseY - h + 20, 20, 16);
+    if (ctx) ctx.solid(x - 16, baseY - 18, 32, 18);
+  },
+
+  drawbridge(scene, ctx, x, baseY, w = 80) {
+    groundShadow(scene, x + w / 2, baseY, w, 18, 0.26);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0x8a6238);
+    gfx.fillRoundedRect(x, baseY - 16, w, 20, 3);
+    gfx.strokeRoundedRect(x, baseY - 16, w, 20, 3);
+    gfx.lineStyle(2, 0x6d4a2a, 0.7);
+    for (let i = 1; i < 4; i += 1) gfx.lineBetween(x + (w / 4) * i, baseY - 16, x + (w / 4) * i, baseY + 4);
+    if (ctx) ctx.solid(x + 4, baseY - 12, w - 8, 12);
+  },
+
+  throne(scene, ctx, x, baseY) {
+    groundShadow(scene, x, baseY, 60, 20, 0.3);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0x8b5cf6);
+    gfx.fillRect(x - 28, baseY - 30, 56, 32);
+    gfx.fillRect(x - 22, baseY - 70, 44, 42);
+    gfx.fillTriangle(x, baseY - 90, x - 18, baseY - 70, x + 18, baseY - 70);
+    gfx.fillStyle(0xf2c94c, 1);
+    gfx.fillCircle(x, baseY - 88, 8);
+    gfx.strokeRect(x - 28, baseY - 30, 56, 32);
+    if (ctx) ctx.solid(x - 24, baseY - 18, 48, 18);
+  },
+
+  banner(scene, x, baseY, color = 0x8b5cf6) {
+    const gfx = g(scene, baseY);
+    gfx.fillStyle(0x8a8070, 1);
+    gfx.fillRect(x - 2, baseY - 70, 4, 70);
+    gfx.fillStyle(color, 1);
+    gfx.fillRect(x + 2, baseY - 68, 28, 36);
+    gfx.fillTriangle(x + 2, baseY - 32, x + 30, baseY - 32, x + 16, baseY - 18);
+  },
+
+  moat(scene, x, y, w, h) {
+    const gfx = g(scene, -48);
+    gfx.fillStyle(0x3a5a8a, 0.85);
+    gfx.fillEllipse(x, y, w, h);
+    gfx.fillStyle(0x5a8ab0, 0.4);
+    gfx.fillEllipse(x - w * 0.1, y - 4, w * 0.5, h * 0.4);
   }
 };
