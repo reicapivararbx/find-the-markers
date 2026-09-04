@@ -4,7 +4,13 @@ import {
   buildOrganicGarden,
   buildOrganicHarbor,
   buildOrganicFactory,
-  buildOrganicMine
+  buildOrganicMine,
+  buildOrganicLab,
+  buildOrganicRuins,
+  buildOrganicPeak,
+  buildOrganicVault,
+  buildOrganicCitadelGate,
+  buildOrganicCitadel
 } from "./expansion-room-factory.js";
 import { MultiSwitchPuzzle } from "../puzzles/multi-switch.js";
 import { SlotMachine } from "../entities/slot-machine.js";
@@ -112,16 +118,18 @@ export const room_15_lab = makeExpansionRoom({
   id: "room_15_lab",
   theme: "lab",
   sealId: "seal_lab",
+  customBuild: buildOrganicLab,
+  sealPos: { x: 620, y: 520 },
   gates: [
-    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } },
-    { key: "right", x: 1400, arrowY: 520, zone: { x: 1370, y: 400, width: 70, height: 240 } },
-    { key: "secret", x: 720, arrowY: 280, zone: { x: 680, y: 200, width: 80, height: 120 } }
+    { key: "left", x: 40, arrowY: 540, zone: { x: 0, y: 420, width: 70, height: 240 } },
+    { key: "right", x: 1400, arrowY: 540, zone: { x: 1370, y: 420, width: 70, height: 240 } },
+    { key: "secret", x: 720, arrowY: 260, zone: { x: 680, y: 180, width: 80, height: 120 } }
   ],
   spawns: {
-    default: { x: 200, y: 600 },
-    from_room_14: { x: 200, y: 600 },
-    from_room_16: { x: 1280, y: 600 },
-    from_secret: { x: 720, y: 500 }
+    default: { x: 160, y: 580 },
+    from_room_14: { x: 160, y: 580 },
+    from_room_16: { x: 1280, y: 560 },
+    from_secret: { x: 720, y: 360 }
   },
   wireExtra: wirePuzzle("runesSolved", "runa", 3)
 });
@@ -130,16 +138,18 @@ export const room_16_ruins = makeExpansionRoom({
   id: "room_16_ruins",
   theme: "ruins",
   sealId: "seal_ruins",
+  customBuild: buildOrganicRuins,
+  sealPos: { x: 640, y: 540 },
   gates: [
-    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } },
-    { key: "right", x: 1400, arrowY: 520, zone: { x: 1370, y: 400, width: 70, height: 240 } },
-    { key: "secret", x: 720, arrowY: 280, zone: { x: 680, y: 200, width: 80, height: 120 } }
+    { key: "left", x: 40, arrowY: 540, zone: { x: 0, y: 420, width: 70, height: 240 } },
+    { key: "right", x: 1400, arrowY: 540, zone: { x: 1370, y: 420, width: 70, height: 240 } },
+    { key: "secret", x: 720, arrowY: 250, zone: { x: 680, y: 170, width: 80, height: 120 } }
   ],
   spawns: {
-    default: { x: 200, y: 600 },
-    from_room_15: { x: 200, y: 600 },
-    from_room_17: { x: 1280, y: 600 },
-    from_secret: { x: 720, y: 500 }
+    default: { x: 160, y: 580 },
+    from_room_15: { x: 160, y: 580 },
+    from_room_17: { x: 1280, y: 560 },
+    from_secret: { x: 720, y: 360 }
   }
 });
 
@@ -147,16 +157,18 @@ export const room_17_peak = makeExpansionRoom({
   id: "room_17_peak",
   theme: "peak",
   sealId: "seal_peak",
+  customBuild: buildOrganicPeak,
+  sealPos: { x: 620, y: 520 },
   gates: [
-    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } },
-    { key: "right", x: 1400, arrowY: 520, zone: { x: 1370, y: 400, width: 70, height: 240 } },
-    { key: "secret", x: 720, arrowY: 280, zone: { x: 680, y: 200, width: 80, height: 120 } }
+    { key: "left", x: 40, arrowY: 540, zone: { x: 0, y: 420, width: 70, height: 240 } },
+    { key: "right", x: 1400, arrowY: 540, zone: { x: 1370, y: 420, width: 70, height: 240 } },
+    { key: "secret", x: 720, arrowY: 250, zone: { x: 680, y: 170, width: 80, height: 120 } }
   ],
   spawns: {
-    default: { x: 200, y: 600 },
-    from_room_16: { x: 200, y: 600 },
-    from_room_18: { x: 1280, y: 600 },
-    from_secret: { x: 720, y: 500 }
+    default: { x: 160, y: 580 },
+    from_room_16: { x: 160, y: 580 },
+    from_room_18: { x: 1280, y: 560 },
+    from_secret: { x: 720, y: 360 }
   },
   wireExtra: wirePuzzle("fragmentsSolved", "fragmento", 4)
 });
@@ -166,16 +178,18 @@ export const room_18_vault = makeExpansionRoom({
   theme: "vault",
   interior: true,
   sealId: "seal_vault",
+  customBuild: buildOrganicVault,
+  sealPos: { x: 720, y: 560 },
   gates: [
-    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } },
-    { key: "right", x: 1400, arrowY: 520, zone: { x: 1370, y: 400, width: 70, height: 240 } },
-    { key: "secret", x: 720, arrowY: 280, zone: { x: 680, y: 200, width: 80, height: 120 } }
+    { key: "left", x: 40, arrowY: 540, zone: { x: 0, y: 420, width: 70, height: 240 } },
+    { key: "right", x: 1400, arrowY: 540, zone: { x: 1370, y: 420, width: 70, height: 240 } },
+    { key: "secret", x: 720, arrowY: 260, zone: { x: 680, y: 180, width: 80, height: 120 } }
   ],
   spawns: {
-    default: { x: 200, y: 600 },
-    from_room_17: { x: 200, y: 600 },
-    from_room_19: { x: 1280, y: 600 },
-    from_secret: { x: 720, y: 500 }
+    default: { x: 160, y: 600 },
+    from_room_17: { x: 160, y: 600 },
+    from_room_19: { x: 1280, y: 580 },
+    from_secret: { x: 720, y: 400 }
   },
   wireExtra: wirePuzzle("firewallSolved", "nó do firewall", 3)
 });
@@ -184,16 +198,18 @@ export const room_19_citadel_gate = makeExpansionRoom({
   id: "room_19_citadel_gate",
   theme: "citadel",
   sealId: "seal_citadel_gate",
+  customBuild: buildOrganicCitadelGate,
+  sealPos: { x: 720, y: 540 },
   gates: [
-    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } },
-    { key: "right", x: 1400, arrowY: 520, zone: { x: 1370, y: 400, width: 70, height: 240 } },
-    { key: "secret", x: 720, arrowY: 280, zone: { x: 680, y: 200, width: 80, height: 120 } }
+    { key: "left", x: 40, arrowY: 540, zone: { x: 0, y: 420, width: 70, height: 240 } },
+    { key: "right", x: 1400, arrowY: 540, zone: { x: 1370, y: 420, width: 70, height: 240 } },
+    { key: "secret", x: 720, arrowY: 250, zone: { x: 680, y: 170, width: 80, height: 120 } }
   ],
   spawns: {
-    default: { x: 200, y: 600 },
-    from_room_18: { x: 200, y: 600 },
-    from_room_20: { x: 1280, y: 600 },
-    from_secret: { x: 720, y: 500 }
+    default: { x: 160, y: 580 },
+    from_room_18: { x: 160, y: 580 },
+    from_room_20: { x: 1280, y: 560 },
+    from_secret: { x: 720, y: 360 }
   }
 });
 
@@ -201,16 +217,18 @@ export const room_20_citadel = makeExpansionRoom({
   id: "room_20_citadel",
   theme: "citadel",
   interior: true,
+  customBuild: buildOrganicCitadel,
+  sealPos: { x: 720, y: 500 },
   gates: [
-    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } },
-    { key: "secret", x: 720, arrowY: 280, zone: { x: 680, y: 200, width: 80, height: 120 } },
+    { key: "left", x: 40, arrowY: 540, zone: { x: 0, y: 420, width: 70, height: 240 } },
+    { key: "secret", x: 720, arrowY: 260, zone: { x: 680, y: 180, width: 80, height: 120 } },
     { key: "backrooms", x: 200, arrowY: 300, zone: { x: 160, y: 220, width: 80, height: 120 } },
     { key: "developer", x: 1240, arrowY: 300, zone: { x: 1200, y: 220, width: 80, height: 120 } }
   ],
   spawns: {
-    default: { x: 200, y: 600 },
-    from_room_19: { x: 200, y: 600 },
-    from_secret: { x: 720, y: 500 },
+    default: { x: 160, y: 600 },
+    from_room_19: { x: 160, y: 600 },
+    from_secret: { x: 720, y: 400 },
     from_backrooms: { x: 280, y: 500 },
     from_developer: { x: 1160, y: 500 }
   }

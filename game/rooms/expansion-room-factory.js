@@ -302,6 +302,220 @@ function buildOrganicMine(ctx, t) {
   kit.fallenLog(scene, ctx, 200, 700, 80);
 }
 
+function buildOrganicLab(ctx, t) {
+  const { scene } = ctx;
+  kit.sky(scene, t.skyTop, t.skyBottom);
+  kit.ground(scene, ctx, t.ground);
+
+  kit.stonePath(scene, [
+    [40, 560],
+    [200, 540],
+    [400, 560],
+    [620, 520],
+    [840, 540],
+    [1080, 520],
+    [1400, 560]
+  ], 56);
+  kit.dirtPath(scene, [
+    [400, 560],
+    [420, 420],
+    [480, 300],
+    [720, 260]
+  ], 44);
+  kit.dirtPath(scene, [
+    [840, 540],
+    [900, 640],
+    [1000, 720]
+  ], 40);
+
+  kit.labBench(scene, ctx, 160, 480, 150);
+  kit.labBench(scene, ctx, 520, 460, 140);
+  kit.labBench(scene, ctx, 980, 480, 150);
+  kit.serverRack(scene, ctx, 320, 420, 110);
+  kit.serverRack(scene, ctx, 760, 400, 120);
+  kit.serverRack(scene, ctx, 1200, 420, 100);
+  kit.beakerProp(scene, 200, 440, 0x56ccf2);
+  kit.beakerProp(scene, 580, 420, 0x62c462);
+  kit.beakerProp(scene, 1040, 440, 0xb37feb);
+  kit.laserBeam(scene, 360, 300, 700, 280, 0xff5d5d);
+  kit.laserBeam(scene, 700, 280, 1100, 320, 0x56ccf2);
+  kit.crate(scene, ctx, 240, 640, 80, 36, 0x8a9aa8);
+  kit.crate(scene, ctx, 1100, 660, 90, 40, 0x7a8a98);
+  kit.lampPost(scene, ctx, 480, 520);
+  kit.lampPost(scene, ctx, 960, 520);
+  kit.signBoard(scene, ctx, 140, 500, 120, 48, ["Lab", "Secreto"]);
+}
+
+function buildOrganicRuins(ctx, t) {
+  const { scene } = ctx;
+  kit.sky(scene, t.skyTop, t.skyBottom);
+  kit.cloud(scene, 300, 100, 0.9);
+  kit.cloud(scene, 1000, 80, 0.7);
+  kit.ground(scene, ctx, t.ground);
+
+  kit.sandDune(scene, 200, 700, 140);
+  kit.sandDune(scene, 600, 740, 120);
+  kit.sandDune(scene, 1100, 720, 150);
+  kit.stonePath(scene, [
+    [40, 560],
+    [220, 540],
+    [420, 560],
+    [640, 520],
+    [860, 540],
+    [1100, 520],
+    [1400, 560]
+  ], 52);
+  kit.dirtPath(scene, [
+    [420, 560],
+    [480, 420],
+    [560, 300],
+    [720, 240]
+  ], 40);
+
+  kit.stoneArch(scene, ctx, 360, 440, 110, 95);
+  kit.stoneArch(scene, ctx, 900, 420, 100, 90);
+  kit.obelisk(scene, ctx, 200, 480, 100);
+  kit.obelisk(scene, ctx, 720, 400, 120);
+  kit.obelisk(scene, ctx, 1240, 460, 95);
+  kit.ruinPillar(scene, ctx, 500, 500, 80);
+  kit.ruinPillar(scene, ctx, 1080, 480, 70);
+  kit.mosaicTile(scene, 640, 600, [0xd1495b, 0x56ccf2, 0xf2c94c, 0x62c462]);
+  kit.mosaicTile(scene, 800, 640, [0xf2c94c, 0x8b5cf6, 0xd1495b]);
+  kit.rocks(scene, ctx, 280, 620, 1.1);
+  kit.rocks(scene, ctx, 1000, 640, 0.95);
+  kit.fallenLog(scene, ctx, 180, 680, 70);
+  kit.signBoard(scene, ctx, 150, 500, 120, 48, ["Ruínas", "Antigas"]);
+}
+
+function buildOrganicPeak(ctx, t) {
+  const { scene } = ctx;
+  kit.sky(scene, t.skyTop, t.skyBottom);
+  kit.cloud(scene, 250, 90, 0.85);
+  kit.cloud(scene, 900, 70, 0.7);
+  kit.ground(scene, ctx, t.ground);
+
+  kit.mountainPeak(scene, 200, 380, 140, 120);
+  kit.mountainPeak(scene, 720, 320, 180, 150);
+  kit.mountainPeak(scene, 1240, 360, 130, 110);
+  kit.snowPatch(scene, 300, 560, 100);
+  kit.snowPatch(scene, 600, 600, 90);
+  kit.snowPatch(scene, 1000, 540, 110);
+  kit.snowPatch(scene, 1280, 620, 80);
+  kit.stonePath(scene, [
+    [40, 560],
+    [200, 540],
+    [400, 560],
+    [620, 520],
+    [840, 540],
+    [1080, 520],
+    [1400, 560]
+  ], 48);
+  kit.dirtPath(scene, [
+    [400, 560],
+    [480, 400],
+    [600, 300],
+    [720, 240]
+  ], 40);
+
+  kit.iceSpike(scene, 260, 480, 45);
+  kit.iceSpike(scene, 480, 460, 55);
+  kit.iceSpike(scene, 880, 440, 50);
+  kit.iceSpike(scene, 1120, 470, 40);
+  kit.flagPole(scene, ctx, 720, 360, 90, 0xd1495b);
+  kit.flagPole(scene, ctx, 400, 500, 70, 0x56ccf2);
+  kit.rocks(scene, ctx, 340, 640, 1.0);
+  kit.rocks(scene, ctx, 960, 660, 1.1);
+  kit.lampPost(scene, ctx, 520, 520);
+  kit.lampPost(scene, ctx, 1000, 520);
+  kit.signBoard(scene, ctx, 140, 500, 120, 48, ["Pico", "Gelado"]);
+}
+
+function buildOrganicVault(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, t.wall, t.floor);
+
+  kit.vaultDoor(scene, ctx, 720, 360, 55);
+  kit.safeBox(scene, ctx, 280, 480);
+  kit.safeBox(scene, ctx, 520, 500);
+  kit.safeBox(scene, ctx, 960, 480);
+  kit.safeBox(scene, ctx, 1200, 500);
+  kit.goldBar(scene, 340, 560);
+  kit.goldBar(scene, 400, 570);
+  kit.goldBar(scene, 1080, 560);
+  kit.goldBar(scene, 1140, 570);
+  kit.terminal(scene, ctx, 180, 440);
+  kit.terminal(scene, ctx, 1260, 440);
+  kit.terminal(scene, ctx, 720, 560);
+  kit.crate(scene, ctx, 200, 640, 90, 40, 0x4a4a58);
+  kit.crate(scene, ctx, 1100, 660, 100, 44, 0x5a5a68);
+  kit.lampPost(scene, ctx, 400, 520);
+  kit.lampPost(scene, ctx, 1040, 520);
+  kit.signBoard(scene, ctx, 150, 400, 120, 48, ["Cofre", "Blindado"]);
+}
+
+function buildOrganicCitadelGate(ctx, t) {
+  const { scene } = ctx;
+  kit.sky(scene, t.skyTop, t.skyBottom);
+  kit.cloud(scene, 280, 100, 0.9);
+  kit.cloud(scene, 980, 80, 0.75);
+  kit.ground(scene, ctx, t.ground);
+
+  kit.moat(scene, 720, 700, 400, 60);
+  kit.moat(scene, 300, 720, 180, 40);
+  kit.moat(scene, 1140, 720, 180, 40);
+  kit.stonePath(scene, [
+    [40, 560],
+    [200, 540],
+    [400, 560],
+    [620, 520],
+    [840, 540],
+    [1080, 520],
+    [1400, 560]
+  ], 56);
+  kit.dirtPath(scene, [
+    [620, 520],
+    [680, 400],
+    [720, 300],
+    [720, 240]
+  ], 44);
+
+  kit.drawbridge(scene, ctx, 680, 560, 90);
+  kit.rampart(scene, ctx, 100, 480, 180, 75);
+  kit.rampart(scene, ctx, 1160, 480, 180, 75);
+  kit.watchtower(scene, ctx, 200, 420, 130);
+  kit.watchtower(scene, ctx, 1240, 420, 130);
+  kit.banner(scene, 360, 460, 0x8b5cf6);
+  kit.banner(scene, 1080, 460, 0xd1495b);
+  kit.banner(scene, 720, 400, 0xf2c94c);
+  kit.crate(scene, ctx, 440, 640, 80, 36, 0x6a5a88);
+  kit.crate(scene, ctx, 1000, 660, 90, 40, 0x5a4a78);
+  kit.lampPost(scene, ctx, 500, 520);
+  kit.lampPost(scene, ctx, 940, 520);
+  kit.signBoard(scene, ctx, 140, 500, 130, 48, ["Portão", "Cidadela"]);
+}
+
+function buildOrganicCitadel(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, t.wall, t.floor);
+
+  kit.throne(scene, ctx, 720, 380);
+  kit.banner(scene, 520, 360, 0x8b5cf6);
+  kit.banner(scene, 920, 360, 0xd1495b);
+  kit.banner(scene, 400, 420, 0xf2c94c);
+  kit.banner(scene, 1040, 420, 0x56ccf2);
+  kit.watchtower(scene, ctx, 180, 400, 110);
+  kit.watchtower(scene, ctx, 1260, 400, 110);
+  kit.rampart(scene, ctx, 280, 500, 140, 50);
+  kit.rampart(scene, ctx, 1020, 500, 140, 50);
+  kit.goldBar(scene, 600, 520);
+  kit.goldBar(scene, 840, 520);
+  kit.crate(scene, ctx, 240, 640, 90, 40, 0x6a5a88);
+  kit.crate(scene, ctx, 1120, 660, 100, 44, 0x5a4a78);
+  kit.lampPost(scene, ctx, 480, 540);
+  kit.lampPost(scene, ctx, 960, 540);
+  kit.signBoard(scene, ctx, 150, 400, 130, 48, ["Trono", "Real"]);
+}
+
 export function makeExpansionRoom({
   id,
   theme = "garden",
@@ -389,7 +603,18 @@ export function makeExpansionRoom({
   };
 }
 
-export { buildOrganicGarden, buildOrganicHarbor, buildOrganicFactory, buildOrganicMine };
+export {
+  buildOrganicGarden,
+  buildOrganicHarbor,
+  buildOrganicFactory,
+  buildOrganicMine,
+  buildOrganicLab,
+  buildOrganicRuins,
+  buildOrganicPeak,
+  buildOrganicVault,
+  buildOrganicCitadelGate,
+  buildOrganicCitadel
+};
 
 export function makeSecretRoom({ id, parentKey = "exit", parentRoom }) {
   return makeExpansionRoom({
