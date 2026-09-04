@@ -41,6 +41,65 @@ function idleTweenFor(style, def) {
   if (style === "dynamite" || style === "coal" || style === "shaft") {
     return { y: y - 5, scaleY: { from: 0.96, to: 1.04 }, duration: 1000 };
   }
+  if (style === "plasma" || style === "laser" || style === "circuit" || style === "scope") {
+    return { y: y - 6, alpha: { from: 0.8, to: 1 }, duration: 750 };
+  }
+  if (style === "beaker" || style === "petri" || style === "testtube" || style === "sample") {
+    return { y: y - 4, scaleX: { from: 0.97, to: 1.03 }, duration: 1000 };
+  }
+  if (style === "clone" || style === "microscope") {
+    return { y: y - 5, angle: { from: -3, to: 3 }, duration: 1200 };
+  }
+  if (style === "sand" || style === "relic" || style === "mosaic" || style === "glyph") {
+    return { y: y - 3, angle: { from: -1.5, to: 1.5 }, duration: 1400 };
+  }
+  if (style === "obelisk" || style === "column" || style === "arch" || style === "statue" || style === "idol") {
+    return { y: y - 4, duration: 1300 };
+  }
+  if (style === "scroll") {
+    return { y: y - 5, angle: { from: -2, to: 2 }, duration: 1100 };
+  }
+  if (style === "frost" || style === "glacier" || style === "avalanche" || style === "summit") {
+    return { y: y - 4, angle: { from: -2, to: 2 }, duration: 1500 };
+  }
+  if (style === "wind" || style === "flag" || style === "yeti") {
+    return { y: y - 8, angle: { from: -5, to: 5 }, duration: 900 };
+  }
+  if (style === "cliff" || style === "zenith") {
+    return { y: y - 5, duration: 1200 };
+  }
+  if (style === "goldbar" || style === "safe" || style === "lockbox" || style === "vaultdoor") {
+    return { y: y - 3, alpha: { from: 0.9, to: 1 }, duration: 1100 };
+  }
+  if (style === "barcode" || style === "cipher" || style === "keycard" || style === "wire" || style === "ledger") {
+    return { y: y - 4, duration: 1000 };
+  }
+  if (style === "sealstamp") {
+    return { y: y - 5, scaleY: { from: 0.96, to: 1.04 }, duration: 900 };
+  }
+  if (style === "banner" || style === "banner_royal" || style === "herald") {
+    return { y: y - 7, angle: { from: -4, to: 4 }, duration: 850 };
+  }
+  if (style === "moat" || style === "drawbridge") {
+    return { y: y - 3, scaleX: { from: 0.97, to: 1.03 }, duration: 1200 };
+  }
+  if (style === "guard" || style === "knight" || style === "shield" || style === "portcullis") {
+    return { y: y - 4, duration: 1100 };
+  }
+  if (style === "rampart" || style === "watchtower" || style === "barricade" || style === "spire") {
+    return { y: y - 3, duration: 1300 };
+  }
+  if (
+    style === "crown" ||
+    style === "throne" ||
+    style === "scepter" ||
+    style === "oracle" ||
+    style === "legacy" ||
+    style === "finale" ||
+    style === "champion"
+  ) {
+    return { y: y - 6, alpha: { from: 0.88, to: 1 }, duration: 1000 };
+  }
   if (style === "miku") {
     return { y: y - 7, duration: 1100 };
   }

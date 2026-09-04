@@ -167,3 +167,78 @@ test("Porto/Fábrica/Minas: silhuetas únicas e layout orgânico", () => {
     "shaft"
   ]);
 });
+
+test("Lab/Ruínas/Pico/Cofre/Cidadela: silhuetas únicas e layout orgânico", () => {
+  assertOrganicArea("room_15_lab", [
+    "beaker",
+    "circuit",
+    "clone",
+    "laser",
+    "microscope",
+    "petri",
+    "plasma",
+    "sample",
+    "scope",
+    "testtube"
+  ]);
+  assertOrganicArea("room_16_ruins", [
+    "arch",
+    "column",
+    "glyph",
+    "idol",
+    "mosaic",
+    "obelisk",
+    "relic",
+    "sand",
+    "scroll",
+    "statue"
+  ]);
+  assertOrganicArea("room_17_peak", [
+    "avalanche",
+    "cliff",
+    "flag",
+    "frost",
+    "glacier",
+    "ice",
+    "summit",
+    "wind",
+    "yeti",
+    "zenith"
+  ]);
+  assertOrganicArea("room_18_vault", [
+    "barcode",
+    "cipher",
+    "goldbar",
+    "keycard",
+    "ledger",
+    "lockbox",
+    "safe",
+    "sealstamp",
+    "vaultdoor",
+    "wire"
+  ]);
+  assertOrganicArea("room_19_citadel_gate", [
+    "banner",
+    "barricade",
+    "drawbridge",
+    "guard",
+    "herald",
+    "moat",
+    "portcullis",
+    "rampart",
+    "shield",
+    "watchtower"
+  ]);
+  assertOrganicArea("room_20_citadel", [
+    "crown",
+    "throne",
+    "scepter",
+    "banner_royal",
+    "knight",
+    "oracle",
+    "spire",
+    "legacy",
+    "finale",
+    "champion"
+  ]);
+});

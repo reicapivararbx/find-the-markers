@@ -71,7 +71,66 @@ const STYLES = Object.freeze([
   "ore",
   "pickaxe",
   "rail",
-  "shaft"
+  "shaft",
+  "beaker",
+  "circuit",
+  "clone",
+  "laser",
+  "microscope",
+  "petri",
+  "plasma",
+  "sample",
+  "scope",
+  "testtube",
+  "arch",
+  "column",
+  "glyph",
+  "idol",
+  "mosaic",
+  "obelisk",
+  "relic",
+  "sand",
+  "scroll",
+  "statue",
+  "avalanche",
+  "cliff",
+  "flag",
+  "frost",
+  "glacier",
+  "summit",
+  "wind",
+  "yeti",
+  "zenith",
+  "barcode",
+  "cipher",
+  "goldbar",
+  "keycard",
+  "ledger",
+  "lockbox",
+  "safe",
+  "sealstamp",
+  "vaultdoor",
+  "wire",
+  "banner",
+  "barricade",
+  "drawbridge",
+  "guard",
+  "herald",
+  "moat",
+  "portcullis",
+  "rampart",
+  "shield",
+  "watchtower",
+  "crown",
+  "throne",
+  "scepter",
+  "banner_royal",
+  "knight",
+  "oracle",
+  "spire",
+  "legacy",
+  "finale",
+  "champion"
 ]);
 
 const GARDEN_STYLES = Object.freeze([
@@ -178,6 +237,162 @@ const MINE_LAYOUT = Object.freeze([
   { x: 920, y: 540 }
 ]);
 
+const LAB_STYLES = Object.freeze([
+  "beaker",
+  "circuit",
+  "clone",
+  "laser",
+  "microscope",
+  "petri",
+  "plasma",
+  "sample",
+  "scope",
+  "testtube"
+]);
+
+const LAB_LAYOUT = Object.freeze([
+  { x: 180, y: 440 },
+  { x: 360, y: 680 },
+  { x: 520, y: 380 },
+  { x: 700, y: 620 },
+  { x: 860, y: 420 },
+  { x: 1020, y: 700 },
+  { x: 1160, y: 480 },
+  { x: 1300, y: 600 },
+  { x: 280, y: 560 },
+  { x: 940, y: 540 }
+]);
+
+const RUINS_STYLES = Object.freeze([
+  "arch",
+  "column",
+  "glyph",
+  "idol",
+  "mosaic",
+  "obelisk",
+  "relic",
+  "sand",
+  "scroll",
+  "statue"
+]);
+
+const RUINS_LAYOUT = Object.freeze([
+  { x: 200, y: 460 },
+  { x: 380, y: 700 },
+  { x: 560, y: 360 },
+  { x: 720, y: 640 },
+  { x: 880, y: 400 },
+  { x: 1040, y: 720 },
+  { x: 1180, y: 500 },
+  { x: 1320, y: 580 },
+  { x: 300, y: 580 },
+  { x: 960, y: 540 }
+]);
+
+const PEAK_STYLES = Object.freeze([
+  "avalanche",
+  "cliff",
+  "flag",
+  "frost",
+  "glacier",
+  "ice",
+  "summit",
+  "wind",
+  "yeti",
+  "zenith"
+]);
+
+const PEAK_LAYOUT = Object.freeze([
+  { x: 220, y: 480 },
+  { x: 400, y: 680 },
+  { x: 560, y: 360 },
+  { x: 740, y: 620 },
+  { x: 900, y: 400 },
+  { x: 1060, y: 700 },
+  { x: 1200, y: 460 },
+  { x: 1320, y: 600 },
+  { x: 320, y: 560 },
+  { x: 980, y: 540 }
+]);
+
+const VAULT_STYLES = Object.freeze([
+  "barcode",
+  "cipher",
+  "goldbar",
+  "keycard",
+  "ledger",
+  "lockbox",
+  "safe",
+  "sealstamp",
+  "vaultdoor",
+  "wire"
+]);
+
+const VAULT_LAYOUT = Object.freeze([
+  { x: 200, y: 440 },
+  { x: 380, y: 680 },
+  { x: 540, y: 380 },
+  { x: 700, y: 640 },
+  { x: 860, y: 420 },
+  { x: 1020, y: 700 },
+  { x: 1160, y: 480 },
+  { x: 1300, y: 600 },
+  { x: 300, y: 560 },
+  { x: 940, y: 540 }
+]);
+
+const GATE_STYLES = Object.freeze([
+  "banner",
+  "barricade",
+  "drawbridge",
+  "guard",
+  "herald",
+  "moat",
+  "portcullis",
+  "rampart",
+  "shield",
+  "watchtower"
+]);
+
+const GATE_LAYOUT = Object.freeze([
+  { x: 180, y: 460 },
+  { x: 360, y: 700 },
+  { x: 540, y: 360 },
+  { x: 720, y: 620 },
+  { x: 880, y: 400 },
+  { x: 1040, y: 720 },
+  { x: 1180, y: 500 },
+  { x: 1320, y: 580 },
+  { x: 280, y: 560 },
+  { x: 960, y: 540 }
+]);
+
+const CITADEL_STYLES = Object.freeze([
+  "crown",
+  "throne",
+  "scepter",
+  "banner_royal",
+  "knight",
+  "oracle",
+  "spire",
+  "legacy",
+  "finale",
+  "champion"
+]);
+
+const CITADEL_LAYOUT = Object.freeze([
+  { x: 220, y: 440 },
+  { x: 400, y: 680 },
+  { x: 560, y: 360 },
+  { x: 720, y: 600 },
+  { x: 880, y: 400 },
+  { x: 1040, y: 700 },
+  { x: 1180, y: 480 },
+  { x: 1320, y: 580 },
+  { x: 300, y: 540 },
+  { x: 960, y: 520 }
+]);
+
 const AREA_SPECS = Object.freeze([
   {
     room: "room_11_garden",
@@ -270,7 +485,9 @@ const AREA_SPECS = Object.freeze([
       "Scope Marker",
       "Test Tube Marker"
     ],
-    count: 10
+    count: 10,
+    styles: LAB_STYLES,
+    layout: LAB_LAYOUT
   },
   {
     room: "room_16_ruins",
@@ -287,7 +504,9 @@ const AREA_SPECS = Object.freeze([
       "Scroll Marker",
       "Statue Marker"
     ],
-    count: 10
+    count: 10,
+    styles: RUINS_STYLES,
+    layout: RUINS_LAYOUT
   },
   {
     room: "room_17_peak",
@@ -304,7 +523,9 @@ const AREA_SPECS = Object.freeze([
       "Yeti Marker",
       "Zenith Marker"
     ],
-    count: 10
+    count: 10,
+    styles: PEAK_STYLES,
+    layout: PEAK_LAYOUT
   },
   {
     room: "room_18_vault",
@@ -321,7 +542,9 @@ const AREA_SPECS = Object.freeze([
       "Vault Door Marker",
       "Wire Marker"
     ],
-    count: 10
+    count: 10,
+    styles: VAULT_STYLES,
+    layout: VAULT_LAYOUT
   },
   {
     room: "room_19_citadel_gate",
@@ -338,7 +561,9 @@ const AREA_SPECS = Object.freeze([
       "Shield Marker",
       "Watchtower Marker"
     ],
-    count: 10
+    count: 10,
+    styles: GATE_STYLES,
+    layout: GATE_LAYOUT
   },
   {
     room: "room_20_citadel",
@@ -355,7 +580,9 @@ const AREA_SPECS = Object.freeze([
       "Finale Marker",
       "Champion Seal Marker"
     ],
-    count: 10
+    count: 10,
+    styles: CITADEL_STYLES,
+    layout: CITADEL_LAYOUT
   }
 ]);
 
@@ -476,40 +703,25 @@ export const COIN_DEFS = Object.freeze([
   { id: "coin_mine_02", room: "room_14_mine", x: 600, y: 700 },
   { id: "coin_mine_03", room: "room_14_mine", x: 940, y: 380 },
   { id: "coin_mine_04", room: "room_14_mine", x: 1220, y: 640 },
-  ...Array.from({ length: 4 }, (_, i) => ({
-    id: `coin_lab_${String(i + 1).padStart(2, "0")}`,
-    room: "room_15_lab",
-    x: 320 + i * 220,
-    y: 700
-  })),
-  ...Array.from({ length: 3 }, (_, i) => ({
-    id: `coin_ruins_${String(i + 1).padStart(2, "0")}`,
-    room: "room_16_ruins",
-    x: 340 + i * 280,
-    y: 690
-  })),
-  ...Array.from({ length: 3 }, (_, i) => ({
-    id: `coin_peak_${String(i + 1).padStart(2, "0")}`,
-    room: "room_17_peak",
-    x: 360 + i * 260,
-    y: 700
-  })),
-  ...Array.from({ length: 3 }, (_, i) => ({
-    id: `coin_vault_${String(i + 1).padStart(2, "0")}`,
-    room: "room_18_vault",
-    x: 380 + i * 250,
-    y: 690
-  })),
-  ...Array.from({ length: 4 }, (_, i) => ({
-    id: `coin_gate_${String(i + 1).padStart(2, "0")}`,
-    room: "room_19_citadel_gate",
-    x: 300 + i * 220,
-    y: 700
-  })),
-  ...Array.from({ length: 4 }, (_, i) => ({
-    id: `coin_citadel_${String(i + 1).padStart(2, "0")}`,
-    room: "room_20_citadel",
-    x: 280 + i * 240,
-    y: 690
-  }))
+  { id: "coin_lab_01", room: "room_15_lab", x: 240, y: 500 },
+  { id: "coin_lab_02", room: "room_15_lab", x: 580, y: 700 },
+  { id: "coin_lab_03", room: "room_15_lab", x: 920, y: 420 },
+  { id: "coin_lab_04", room: "room_15_lab", x: 1220, y: 640 },
+  { id: "coin_ruins_01", room: "room_16_ruins", x: 260, y: 520 },
+  { id: "coin_ruins_02", room: "room_16_ruins", x: 640, y: 700 },
+  { id: "coin_ruins_03", room: "room_16_ruins", x: 1100, y: 460 },
+  { id: "coin_peak_01", room: "room_17_peak", x: 280, y: 500 },
+  { id: "coin_peak_02", room: "room_17_peak", x: 680, y: 700 },
+  { id: "coin_peak_03", room: "room_17_peak", x: 1120, y: 440 },
+  { id: "coin_vault_01", room: "room_18_vault", x: 300, y: 520 },
+  { id: "coin_vault_02", room: "room_18_vault", x: 700, y: 680 },
+  { id: "coin_vault_03", room: "room_18_vault", x: 1140, y: 460 },
+  { id: "coin_gate_01", room: "room_19_citadel_gate", x: 220, y: 520 },
+  { id: "coin_gate_02", room: "room_19_citadel_gate", x: 560, y: 700 },
+  { id: "coin_gate_03", room: "room_19_citadel_gate", x: 900, y: 440 },
+  { id: "coin_gate_04", room: "room_19_citadel_gate", x: 1200, y: 640 },
+  { id: "coin_citadel_01", room: "room_20_citadel", x: 240, y: 500 },
+  { id: "coin_citadel_02", room: "room_20_citadel", x: 580, y: 700 },
+  { id: "coin_citadel_03", room: "room_20_citadel", x: 920, y: 420 },
+  { id: "coin_citadel_04", room: "room_20_citadel", x: 1220, y: 620 }
 ]);
