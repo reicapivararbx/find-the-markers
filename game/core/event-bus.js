@@ -16,7 +16,8 @@ export const Events = {
   SEAL_GRANTED: "seal:granted",
   SECRET_UNLOCKED: "secret:unlocked",
   SLOT_SPIN: "slot:spin",
-  MUSIC_NOTE_FOUND: "musicNote:found"
+  MUSIC_NOTE_FOUND: "musicNote:found",
+  MENU_CHAMPION_SOLVED: "menu:championPuzzleSolved"
 };
 
 export class EventBus {

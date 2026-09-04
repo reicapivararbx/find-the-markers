@@ -95,6 +95,10 @@ export const Sfx = {
   transition: () => noise({ duration: 0.3, volume: 0.05 }),
   box: () => tone({ freq: 140, endFreq: 90, duration: 0.18, type: "square", volume: 0.09 }),
   interact: () => tone({ freq: 480, duration: 0.06, type: "triangle", volume: 0.07 }),
+  tick: (pitch = 1) => {
+    const p = Math.max(0.5, Math.min(2, Number(pitch) || 1));
+    tone({ freq: 420 * p, duration: 0.045, type: "triangle", volume: 0.055 });
+  },
   reveal: () => {
     tone({ freq: 520, duration: 0.1, type: "sine", volume: 0.1 });
     tone({ freq: 780, duration: 0.16, type: "sine", volume: 0.1, delay: 0.09 });

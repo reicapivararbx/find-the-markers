@@ -28,6 +28,10 @@ export function createDefaultSave() {
     discoveredMusicNoteIds: [],
     mikuMarkerUnlocked: false,
     playerCharacter: null,
+    menuSecrets: {
+      championClicks: 0,
+      championSolved: false
+    },
     slot: {
       spins: 0,
       pity: 0,
@@ -50,7 +54,8 @@ export function migrateSave(raw) {
     ...raw,
     puzzleStates: { ...defaults.puzzleStates, ...(raw.puzzleStates || {}) },
     settings: { ...defaults.settings, ...(raw.settings || {}) },
-    slot: { ...defaults.slot, ...(raw.slot || {}) }
+    slot: { ...defaults.slot, ...(raw.slot || {}) },
+    menuSecrets: { ...defaults.menuSecrets, ...(raw.menuSecrets || {}) }
   };
 
   save.version = SAVE_VERSION;
@@ -76,6 +81,13 @@ export function migrateSave(raw) {
   save.settings.sound = raw.settings?.sound !== false;
   const char = raw.playerCharacter;
   save.playerCharacter = char === "male" || char === "female" ? char : null;
+
+  const clicks = Math.floor(Number(save.menuSecrets.championClicks) || 0);
+  save.menuSecrets.championClicks = Math.max(0, Math.min(67, clicks));
+  save.menuSecrets.championSolved = Boolean(save.menuSecrets.championSolved);
+  if (save.menuSecrets.championSolved) {
+    save.menuSecrets.championClicks = 67;
+  }
 
   return save;
 }
@@ -261,6 +273,38 @@ export class SaveManager {
     return this.save.playerCharacter === "male" || this.save.playerCharacter === "female";
   }
 
+  get menuChampionClicks() {
+    return this.save.menuSecrets?.championClicks ?? 0;
+  }
+
+  get menuChampionSolved() {
+    return Boolean(this.save.menuSecrets?.championSolved);
+  }
+
+  recordMenuChampionClick() {
+    if (!this.save.menuSecrets) {
+      this.save.menuSecrets = { championClicks: 0, championSolved: false };
+    }
+    if (this.save.menuSecrets.championSolved) {
+      return { clicks: 67, solved: true, justSolved: false };
+    }
+    const next = Math.min(67, (this.save.menuSecrets.championClicks || 0) + 1);
+    this.save.menuSecrets.championClicks = next;
+    let justSolved = false;
+    if (next >= 67) {
+      this.save.menuSecrets.championSolved = true;
+      this.save.menuSecrets.championClicks = 67;
+      justSolved = true;
+      bus.emit(Events.MENU_CHAMPION_SOLVED);
+    }
+    this.persist();
+    return {
+      clicks: this.save.menuSecrets.championClicks,
+      solved: this.save.menuSecrets.championSolved,
+      justSolved
+    };
+  }
+
   hasProgress() {
     const s = this.save;
     return (
@@ -271,7 +315,9 @@ export class SaveManager {
       s.collectedCoinIds.length > 0 ||
       s.coins > 0 ||
       s.currentRoom !== "room_09_spawn" ||
-      Object.values(s.puzzleStates).some(Boolean)
+      Object.values(s.puzzleStates).some(Boolean) ||
+      Boolean(s.menuSecrets?.championSolved) ||
+      (s.menuSecrets?.championClicks || 0) > 0
     );
   }
 

@@ -77,6 +77,7 @@ test("migrate: campos ausentes viram defaults, versão normalizada", () => {
   assert.deepEqual(migrated.discoveredMusicNoteIds, []);
   assert.equal(migrated.mikuMarkerUnlocked, false);
   assert.deepEqual(migrated.slot, createDefaultSave().slot);
+  assert.deepEqual(migrated.menuSecrets, createDefaultSave().menuSecrets);
 });
 
 test("miku: notas e unlock do marker", () => {
@@ -149,4 +150,70 @@ test("hasProgress detecta progresso real", () => {
   assert.equal(manager.hasProgress(), false);
   manager.collectMarker("spawn_easy");
   assert.equal(manager.hasProgress(), true);
+});
+
+test("menu champion: clicks parciais persistem; 66 não resolve; 67 resolve uma vez", () => {
+  const storage = new MemoryStorage();
+  const a = new SaveManager(storage);
+  a.load();
+  assert.equal(a.menuChampionClicks, 0);
+  assert.equal(a.menuChampionSolved, false);
+  assert.deepEqual(a.save.menuSecrets, { championClicks: 0, championSolved: false });
+
+  for (let i = 0; i < 40; i += 1) a.recordMenuChampionClick();
+  assert.equal(a.menuChampionClicks, 40);
+  assert.equal(a.menuChampionSolved, false);
+  assert.equal(a.hasProgress(), true);
+
+  const mid = new SaveManager(storage);
+  mid.load();
+  assert.equal(mid.menuChampionClicks, 40);
+  assert.equal(mid.menuChampionSolved, false);
+
+  for (let i = 0; i < 26; i += 1) mid.recordMenuChampionClick();
+  assert.equal(mid.menuChampionClicks, 66);
+  assert.equal(mid.menuChampionSolved, false);
+
+  const at67 = mid.recordMenuChampionClick();
+  assert.equal(at67.clicks, 67);
+  assert.equal(at67.solved, true);
+  assert.equal(at67.justSolved, true);
+  assert.equal(mid.menuChampionSolved, true);
+
+  const extra = mid.recordMenuChampionClick();
+  assert.equal(extra.clicks, 67);
+  assert.equal(extra.justSolved, false);
+  assert.equal(extra.solved, true);
+
+  const b = new SaveManager(storage);
+  b.load();
+  assert.equal(b.menuChampionClicks, 67);
+  assert.equal(b.menuChampionSolved, true);
+});
+
+test("migrate: menuSecrets defaults e clamp de clicks", () => {
+  const bare = migrateSave({ collectedMarkerIds: [] });
+  assert.deepEqual(bare.menuSecrets, { championClicks: 0, championSolved: false });
+
+  const partial = migrateSave({ menuSecrets: { championClicks: 43 } });
+  assert.equal(partial.menuSecrets.championClicks, 43);
+  assert.equal(partial.menuSecrets.championSolved, false);
+
+  const solved = migrateSave({ menuSecrets: { championClicks: 12, championSolved: true } });
+  assert.equal(solved.menuSecrets.championClicks, 67);
+  assert.equal(solved.menuSecrets.championSolved, true);
+
+  const over = migrateSave({ menuSecrets: { championClicks: 999 } });
+  assert.equal(over.menuSecrets.championClicks, 67);
+});
+
+test("isCollectible menu_champion só com championSolved", async () => {
+  const { isCollectible, MARKER_BY_ID } = await import("../game/config/marker-registry.js");
+  const def = MARKER_BY_ID.menu_champion_marker;
+  const locked = createDefaultSave();
+  assert.equal(isCollectible(def, locked), false);
+  locked.menuSecrets.championSolved = true;
+  assert.equal(isCollectible(def, locked), true);
+  locked.collectedMarkerIds.push("menu_champion_marker");
+  assert.equal(isCollectible(def, locked), false);
 });
