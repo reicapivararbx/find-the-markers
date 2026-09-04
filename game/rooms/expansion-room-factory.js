@@ -134,6 +134,174 @@ function buildOrganicGarden(ctx, t) {
   kit.water(scene, 560, 440, 120, 50);
 }
 
+function buildOrganicHarbor(ctx, t) {
+  const { scene } = ctx;
+  kit.sky(scene, t.skyTop, t.skyBottom);
+  kit.cloud(scene, 200, 100, 1.0);
+  kit.cloud(scene, 900, 80, 0.8);
+  kit.ground(scene, ctx, t.ground);
+
+  kit.waterBody(scene, 720, 720, 900, 160);
+  kit.waterBody(scene, 200, 700, 280, 100);
+  kit.waterBody(scene, 1280, 700, 260, 110);
+
+  kit.stonePath(scene, [
+    [40, 540],
+    [200, 520],
+    [400, 540],
+    [620, 500],
+    [860, 520],
+    [1100, 500],
+    [1400, 540]
+  ], 56);
+  kit.dirtPath(scene, [
+    [400, 540],
+    [420, 420],
+    [480, 320],
+    [720, 280]
+  ], 44);
+  kit.dirtPath(scene, [
+    [860, 520],
+    [900, 620],
+    [980, 700]
+  ], 40);
+
+  kit.dock(scene, ctx, 180, 620, 220);
+  kit.dock(scene, ctx, 980, 640, 180);
+  kit.crane(scene, ctx, 500, 480, 130);
+  kit.crane(scene, ctx, 1100, 460, 110);
+  kit.lighthouse(scene, ctx, 1280, 380, 150);
+  kit.buoy(scene, 320, 720);
+  kit.buoy(scene, 700, 740);
+  kit.buoy(scene, 1180, 720);
+  kit.cargoCrate(scene, ctx, 240, 540, 0xb85a2a);
+  kit.cargoCrate(scene, ctx, 600, 560, 0x3a6a8a);
+  kit.cargoCrate(scene, ctx, 1040, 540, 0x8a6238);
+  kit.ropeCoil(scene, 360, 580);
+  kit.ropeCoil(scene, 880, 560);
+  kit.rocks(scene, ctx, 140, 480, 1.0);
+  kit.rocks(scene, ctx, 820, 400, 0.9);
+  kit.lampPost(scene, ctx, 280, 500);
+  kit.lampPost(scene, ctx, 920, 500);
+  kit.signBoard(scene, ctx, 160, 480, 120, 48, ["Porto", "Enferrujado"]);
+  kit.bench(scene, ctx, 720, 540, 100);
+}
+
+function buildOrganicFactory(ctx, t) {
+  const { scene } = ctx;
+  kit.sky(scene, t.skyTop, t.skyBottom);
+  kit.cloud(scene, 300, 90, 0.7);
+  kit.cloud(scene, 1000, 110, 0.9);
+  kit.ground(scene, ctx, t.ground);
+
+  kit.stonePath(scene, [
+    [40, 540],
+    [220, 560],
+    [480, 520],
+    [720, 540],
+    [1000, 520],
+    [1400, 560]
+  ], 60);
+  kit.dirtPath(scene, [
+    [480, 520],
+    [500, 400],
+    [560, 300],
+    [720, 260]
+  ], 48);
+  kit.dirtPath(scene, [
+    [1000, 520],
+    [1040, 620],
+    [1100, 720]
+  ], 42);
+
+  kit.smokestack(scene, ctx, 200, 420, 140);
+  kit.smokestack(scene, ctx, 1240, 400, 120);
+  kit.conveyor(scene, ctx, 360, 600, 200);
+  kit.conveyor(scene, ctx, 900, 580, 180);
+  kit.pipeRun(scene, [
+    [160, 360],
+    [400, 340],
+    [600, 380],
+    [800, 320],
+    [1100, 360]
+  ], 0x8a9088);
+  kit.pipeRun(scene, [
+    [300, 480],
+    [300, 620],
+    [500, 640]
+  ], 0x6a8070);
+  kit.gearDecor(scene, 480, 460, 32);
+  kit.gearDecor(scene, 780, 440, 24);
+  kit.gearDecor(scene, 1080, 480, 28);
+  kit.oilDrum(scene, ctx, 280, 560);
+  kit.oilDrum(scene, ctx, 640, 640);
+  kit.oilDrum(scene, ctx, 1120, 560);
+  kit.factoryWindow(scene, 180, 320, 70, 48);
+  kit.factoryWindow(scene, 320, 300, 60, 40);
+  kit.factoryWindow(scene, 1160, 310, 70, 48);
+  kit.cargoCrate(scene, ctx, 520, 560, 0x6a6058);
+  kit.cargoCrate(scene, ctx, 860, 640, 0x8a6238);
+  kit.lampPost(scene, ctx, 400, 520);
+  kit.lampPost(scene, ctx, 1000, 520);
+  kit.signBoard(scene, ctx, 140, 500, 130, 48, ["Fábrica", "Abandonada"]);
+  kit.rocks(scene, ctx, 700, 700, 1.1);
+  kit.rocks(scene, ctx, 1300, 620, 0.85);
+}
+
+function buildOrganicMine(ctx, t) {
+  const { scene } = ctx;
+  kit.sky(scene, t.skyTop, t.skyBottom);
+  kit.ground(scene, ctx, t.ground);
+
+  kit.mineRail(scene, [
+    [40, 560],
+    [200, 540],
+    [400, 560],
+    [600, 520],
+    [820, 540],
+    [1040, 520],
+    [1400, 560]
+  ]);
+  kit.mineRail(scene, [
+    [600, 520],
+    [620, 400],
+    [680, 300],
+    [720, 240]
+  ]);
+  kit.dirtPath(scene, [
+    [200, 540],
+    [240, 640],
+    [300, 720]
+  ], 40);
+  kit.dirtPath(scene, [
+    [1040, 520],
+    [1100, 640],
+    [1200, 720]
+  ], 40);
+
+  kit.tunnelMouth(scene, ctx, 180, 420, 110, 90);
+  kit.tunnelMouth(scene, ctx, 1260, 400, 100, 85);
+  kit.supportBeam(scene, ctx, 360, 480, 100);
+  kit.supportBeam(scene, ctx, 720, 460, 110);
+  kit.supportBeam(scene, ctx, 1080, 480, 95);
+  kit.mineCart(scene, ctx, 480, 560);
+  kit.mineCart(scene, ctx, 900, 540);
+  kit.crystalCluster(scene, 300, 400, 0x7eb8e8);
+  kit.crystalCluster(scene, 640, 360, 0xb37feb);
+  kit.crystalCluster(scene, 1100, 380, 0x56ccf2);
+  kit.orePile(scene, 420, 640);
+  kit.orePile(scene, 780, 680);
+  kit.orePile(scene, 1180, 620);
+  kit.rocks(scene, ctx, 240, 500, 1.2);
+  kit.rocks(scene, ctx, 560, 600, 0.95);
+  kit.rocks(scene, ctx, 1000, 600, 1.05);
+  kit.rocks(scene, ctx, 1320, 520, 0.9);
+  kit.lampPost(scene, ctx, 520, 520);
+  kit.lampPost(scene, ctx, 960, 520);
+  kit.signBoard(scene, ctx, 150, 500, 120, 48, ["Minas", "Profundas"]);
+  kit.fallenLog(scene, ctx, 200, 700, 80);
+}
+
 export function makeExpansionRoom({
   id,
   theme = "garden",
@@ -221,7 +389,7 @@ export function makeExpansionRoom({
   };
 }
 
-export { buildOrganicGarden };
+export { buildOrganicGarden, buildOrganicHarbor, buildOrganicFactory, buildOrganicMine };
 
 export function makeSecretRoom({ id, parentKey = "exit", parentRoom }) {
   return makeExpansionRoom({

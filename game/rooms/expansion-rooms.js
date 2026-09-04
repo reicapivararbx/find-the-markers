@@ -1,4 +1,11 @@
-import { makeExpansionRoom, makeSecretRoom, buildOrganicGarden } from "./expansion-room-factory.js";
+import {
+  makeExpansionRoom,
+  makeSecretRoom,
+  buildOrganicGarden,
+  buildOrganicHarbor,
+  buildOrganicFactory,
+  buildOrganicMine
+} from "./expansion-room-factory.js";
 import { MultiSwitchPuzzle } from "../puzzles/multi-switch.js";
 import { SlotMachine } from "../entities/slot-machine.js";
 
@@ -46,16 +53,18 @@ export const room_12_harbor = makeExpansionRoom({
   id: "room_12_harbor",
   theme: "harbor",
   sealId: "seal_harbor",
+  customBuild: buildOrganicHarbor,
+  sealPos: { x: 620, y: 520 },
   gates: [
-    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } },
-    { key: "right", x: 1400, arrowY: 520, zone: { x: 1370, y: 400, width: 70, height: 240 } },
-    { key: "secret", x: 720, arrowY: 280, zone: { x: 680, y: 200, width: 80, height: 120 } }
+    { key: "left", x: 40, arrowY: 540, zone: { x: 0, y: 420, width: 70, height: 240 } },
+    { key: "right", x: 1400, arrowY: 540, zone: { x: 1370, y: 420, width: 70, height: 240 } },
+    { key: "secret", x: 720, arrowY: 260, zone: { x: 680, y: 180, width: 80, height: 120 } }
   ],
   spawns: {
-    default: { x: 200, y: 600 },
-    from_room_11: { x: 200, y: 600 },
-    from_room_13: { x: 1280, y: 600 },
-    from_secret: { x: 720, y: 500 }
+    default: { x: 160, y: 560 },
+    from_room_11: { x: 160, y: 560 },
+    from_room_13: { x: 1280, y: 540 },
+    from_secret: { x: 720, y: 360 }
   },
   wireExtra: wirePuzzle("valvesSolved", "válvula", 3)
 });
@@ -64,16 +73,18 @@ export const room_13_factory = makeExpansionRoom({
   id: "room_13_factory",
   theme: "factory",
   sealId: "seal_factory",
+  customBuild: buildOrganicFactory,
+  sealPos: { x: 720, y: 540 },
   gates: [
-    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } },
-    { key: "right", x: 1400, arrowY: 520, zone: { x: 1370, y: 400, width: 70, height: 240 } },
-    { key: "secret", x: 720, arrowY: 280, zone: { x: 680, y: 200, width: 80, height: 120 } }
+    { key: "left", x: 40, arrowY: 540, zone: { x: 0, y: 420, width: 70, height: 240 } },
+    { key: "right", x: 1400, arrowY: 540, zone: { x: 1370, y: 420, width: 70, height: 240 } },
+    { key: "secret", x: 720, arrowY: 260, zone: { x: 680, y: 180, width: 80, height: 120 } }
   ],
   spawns: {
-    default: { x: 200, y: 600 },
-    from_room_12: { x: 200, y: 600 },
-    from_room_14: { x: 1280, y: 600 },
-    from_secret: { x: 720, y: 500 }
+    default: { x: 160, y: 580 },
+    from_room_12: { x: 160, y: 580 },
+    from_room_14: { x: 1280, y: 560 },
+    from_secret: { x: 720, y: 360 }
   }
 });
 
@@ -81,16 +92,18 @@ export const room_14_mine = makeExpansionRoom({
   id: "room_14_mine",
   theme: "mine",
   sealId: "seal_mine",
+  customBuild: buildOrganicMine,
+  sealPos: { x: 720, y: 540 },
   gates: [
-    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } },
-    { key: "right", x: 1400, arrowY: 520, zone: { x: 1370, y: 400, width: 70, height: 240 } },
-    { key: "secret", x: 720, arrowY: 280, zone: { x: 680, y: 200, width: 80, height: 120 } }
+    { key: "left", x: 40, arrowY: 560, zone: { x: 0, y: 440, width: 70, height: 240 } },
+    { key: "right", x: 1400, arrowY: 560, zone: { x: 1370, y: 440, width: 70, height: 240 } },
+    { key: "secret", x: 720, arrowY: 240, zone: { x: 680, y: 160, width: 80, height: 120 } }
   ],
   spawns: {
-    default: { x: 200, y: 600 },
-    from_room_13: { x: 200, y: 600 },
-    from_room_15: { x: 1280, y: 600 },
-    from_secret: { x: 720, y: 500 }
+    default: { x: 160, y: 580 },
+    from_room_13: { x: 160, y: 580 },
+    from_room_15: { x: 1280, y: 560 },
+    from_secret: { x: 720, y: 340 }
   },
   wireExtra: wirePuzzle("batteriesSolved", "bateria", 3)
 });
