@@ -1342,5 +1342,152 @@ export const kit = {
     gfx.fillEllipse(x, y, w, h);
     gfx.fillStyle(0x5a8ab0, 0.4);
     gfx.fillEllipse(x - w * 0.1, y - 4, w * 0.5, h * 0.4);
+  },
+
+  /**
+   * Solo de prado com manchas + anéis de borda escura (sugere silhueta irregular).
+   * Colliders de borda do mundo ficam em ground(); aqui só o look.
+   */
+  meadowFloor(scene, color = 0x7cbc5a) {
+    const gfx = g(scene, -50);
+    gfx.fillStyle(color, 1);
+    gfx.fillRect(0, 0, 1440, 810);
+    // manchas de terra/musgo
+    const blotches = [
+      [180, 200, 220, 90, 0x000000, 0.05],
+      [520, 160, 180, 70, 0xffffff, 0.04],
+      [900, 220, 260, 100, 0x000000, 0.06],
+      [1200, 180, 160, 80, 0xffffff, 0.035],
+      [300, 520, 200, 90, 0x000000, 0.045],
+      [700, 640, 240, 100, 0x5d8f46, 0.12],
+      [1100, 560, 180, 80, 0x000000, 0.05],
+      [160, 700, 140, 60, 0x6b8f3a, 0.1],
+      [980, 720, 200, 70, 0x000000, 0.04],
+      [640, 400, 160, 70, 0xffffff, 0.03]
+    ];
+    blotches.forEach(([x, y, w, h, c, a]) => {
+      gfx.fillStyle(c, a);
+      gfx.fillEllipse(x, y, w, h);
+    });
+    // faixa de solo mais escura nas bordas (floresta/penhasco visual)
+    gfx.fillStyle(0x3a5a2a, 0.35);
+    gfx.fillEllipse(720, 40, 1500, 120);
+    gfx.fillEllipse(40, 400, 100, 700);
+    gfx.fillEllipse(1400, 420, 110, 680);
+    gfx.fillEllipse(720, 800, 1500, 100);
+    return gfx;
+  },
+
+  /** Lago orgânico multi-elipse + margem de pedras + collider na água. */
+  organicPond(scene, ctx, cx, cy, scale = 1) {
+    const gfx = g(scene, -46);
+    const lobes = [
+      [0, 0, 200, 90],
+      [-70, 18, 120, 60],
+      [80, 22, 110, 55],
+      [-20, -28, 90, 50],
+      [40, -20, 70, 40]
+    ];
+    lobes.forEach(([ox, oy, w, h]) => {
+      gfx.fillStyle(0x2a6a88, 0.95);
+      gfx.fillEllipse(cx + ox * scale, cy + oy * scale, w * scale, h * scale);
+    });
+    gfx.fillStyle(0x5eb8d8, 0.4);
+    gfx.fillEllipse(cx - 30 * scale, cy - 12 * scale, 90 * scale, 36 * scale);
+    gfx.fillStyle(0xffffff, 0.18);
+    gfx.fillEllipse(cx + 40 * scale, cy + 8 * scale, 50 * scale, 18 * scale);
+    // margem de pedras irregulares
+    const shore = [
+      [-110, -30],
+      [-90, 40],
+      [-40, 55],
+      [30, 50],
+      [100, 30],
+      [120, -20],
+      [70, -50],
+      [-20, -55],
+      [-80, -45]
+    ];
+    shore.forEach(([ox, oy], i) => {
+      const s = 0.7 + (i % 3) * 0.15;
+      kit.rocks(scene, ctx, cx + ox * scale, cy + oy * scale, s);
+    });
+    if (ctx) {
+      ctx.solid(cx - 100 * scale, cy - 30 * scale, 200 * scale, 70 * scale);
+    }
+  },
+
+  /**
+   * Cinturão de floresta: árvores densas + colliders de base.
+   * Cria a silhueta irregular do mapa (player não atravessa a borda).
+   */
+  forestBelt(scene, ctx, points, { scale = 1, canopy = 0x5d8f46 } = {}) {
+    points.forEach(([x, y], i) => {
+      const s = scale * (0.75 + (i % 4) * 0.12);
+      const tint = i % 3 === 0 ? 0x4a6e3a : i % 3 === 1 ? canopy : 0x7cae62;
+      kit.tree(scene, ctx, x, y, { scale: s, canopy: tint });
+    });
+  },
+
+  /** Bloco sólido visual (mato denso / barreira de borda) — esconde colliders. */
+  thicket(scene, ctx, x, baseY, w = 100, h = 40) {
+    groundShadow(scene, x + w / 2, baseY, w * 0.95, 16, 0.28);
+    const gfx = g(scene, baseY);
+    gfx.fillStyle(0x3a5a28, 1);
+    gfx.fillEllipse(x + w * 0.3, baseY - h * 0.4, w * 0.55, h);
+    gfx.fillEllipse(x + w * 0.7, baseY - h * 0.35, w * 0.5, h * 0.9);
+    gfx.fillStyle(0x5d8f46, 1);
+    gfx.fillEllipse(x + w * 0.5, baseY - h * 0.7, w * 0.45, h * 0.7);
+    gfx.fillStyle(0x7cae62, 0.7);
+    gfx.fillCircle(x + w * 0.25, baseY - h * 0.55, 14);
+    gfx.fillCircle(x + w * 0.75, baseY - h * 0.5, 16);
+    if (ctx) ctx.solid(x + 8, baseY - 18, w - 16, 20);
+  },
+
+  /** Labirinto de sebes com aberturas (gaps = passagens). */
+  hedgeMaze(scene, ctx, segments) {
+    segments.forEach((seg) => {
+      kit.hedgeWall(scene, ctx, seg.x, seg.y, seg.w ?? 100, seg.h ?? 44);
+    });
+  },
+
+  /** Arco de ruína / portal de pedra (landmark). */
+  stoneArch(scene, ctx, x, baseY, w = 100, h = 90) {
+    groundShadow(scene, x, baseY, w * 0.9, 20, 0.3);
+    const gfx = g(scene, baseY);
+    outlined(gfx, 0xc4b8a0);
+    gfx.fillRect(x - w / 2, baseY - h, 22, h);
+    gfx.fillRect(x + w / 2 - 22, baseY - h, 22, h);
+    gfx.fillRect(x - w / 2, baseY - h - 14, w, 18);
+    gfx.strokeRect(x - w / 2, baseY - h, 22, h);
+    gfx.strokeRect(x + w / 2 - 22, baseY - h, 22, h);
+    gfx.fillStyle(0x5d8f46, 0.45);
+    gfx.fillEllipse(x - 10, baseY - h * 0.5, 18, 14);
+    gfx.fillEllipse(x + 16, baseY - h * 0.3, 14, 10);
+    if (ctx) {
+      ctx.solid(x - w / 2 + 2, baseY - 20, 20, 20);
+      ctx.solid(x + w / 2 - 22, baseY - 20, 20, 20);
+    }
+  },
+
+  /** Folhas flutuantes leves (FX ambient jardim). */
+  leafDrift(scene, positions) {
+    positions.forEach(([x, y], i) => {
+      const leaf = scene.add
+        .ellipse(x, y, 10, 6, i % 2 ? 0x8fba6a : 0xd4a574, 0.55)
+        .setDepth(y + 2);
+      scene.tweens.add({
+        targets: leaf,
+        x: x + 40 + (i % 3) * 12,
+        y: y + 30,
+        angle: 40,
+        alpha: { from: 0.55, to: 0.15 },
+        duration: 4200 + i * 400,
+        ease: "Sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        delay: i * 200
+      });
+    });
   }
 };

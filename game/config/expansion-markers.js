@@ -587,18 +587,114 @@ const AREA_SPECS = Object.freeze([
 ]);
 
 const SECRET_SPECS = Object.freeze([
-  { room: "secret_11_greenhouse", id: "secret_greenhouse", name: "Orchid Marker", difficulty: "Challenging" },
-  { room: "secret_12_lighthouse", id: "secret_lighthouse", name: "Beacon Marker", difficulty: "Difficult" },
-  { room: "secret_13_boiler", id: "secret_boiler", name: "Steam Marker", difficulty: "Hard" },
-  { room: "secret_14_crystal", id: "secret_crystal", name: "Prism Marker", difficulty: "Insane" },
-  { room: "secret_15_server", id: "secret_server", name: "Packet Marker", difficulty: "Why" },
-  { room: "secret_16_tomb", id: "secret_tomb", name: "Mummy Marker", difficulty: "Astonishing" },
-  { room: "secret_17_observatory", id: "secret_observatory", name: "Star Chart Marker", difficulty: "Champion" },
-  { room: "secret_18_safe", id: "secret_safe", name: "Combination Marker", difficulty: "NOT!" },
-  { room: "secret_19_armory", id: "secret_armory", name: "Blade Marker", difficulty: "Challenging" },
-  { room: "secret_20_throne", id: "secret_throne", name: "Hidden Crown Marker", difficulty: "Finale" },
-  { room: "secret_backrooms", id: "secret_backrooms_m", name: "Yellow Room Marker", difficulty: "Why" },
-  { room: "secret_developer", id: "secret_dev_m", name: "Debug Marker", difficulty: "NOT!" }
+  {
+    room: "secret_11_greenhouse",
+    id: "secret_greenhouse",
+    name: "Orchid Marker",
+    difficulty: "Challenging",
+    style: "orchid",
+    x: 720,
+    y: 520
+  },
+  {
+    room: "secret_12_lighthouse",
+    id: "secret_lighthouse",
+    name: "Beacon Marker",
+    difficulty: "Difficult",
+    style: "beacon",
+    x: 760,
+    y: 480
+  },
+  {
+    room: "secret_13_boiler",
+    id: "secret_boiler",
+    name: "Steam Marker",
+    difficulty: "Hard",
+    style: "steam",
+    x: 680,
+    y: 560
+  },
+  {
+    room: "secret_14_crystal",
+    id: "secret_crystal",
+    name: "Prism Marker",
+    difficulty: "Insane",
+    style: "prism",
+    x: 740,
+    y: 500
+  },
+  {
+    room: "secret_15_server",
+    id: "secret_server",
+    name: "Packet Marker",
+    difficulty: "Why",
+    style: "packet",
+    x: 700,
+    y: 540
+  },
+  {
+    room: "secret_16_tomb",
+    id: "secret_tomb",
+    name: "Mummy Marker",
+    difficulty: "Astonishing",
+    style: "mummy",
+    x: 720,
+    y: 560
+  },
+  {
+    room: "secret_17_observatory",
+    id: "secret_observatory",
+    name: "Star Chart Marker",
+    difficulty: "Champion",
+    style: "starchart",
+    x: 750,
+    y: 480
+  },
+  {
+    room: "secret_18_safe",
+    id: "secret_safe",
+    name: "Combination Marker",
+    difficulty: "NOT!",
+    style: "combination",
+    x: 710,
+    y: 540
+  },
+  {
+    room: "secret_19_armory",
+    id: "secret_armory",
+    name: "Blade Marker",
+    difficulty: "Challenging",
+    style: "blade",
+    x: 730,
+    y: 520
+  },
+  {
+    room: "secret_20_throne",
+    id: "secret_throne",
+    name: "Hidden Crown Marker",
+    difficulty: "Finale",
+    style: "hiddencrown",
+    x: 720,
+    y: 500
+  },
+  {
+    room: "secret_backrooms",
+    id: "secret_backrooms_m",
+    name: "Yellow Room Marker",
+    difficulty: "Why",
+    style: "yellowroom",
+    x: 700,
+    y: 560
+  },
+  {
+    room: "secret_developer",
+    id: "secret_dev_m",
+    name: "Debug Marker",
+    difficulty: "NOT!",
+    style: "debug",
+    x: 740,
+    y: 540
+  }
 ]);
 
 function layoutPoint(index, total) {
@@ -631,15 +727,15 @@ function buildAreaMarkers() {
 }
 
 function buildSecretMarkers() {
-  return SECRET_SPECS.map((spec, i) => ({
+  return SECRET_SPECS.map((spec) => ({
     id: spec.id,
     name: spec.name,
     difficulty: spec.difficulty,
     room: spec.room,
-    x: 720 + (i % 3) * 20,
-    y: 560,
+    x: spec.x ?? 720,
+    y: spec.y ?? 560,
     mode: "touch",
-    style: STYLES[(i + 3) % STYLES.length]
+    style: spec.style || "classic"
   }));
 }
 

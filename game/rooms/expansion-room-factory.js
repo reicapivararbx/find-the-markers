@@ -603,6 +603,178 @@ export function makeExpansionRoom({
   };
 }
 
+function buildSecretGreenhouse(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0xd8f0d0, 0x6fae7c);
+  kit.greenhouse(scene, ctx, 480, 520, 280, 160);
+  kit.flowerBed(scene, 200, 580, 120, 40, 0xd1495b);
+  kit.flowerBed(scene, 1000, 600, 140, 36, 0xf2a0c8);
+  kit.hedgeWall(scene, ctx, 160, 480, 100, 50);
+  kit.hedgeWall(scene, ctx, 1100, 500, 90, 48);
+  kit.crate(scene, ctx, 360, 620, 70, 36, 0x8a6238);
+}
+
+function buildSecretLighthouse(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0xd0e0f0, 0x5a7a8a);
+  kit.lighthouse(scene, ctx, 720, 560, 180);
+  kit.waterBody(scene, 400, 680, 200, 60);
+  kit.waterBody(scene, 1000, 700, 180, 50);
+  kit.ropeCoil(scene, 280, 600);
+  kit.buoy(scene, 1100, 580);
+  kit.crate(scene, ctx, 200, 620, 80, 40, 0x6a7080);
+}
+
+function buildSecretBoiler(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0xc8b8a8, 0x5a5048);
+  kit.smokestack(scene, ctx, 520, 560, 120);
+  kit.smokestack(scene, ctx, 900, 580, 100);
+  kit.pipeRun(scene, 300, 480, 400, 0);
+  kit.pipeRun(scene, 700, 440, 280, 0);
+  kit.oilDrum(scene, ctx, 240, 600);
+  kit.oilDrum(scene, ctx, 1100, 620);
+  kit.gearDecor(scene, 720, 400, 40);
+  kit.crate(scene, ctx, 400, 620, 90, 40, 0x6a6058);
+}
+
+function buildSecretCrystal(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0x4a4038, 0x2a2018);
+  kit.crystalCluster(scene, 400, 520, 0xb48cff);
+  kit.crystalCluster(scene, 900, 540, 0x7ee8df);
+  kit.crystalCluster(scene, 720, 420, 0xf2a0c8);
+  kit.orePile(scene, 280, 600);
+  kit.orePile(scene, 1100, 620);
+  kit.supportBeam(scene, ctx, 200, 560, 140);
+  kit.supportBeam(scene, ctx, 1200, 560, 140);
+  kit.tunnelMouth(scene, ctx, 720, 300, 100);
+}
+
+function buildSecretServer(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0xe8f4ff, 0x70a0b8);
+  kit.serverRack(scene, ctx, 320, 560, 100);
+  kit.serverRack(scene, ctx, 480, 560, 100);
+  kit.serverRack(scene, ctx, 960, 560, 100);
+  kit.serverRack(scene, ctx, 1120, 560, 100);
+  kit.labBench(scene, ctx, 720, 620, 160);
+  kit.terminal(scene, 720, 480);
+  kit.laserBeam(scene, 200, 400, 200);
+  kit.crate(scene, ctx, 200, 620, 70, 36, 0x3a8a9a);
+}
+
+function buildSecretTomb(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0xe8d8c0, 0xb89868);
+  kit.stoneArch(scene, ctx, 720, 360, 120, 100);
+  kit.obelisk(scene, ctx, 320, 560, 110);
+  kit.obelisk(scene, ctx, 1120, 560, 110);
+  kit.sandDune(scene, 200, 640, 160, 40);
+  kit.sandDune(scene, 1100, 660, 140, 36);
+  kit.mosaicTile(scene, 720, 580, 80);
+  kit.ruinPillar(scene, ctx, 500, 520, 90);
+  kit.ruinPillar(scene, ctx, 940, 520, 90);
+}
+
+function buildSecretObservatory(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0xe8f0f8, 0xc0d0e0);
+  kit.mountainPeak(scene, 720, 400, 180, 120);
+  kit.flagPole(scene, 720, 280);
+  kit.snowPatch(scene, 300, 580, 120, 40);
+  kit.snowPatch(scene, 1000, 600, 140, 36);
+  kit.iceSpike(scene, 400, 520, 50);
+  kit.iceSpike(scene, 1040, 540, 60);
+  kit.crate(scene, ctx, 200, 620, 70, 36, 0xd0d8e0);
+}
+
+function buildSecretSafeRoom(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0x3a3848, 0x1a1820);
+  kit.vaultDoor(scene, ctx, 720, 400, 100);
+  kit.safeBox(scene, ctx, 400, 560);
+  kit.safeBox(scene, ctx, 1040, 560);
+  kit.goldBar(scene, 280, 600);
+  kit.goldBar(scene, 320, 610);
+  kit.goldBar(scene, 1100, 600);
+  kit.terminal(scene, 720, 560);
+  kit.crate(scene, ctx, 200, 620, 80, 40, 0x4a4858);
+}
+
+function buildSecretArmory(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0xd8c8f8, 0x4a3a68);
+  kit.rampart(scene, ctx, 200, 500, 200, 80);
+  kit.rampart(scene, ctx, 1040, 500, 200, 80);
+  kit.watchtower(scene, ctx, 360, 560, 120);
+  kit.watchtower(scene, ctx, 1080, 560, 120);
+  kit.banner(scene, 500, 480, 0xd1495b);
+  kit.banner(scene, 940, 480, 0x8b5cf6);
+  kit.crate(scene, ctx, 720, 620, 100, 40, 0x6a5a88);
+}
+
+function buildSecretThrone(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0xd8c8f8, 0x4a3a68);
+  kit.throne(scene, ctx, 720, 480);
+  kit.banner(scene, 520, 460, 0xf2c94c);
+  kit.banner(scene, 920, 460, 0xd1495b);
+  kit.banner(scene, 400, 500, 0x8b5cf6);
+  kit.banner(scene, 1040, 500, 0x8b5cf6);
+  kit.crate(scene, ctx, 280, 620, 70, 36, 0x6a5a88);
+  kit.crate(scene, ctx, 1100, 620, 70, 36, 0x6a5a88);
+}
+
+function buildSecretBackrooms(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0xf2c94c, 0xe0b830);
+  const gfx = scene.add.graphics().setDepth(50);
+  gfx.lineStyle(2, 0xd4a820, 0.6);
+  for (let y = 200; y < 700; y += 48) gfx.lineBetween(80, y, 1360, y);
+  for (let x = 120; x < 1360; x += 96) gfx.lineBetween(x, 160, x, 720);
+  kit.crate(scene, ctx, 400, 580, 90, 40, 0xc4a020);
+  kit.crate(scene, ctx, 900, 600, 80, 36, 0xc4a020);
+  kit.crate(scene, ctx, 720, 640, 100, 40, 0xb89018);
+}
+
+function buildSecretDeveloper(ctx, t) {
+  const { scene } = ctx;
+  kit.interiorWall(scene, ctx, 0x1a1a22, 0x2a2a32);
+  kit.serverRack(scene, ctx, 300, 560, 90);
+  kit.serverRack(scene, ctx, 1100, 560, 90);
+  kit.terminal(scene, 720, 480);
+  kit.labBench(scene, ctx, 720, 620, 200);
+  scene.add
+    .text(720, 200, "DEBUG ROOM", {
+      fontFamily: '"Comic Sans MS", sans-serif',
+      fontSize: "22px",
+      fontStyle: "bold",
+      color: "#62c462",
+      stroke: "#0b0b12",
+      strokeThickness: 4
+    })
+    .setOrigin(0.5)
+    .setDepth(200);
+  kit.crate(scene, ctx, 200, 620, 70, 36, 0x3a3a48);
+  kit.crate(scene, ctx, 1200, 620, 70, 36, 0x3a3a48);
+}
+
+const SECRET_BUILDS = Object.freeze({
+  secret_11_greenhouse: buildSecretGreenhouse,
+  secret_12_lighthouse: buildSecretLighthouse,
+  secret_13_boiler: buildSecretBoiler,
+  secret_14_crystal: buildSecretCrystal,
+  secret_15_server: buildSecretServer,
+  secret_16_tomb: buildSecretTomb,
+  secret_17_observatory: buildSecretObservatory,
+  secret_18_safe: buildSecretSafeRoom,
+  secret_19_armory: buildSecretArmory,
+  secret_20_throne: buildSecretThrone,
+  secret_backrooms: buildSecretBackrooms,
+  secret_developer: buildSecretDeveloper
+});
+
 export {
   buildOrganicGarden,
   buildOrganicHarbor,
@@ -616,11 +788,13 @@ export {
   buildOrganicCitadel
 };
 
-export function makeSecretRoom({ id, parentKey = "exit", parentRoom }) {
+export function makeSecretRoom({ id, parentKey = "exit", parentRoom, customBuild = null }) {
+  const build = customBuild || SECRET_BUILDS[id] || null;
   return makeExpansionRoom({
     id,
     theme: "secret",
     interior: true,
+    customBuild: build,
     gates: [{ key: parentKey, x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } }],
     spawns: {
       default: { x: 720, y: 600 },
