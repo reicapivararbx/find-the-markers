@@ -1,5 +1,4 @@
 // PÁGINA 5 — CASA NA MATA (top-down 2.5D, subárea da floresta).
-// Casa amarela, capim alto, tronco-ponte e água. Direita: volta à floresta.
 import { kit } from "../scenes/room-kit.js";
 
 export default {
@@ -12,7 +11,7 @@ export default {
   },
 
   gates: [
-    { key: "right", x: 1400, arrowY: 520, zone: { x: 1370, y: 400, width: 70, height: 240 } }
+    { key: "left", x: 40, arrowY: 520, zone: { x: 0, y: 400, width: 70, height: 240 } }
   ],
 
   build(ctx) {
