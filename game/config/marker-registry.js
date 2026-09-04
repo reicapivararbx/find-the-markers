@@ -8,9 +8,11 @@
 //   hidden  -> não aparece até ser revelado por um puzzle/interação
 //   quest   -> só coleta quando a missão associada estiver completa
 //   puzzle  -> só coleta quando o puzzle associado estiver resolvido
+//   slot    -> só via slot machine (não no chão)
 //
 // style: variação visual do sprite (desenho à mão do PDF).
 // Coordenadas: top-down — (x, y) = pés no chão walkable.
+import { EXPANSION_MARKERS } from "./expansion-markers.js";
 
 export const MARKERS = Object.freeze([
   // ---- room_09_spawn (7) ----
@@ -74,7 +76,9 @@ export const MARKERS = Object.freeze([
   { id: "market_insane", name: "Behind You Marker", difficulty: "Insane", room: "room_01_market", x: 120, y: 680, mode: "touch", style: "classic" },
 
   // ---- room_03_casino_pool (desenho: marker segurando o taco) ----
-  { id: "casino_cue", name: "Pool Shark Marker", difficulty: "Challenging", room: "room_03_casino_pool", x: 380, y: 580, mode: "touch", style: "shark" }
+  { id: "casino_cue", name: "Pool Shark Marker", difficulty: "Challenging", room: "room_03_casino_pool", x: 380, y: 580, mode: "touch", style: "shark" },
+
+  ...EXPANSION_MARKERS
 ]);
 
 export const MARKER_BY_ID = Object.freeze(
@@ -100,6 +104,10 @@ export function isCollectible(marker, save) {
       return save.puzzleStates.difficultySolved;
     case "quest":
       return (save.discoveredEggIds || []).length >= 5;
+    case "slot":
+      return false;
+    case "miku":
+      return Boolean(save.mikuMarkerUnlocked || save.puzzleStates?.mikuPuzzleSolved);
     default:
       return true;
   }
@@ -113,6 +121,10 @@ export function lockedReason(marker, save) {
       return "Resolva o medidor de dificuldade primeiro.";
     case "quest":
       return "Encontre os 5 ovos primeiro.";
+    case "slot":
+      return "Ganhe na slot machine do casino.";
+    case "miku":
+      return "Acerte o ritmo no Digital Stage primeiro.";
     default:
       return null;
   }

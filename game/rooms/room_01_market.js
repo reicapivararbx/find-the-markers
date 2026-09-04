@@ -19,7 +19,8 @@ export default {
 
   spawns: {
     default: { x: 1280, y: 600 },
-    from_room_04: { x: 1280, y: 600 }
+    from_room_04: { x: 1280, y: 600 },
+    from_room_11: { x: 180, y: 600 }
   },
 
   gates: [

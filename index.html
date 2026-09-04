@@ -55,11 +55,39 @@
         </div>
       </section>
 
+      <!-- ================= ESCOLHA DE PERSONAGEM ================= -->
+      <section id="character-select-screen" class="screen" aria-labelledby="character-select-title">
+        <div class="menu-card character-select-card">
+          <p class="eyebrow">NOVO JOGO</p>
+          <h2 id="character-select-title">Escolha seu personagem</h2>
+          <p class="menu-description">Só visual — mesma velocidade, hitbox e progresso.</p>
+          <div class="character-select-grid">
+            <article class="character-card" data-character="male">
+              <div class="character-preview">
+                <img src="./imagens/player/human.png" alt="Personagem homem" width="160" height="130" decoding="async">
+              </div>
+              <h3>Homem</h3>
+              <button type="button" class="button button-primary" data-pick="male">Escolher</button>
+            </article>
+            <article class="character-card" data-character="female">
+              <div class="character-preview">
+                <img src="./imagens/player/miku.png" alt="Personagem mulher" width="120" height="160" decoding="async">
+              </div>
+              <h3>Mulher</h3>
+              <button type="button" class="button button-primary" data-pick="female">Escolher</button>
+            </article>
+          </div>
+          <button id="character-select-back" class="button button-ghost" type="button" hidden>Voltar</button>
+        </div>
+      </section>
+
       <!-- ================= HUD ================= -->
       <section id="game-ui" aria-label="Interface da partida">
         <header id="hud">
           <div class="hud-counter marker-counter"><i aria-hidden="true"></i><span>Markers</span><strong id="hud-markers">0/40</strong></div>
           <div class="hud-counter egg-counter"><i aria-hidden="true">🥚</i><span>Ovos</span><strong id="hud-eggs">0/5</strong></div>
+          <div class="hud-counter coin-counter"><i aria-hidden="true">🪙</i><span>Coins</span><strong id="hud-coins">0</strong></div>
+          <div class="hud-counter note-counter"><i aria-hidden="true">♪</i><span>Notas</span><strong id="hud-notes">0/5</strong></div>
           <div class="hud-location"><span>ÁREA</span><strong id="hud-area">Início</strong></div>
           <div class="hud-buttons">
             <button id="btn-collection" class="icon-button" type="button" aria-label="Coleção">🎒</button>
@@ -96,6 +124,7 @@
           <h2>Pausa</h2>
           <button id="pause-resume" class="button button-primary" type="button">Continuar</button>
           <button id="pause-sound" class="button button-ghost" type="button">Som: ligado</button>
+          <button id="pause-character" class="button button-ghost" type="button">Trocar personagem</button>
           <button id="pause-reset" class="button button-danger-ghost" type="button">Apagar progresso</button>
           <div id="pause-reset-confirm" class="confirm-box">
             <p>Tem certeza? Todo o progresso será apagado.</p>

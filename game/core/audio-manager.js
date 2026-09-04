@@ -76,6 +76,16 @@ export const Sfx = {
     tone({ freq: 659, duration: 0.11, type: "triangle", volume: 0.11, delay: 0.1 });
     tone({ freq: 784, duration: 0.2, type: "triangle", volume: 0.11, delay: 0.2 });
   },
+  mikuCollect: () => {
+    tone({ freq: 523, endFreq: 784, duration: 0.14, type: "sine", volume: 0.1 });
+    tone({ freq: 659, duration: 0.1, type: "triangle", volume: 0.09, delay: 0.1 });
+    tone({ freq: 988, duration: 0.16, type: "sine", volume: 0.08, delay: 0.2 });
+    tone({ freq: 1318, duration: 0.12, type: "triangle", volume: 0.06, delay: 0.32 });
+  },
+  mikuNote: (pad = 0) => {
+    const freqs = [523, 587, 659, 784];
+    tone({ freq: freqs[pad % 4], duration: 0.11, type: "sine", volume: 0.1 });
+  },
   unlock: () => {
     tone({ freq: 392, duration: 0.12, type: "square", volume: 0.09 });
     tone({ freq: 523, duration: 0.12, type: "square", volume: 0.09, delay: 0.11 });

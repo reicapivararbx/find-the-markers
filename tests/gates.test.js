@@ -51,13 +51,29 @@ test("gate futuro de 30 abre (mensagem 'Em breve' é da UI), destino null é tra
   assert.equal(missingMarkerMessage(exit, saveWith(30)), null);
 });
 
-test("feira future30: config canônica (30 markers, to null, MARKER_GATES.marketFuture)", async () => {
+test("feira future30: abre Jardim (30 markers, room_11_garden, MARKER_GATES.marketFuture)", async () => {
   const { ROOM_CONNECTIONS } = await import("../game/config/room-connections.js");
   const future = ROOM_CONNECTIONS.room_01_market.future30;
   assert.equal(future.requiredMarkers, MARKER_GATES.marketFuture);
   assert.equal(future.requiredMarkers, 30);
-  assert.equal(future.to, null);
-  assert.ok(future.arriveAt);
+  assert.equal(future.to, "room_11_garden");
+  assert.equal(future.arriveAt, "from_room_01");
+  assert.equal(canEnter(future, saveWith(29)), false);
+  assert.equal(canEnter(future, saveWith(30)), true);
+});
+
+test("digital stage: exige 5 notas musicais", () => {
+  const exit = { to: "secret_digital_stage", requireMusicNotes: 5 };
+  assert.equal(canEnter(exit, saveWith(0)), false);
+  assert.equal(canEnter(exit, { ...saveWith(0), discoveredMusicNoteIds: ["a", "b", "c", "d"] }), false);
+  assert.equal(canEnter(exit, { ...saveWith(0), discoveredMusicNoteIds: ["a", "b", "c", "d", "e"] }), true);
+});
+
+test("cidadela: exige 130 markers + 9 selos", () => {
+  const exit = { to: "room_20_citadel", requiredMarkers: 130, requireSeals: true };
+  assert.equal(canEnter(exit, saveWith(130)), false);
+  const seals = Array.from({ length: 9 }, (_, i) => `seal_${i}`);
+  assert.equal(canEnter(exit, { ...saveWith(130), areaSeals: seals }), true);
 });
 
 test("backtracking feira↔cidade: ida exige 24, volta é livre", async () => {

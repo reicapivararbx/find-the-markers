@@ -1,16 +1,28 @@
-// BootScene: gera as texturas procedurais e desenha o pano de fundo animado
-// que fica atrás da tela de título.
 import Phaser from "../phaser-global.js";
 import { generateAllTextures, markerTextureKey } from "../assets/textures.js";
-import { VIEW } from "../config/game-config.js";
-import { METER_ROWS, difficultyColor } from "../config/difficulty-metadata.js";
+import { VIEW, PLAYER_CHARACTERS } from "../config/game-config.js";
+import { METER_ROWS } from "../config/difficulty-metadata.js";
 
 export class BootScene extends Phaser.Scene {
   constructor() {
     super("BootScene");
   }
 
+  preload() {
+    Object.values(PLAYER_CHARACTERS).forEach((def) => {
+      this.load.image(def.textureKey, def.path);
+    });
+    this.load.on("loaderror", (file) => {
+      console.error(`[Boot] Falha ao carregar sprite do player: ${file?.key} → ${file?.url}`);
+    });
+  }
+
   create() {
+    Object.values(PLAYER_CHARACTERS).forEach((def) => {
+      if (!this.textures.exists(def.textureKey)) {
+        console.error(`[Boot] Textura ausente após load: ${def.textureKey} (${def.path})`);
+      }
+    });
     generateAllTextures(this);
 
     const g = this.add.graphics().setDepth(-10);

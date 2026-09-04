@@ -11,7 +11,12 @@ export const Events = {
   GATE_BLOCKED: "gate:blocked",
   INTERACTION_COMPLETED: "interaction:completed",
   SAVE_CHANGED: "save:changed",
-  BOX_OPENED: "box:opened"
+  BOX_OPENED: "box:opened",
+  COIN_COLLECTED: "coin:collected",
+  SEAL_GRANTED: "seal:granted",
+  SECRET_UNLOCKED: "secret:unlocked",
+  SLOT_SPIN: "slot:spin",
+  MUSIC_NOTE_FOUND: "musicNote:found"
 };
 
 export class EventBus {

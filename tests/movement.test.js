@@ -11,6 +11,19 @@ test("PHYSICS top-down: gravidade zero e corpo nos pés", () => {
   assert.ok(Number.isFinite(PHYSICS.depthBias));
 });
 
+test("PLAYER_CHARACTERS: male/female com paths e displayHeight", async () => {
+  const { PLAYER_CHARACTERS } = await import("../game/config/game-config.js");
+  assert.equal(PLAYER_CHARACTERS.male.id, "male");
+  assert.equal(PLAYER_CHARACTERS.female.id, "female");
+  assert.equal(PLAYER_CHARACTERS.male.label, "Homem");
+  assert.equal(PLAYER_CHARACTERS.female.label, "Mulher");
+  assert.ok(PLAYER_CHARACTERS.male.path.includes("human.png"));
+  assert.ok(PLAYER_CHARACTERS.female.path.includes("miku.png"));
+  assert.ok(PLAYER_CHARACTERS.male.displayHeight > 0);
+  assert.ok(PLAYER_CHARACTERS.female.displayHeight > 0);
+  assert.notEqual(PLAYER_CHARACTERS.male.textureKey, PLAYER_CHARACTERS.female.textureKey);
+});
+
 test("PHYSICS não expõe jump/coyote/buffer (legado platformer)", () => {
   assert.equal("jumpVelocity" in PHYSICS, false);
   assert.equal("coyoteMs" in PHYSICS, false);

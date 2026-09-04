@@ -2,6 +2,7 @@
 // Quadros dourados com markers Hard. Esquerda: [E] sair. Direita: sinuca.
 import { kit } from "../scenes/room-kit.js";
 import { Interactable } from "../entities/interactable.js";
+import { SlotMachine } from "../entities/slot-machine.js";
 
 export default {
   id: "room_02_casino_gallery",
@@ -58,7 +59,7 @@ export default {
   },
 
   wire(ctx) {
-    const { scene } = ctx;
+    const { scene, sm, hud } = ctx;
     scene.exitDoor = new Interactable(scene, {
       id: "casino_exit",
       x: 115,
@@ -68,5 +69,13 @@ export default {
       action: () => ctx.travel("exitCasino")
     });
     ctx.addUpdatable(scene.exitDoor);
+
+    const slot = new SlotMachine(scene, {
+      x: 720,
+      y: 640,
+      saveManager: sm,
+      hud
+    });
+    ctx.addUpdatable(slot);
   }
 };

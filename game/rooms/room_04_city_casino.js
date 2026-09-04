@@ -1,6 +1,9 @@
 // PÁGINA 4 — CIDADE & CASINO (top-down 2.5D).
 import { kit } from "../scenes/room-kit.js";
 import { Interactable } from "../entities/interactable.js";
+import { MusicNoteEntity } from "../entities/music-note.js";
+import { MUSIC_NOTE_DEFS } from "../config/expansion-markers.js";
+import { canEnter, blockedReason, ROOM_CONNECTIONS } from "../config/room-connections.js";
 
 export default {
   id: "room_04_city_casino",
@@ -10,7 +13,8 @@ export default {
     default: { x: 180, y: 600 },
     from_room_07: { x: 1280, y: 600 },
     from_room_01: { x: 180, y: 600 },
-    outside_casino: { x: 1000, y: 640 }
+    outside_casino: { x: 1000, y: 640 },
+    from_digital_stage: { x: 360, y: 560 }
   },
 
   gates: [
@@ -131,7 +135,7 @@ export default {
   },
 
   wire(ctx) {
-    const { scene } = ctx;
+    const { scene, sm, hud } = ctx;
     scene.casinoDoor = new Interactable(scene, {
       id: "casino_door",
       x: 1000,
@@ -141,5 +145,63 @@ export default {
       action: () => ctx.travel("casino")
     });
     ctx.addUpdatable(scene.casinoDoor);
+
+    MUSIC_NOTE_DEFS.filter((n) => n.room === "room_04_city_casino").forEach((def) => {
+      if (sm.save.discoveredMusicNoteIds?.includes(def.id)) return;
+      const note = new MusicNoteEntity(scene, def, sm, hud);
+      ctx.addUpdatable(note);
+      scene.time.delayedCall(0, () => {
+        if (scene.player?.sprite) {
+          scene.physics.add.overlap(scene.player.sprite, note.zone, () => note.tryCollect());
+        }
+      });
+    });
+
+    const notesFound = (sm.save.discoveredMusicNoteIds || []).length;
+    const stageLit = notesFound >= 5 || sm.save.mikuMarkerUnlocked;
+    const stageX = 360;
+    const stageY = 520;
+    const glow = scene.add.circle(stageX, stageY - 40, 48, 0x39c5bb, stageLit ? 0.35 : 0.08).setDepth(stageY);
+    if (stageLit) {
+      scene.tweens.add({
+        targets: glow,
+        alpha: { from: 0.2, to: 0.5 },
+        scale: { from: 0.95, to: 1.15 },
+        duration: 900,
+        yoyo: true,
+        repeat: -1
+      });
+    }
+    scene.add
+      .text(stageX, stageY - 90, "DIGITAL STAGE", {
+        fontFamily: '"Comic Sans MS", sans-serif',
+        fontSize: "14px",
+        fontStyle: "bold",
+        color: stageLit ? "#39c5bb" : "#6a6a78",
+        backgroundColor: "#1a1a28cc",
+        padding: { x: 6, y: 2 }
+      })
+      .setOrigin(0.5)
+      .setDepth(stageY + 2);
+
+    const stageDoor = new Interactable(scene, {
+      id: "digital_stage_door",
+      x: stageX,
+      y: stageY,
+      radius: 120,
+      prompt: stageLit ? "[E] Entrar no Digital Stage" : `[E] Digital Stage (${notesFound}/5 ♪)`,
+      action: () => {
+        const exit = ROOM_CONNECTIONS.room_04_city_casino.digitalStage;
+        if (!canEnter(exit, sm.save)) {
+          hud.toast(blockedReason(exit, sm.save) || "Encontre as 5 notas musicais.", {
+            icon: "♪",
+            duration: 2200
+          });
+          return;
+        }
+        ctx.travel("digitalStage");
+      }
+    });
+    ctx.addUpdatable(stageDoor);
   }
 };

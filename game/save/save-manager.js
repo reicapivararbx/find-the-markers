@@ -1,5 +1,5 @@
 // Persistência versionada em localStorage, com storage injetável (testes).
-import { SAVE_STORAGE_KEY, SAVE_VERSION } from "../config/game-config.js";
+import { SAVE_STORAGE_KEY, SAVE_VERSION, AREA_SEAL_IDS } from "../config/game-config.js";
 import { bus, Events } from "../core/event-bus.js";
 
 export function createDefaultSave() {
@@ -11,10 +11,29 @@ export function createDefaultSave() {
     puzzleStates: {
       redButtonsSolved: false,
       difficultySolved: false,
-      creditsBoxesSolved: false
+      creditsBoxesSolved: false,
+      valvesSolved: false,
+      batteriesSolved: false,
+      runesSolved: false,
+      fragmentsSolved: false,
+      firewallSolved: false,
+      mikuPuzzleSolved: false
     },
     openedBoxes: [],
     unlockedRooms: [],
+    areaSeals: [],
+    secretAreas: [],
+    coins: 0,
+    collectedCoinIds: [],
+    discoveredMusicNoteIds: [],
+    mikuMarkerUnlocked: false,
+    playerCharacter: null,
+    slot: {
+      spins: 0,
+      pity: 0,
+      jackpotWon: false,
+      highRollerWon: false
+    },
     settings: {
       sound: true
     }
@@ -30,7 +49,8 @@ export function migrateSave(raw) {
     ...defaults,
     ...raw,
     puzzleStates: { ...defaults.puzzleStates, ...(raw.puzzleStates || {}) },
-    settings: { ...defaults.settings, ...(raw.settings || {}) }
+    settings: { ...defaults.settings, ...(raw.settings || {}) },
+    slot: { ...defaults.slot, ...(raw.slot || {}) }
   };
 
   save.version = SAVE_VERSION;
@@ -39,7 +59,23 @@ export function migrateSave(raw) {
   save.discoveredEggIds = Array.isArray(raw.discoveredEggIds) ? [...new Set(raw.discoveredEggIds)] : [];
   save.openedBoxes = Array.isArray(raw.openedBoxes) ? [...new Set(raw.openedBoxes)] : [];
   save.unlockedRooms = Array.isArray(raw.unlockedRooms) ? [...new Set(raw.unlockedRooms)] : [];
+  save.areaSeals = Array.isArray(raw.areaSeals)
+    ? [...new Set(raw.areaSeals.filter((id) => AREA_SEAL_IDS.includes(id)))]
+    : [];
+  save.secretAreas = Array.isArray(raw.secretAreas) ? [...new Set(raw.secretAreas)] : [];
+  save.collectedCoinIds = Array.isArray(raw.collectedCoinIds) ? [...new Set(raw.collectedCoinIds)] : [];
+  save.discoveredMusicNoteIds = Array.isArray(raw.discoveredMusicNoteIds)
+    ? [...new Set(raw.discoveredMusicNoteIds)]
+    : [];
+  save.mikuMarkerUnlocked = Boolean(raw.mikuMarkerUnlocked) || Boolean(save.puzzleStates.mikuPuzzleSolved);
+  save.coins = Math.max(0, Number.isFinite(raw.coins) ? Math.floor(raw.coins) : save.collectedCoinIds.length);
+  save.slot.spins = Math.max(0, Math.floor(Number(save.slot.spins) || 0));
+  save.slot.pity = Math.max(0, Math.floor(Number(save.slot.pity) || 0));
+  save.slot.jackpotWon = Boolean(save.slot.jackpotWon);
+  save.slot.highRollerWon = Boolean(save.slot.highRollerWon);
   save.settings.sound = raw.settings?.sound !== false;
+  const char = raw.playerCharacter;
+  save.playerCharacter = char === "male" || char === "female" ? char : null;
 
   return save;
 }
@@ -95,6 +131,89 @@ export class SaveManager {
     return true;
   }
 
+  discoverMusicNote(noteId) {
+    if (this.save.discoveredMusicNoteIds.includes(noteId)) return false;
+    this.save.discoveredMusicNoteIds.push(noteId);
+    this.persist();
+    bus.emit(Events.MUSIC_NOTE_FOUND, {
+      id: noteId,
+      found: this.save.discoveredMusicNoteIds.length
+    });
+    return true;
+  }
+
+  unlockMikuMarker() {
+    this.save.mikuMarkerUnlocked = true;
+    this.save.puzzleStates.mikuPuzzleSolved = true;
+    if (!this.save.unlockedRooms.includes("secret_digital_stage")) {
+      this.save.unlockedRooms.push("secret_digital_stage");
+      bus.emit(Events.ROOM_UNLOCKED, "secret_digital_stage");
+    }
+    this.persist();
+    bus.emit(Events.PUZZLE_SOLVED, "mikuPuzzleSolved");
+  }
+
+  collectCoin(coinId, amount = 1) {
+    if (this.save.collectedCoinIds.includes(coinId)) return false;
+    this.save.collectedCoinIds.push(coinId);
+    this.save.coins += Math.max(1, Math.floor(amount));
+    this.persist();
+    bus.emit(Events.COIN_COLLECTED, { id: coinId, coins: this.save.coins });
+    return true;
+  }
+
+  addCoins(amount) {
+    const n = Math.floor(amount);
+    if (!Number.isFinite(n) || n === 0) return this.save.coins;
+    this.save.coins = Math.max(0, this.save.coins + n);
+    this.persist();
+    return this.save.coins;
+  }
+
+  spendCoins(amount) {
+    const n = Math.floor(amount);
+    if (!Number.isFinite(n) || n <= 0) return false;
+    if (this.save.coins < n) return false;
+    this.save.coins -= n;
+    this.persist();
+    return true;
+  }
+
+  grantSeal(sealId) {
+    if (!AREA_SEAL_IDS.includes(sealId)) return false;
+    if (this.save.areaSeals.includes(sealId)) return false;
+    this.save.areaSeals.push(sealId);
+    this.persist();
+    bus.emit(Events.SEAL_GRANTED, sealId);
+    return true;
+  }
+
+  hasAllSeals() {
+    return AREA_SEAL_IDS.every((id) => this.save.areaSeals.includes(id));
+  }
+
+  unlockSecretArea(areaId) {
+    if (this.save.secretAreas.includes(areaId)) return false;
+    this.save.secretAreas.push(areaId);
+    this.persist();
+    bus.emit(Events.SECRET_UNLOCKED, areaId);
+    return true;
+  }
+
+  recordSlotSpin({ jackpot = false, highRoller = false } = {}) {
+    this.save.slot.spins += 1;
+    if (jackpot) {
+      this.save.slot.jackpotWon = true;
+      this.save.slot.pity = 0;
+    } else if (highRoller) {
+      this.save.slot.highRollerWon = true;
+      this.save.slot.pity = 0;
+    } else {
+      this.save.slot.pity += 1;
+    }
+    this.persist();
+  }
+
   solvePuzzle(key) {
     if (this.save.puzzleStates[key]) return false;
     this.save.puzzleStates[key] = true;
@@ -130,12 +249,27 @@ export class SaveManager {
     this.persist();
   }
 
+  setPlayerCharacter(character) {
+    if (character !== "male" && character !== "female") return false;
+    if (this.save.playerCharacter === character) return false;
+    this.save.playerCharacter = character;
+    this.persist();
+    return true;
+  }
+
+  hasPlayerCharacter() {
+    return this.save.playerCharacter === "male" || this.save.playerCharacter === "female";
+  }
+
   hasProgress() {
     const s = this.save;
     return (
       s.collectedMarkerIds.length > 0 ||
       s.discoveredEggIds.length > 0 ||
       s.openedBoxes.length > 0 ||
+      s.areaSeals.length > 0 ||
+      s.collectedCoinIds.length > 0 ||
+      s.coins > 0 ||
       s.currentRoom !== "room_09_spawn" ||
       Object.values(s.puzzleStates).some(Boolean)
     );

@@ -171,6 +171,104 @@ function gMarker(g, color, style) {
     g.fillTriangle(23, 44, 33, 44, 28, 54);
     g.lineStyle(3, 0xd4699f, 1);
     g.strokeRoundedRect(12, 22, 32, 46, 8);
+  } else if (style === "miku") {
+    const MIKU = 0x39c5bb;
+    const MIKU_DARK = 0x2a9a92;
+    const MIKU_LIGHT = 0x7ee8df;
+    const GRAPHITE = 0x2a2a32;
+    const BODY = 0xe8ecef;
+
+    g.fillStyle(MIKU_DARK, 1);
+    g.fillEllipse(4, 52, 14, 48);
+    g.fillEllipse(52, 52, 14, 48);
+    g.fillStyle(MIKU, 1);
+    g.fillEllipse(5, 48, 11, 42);
+    g.fillEllipse(51, 48, 11, 42);
+    g.fillStyle(MIKU_LIGHT, 0.55);
+    g.fillEllipse(3, 40, 5, 18);
+    g.fillEllipse(53, 40, 5, 18);
+    g.fillStyle(MIKU_DARK, 0.85);
+    g.fillEllipse(4, 72, 10, 12);
+    g.fillEllipse(52, 72, 10, 12);
+
+    g.lineStyle(4, GRAPHITE, 1);
+    g.lineBetween(22, 68, 20, 75);
+    g.lineBetween(34, 68, 36, 75);
+    g.fillStyle(GRAPHITE, 1);
+    g.fillEllipse(18, 76, 10, 5);
+    g.fillEllipse(38, 76, 10, 5);
+    g.fillStyle(MIKU, 1);
+    g.fillRect(16, 74, 6, 2);
+    g.fillRect(34, 74, 6, 2);
+
+    g.fillStyle(BODY, 1);
+    g.fillRoundedRect(12, 22, 32, 46, 8);
+    g.fillStyle(GRAPHITE, 1);
+    g.fillRect(12, 36, 6, 28);
+    g.fillRect(38, 36, 6, 28);
+    g.fillStyle(MIKU, 1);
+    g.fillTriangle(28, 26, 22, 34, 34, 34);
+    g.fillRect(25, 34, 6, 22);
+    g.fillStyle(MIKU_DARK, 0.5);
+    g.fillRect(28, 34, 3, 22);
+    g.lineStyle(2.5, INK, 0.85);
+    g.strokeRoundedRect(12, 22, 32, 46, 8);
+
+    g.fillStyle(GRAPHITE, 1);
+    g.fillRoundedRect(2, 42, 11, 22, 3);
+    g.fillRoundedRect(43, 42, 11, 22, 3);
+    g.fillStyle(MIKU, 1);
+    g.fillRect(3, 48, 9, 2);
+    g.fillRect(44, 48, 9, 2);
+    g.fillStyle(MIKU_LIGHT, 1);
+    g.fillRect(4, 52, 3, 3);
+    g.fillRect(8, 52, 3, 3);
+    g.fillStyle(0xffffff, 0.7);
+    g.fillRect(4, 57, 3, 3);
+    g.fillRect(8, 57, 2, 3);
+    g.fillStyle(BODY, 1);
+    g.fillCircle(5, 66, 3.2);
+    g.fillCircle(51, 66, 3.2);
+    g.fillStyle(0xeb5757, 1);
+    g.fillRect(3, 43, 8, 5);
+
+    g.fillStyle(GRAPHITE, 1);
+    g.fillRoundedRect(14, 8, 28, 16, 5);
+    g.lineStyle(2, MIKU, 0.9);
+    g.strokeRoundedRect(14, 8, 28, 16, 5);
+    g.fillStyle(MIKU, 1);
+    g.fillTriangle(16, 22, 22, 12, 26, 22);
+    g.fillTriangle(24, 22, 28, 10, 32, 22);
+    g.fillTriangle(30, 22, 34, 12, 40, 22);
+    g.fillStyle(MIKU_LIGHT, 0.5);
+    g.fillTriangle(26, 20, 28, 12, 30, 20);
+    g.fillStyle(GRAPHITE, 1);
+    g.fillRoundedRect(6, 18, 10, 8, 2);
+    g.fillRoundedRect(40, 18, 10, 8, 2);
+    g.fillStyle(MIKU, 1);
+    g.fillRect(7, 21, 8, 2);
+    g.fillRect(41, 21, 8, 2);
+    g.fillStyle(GRAPHITE, 1);
+    g.fillRoundedRect(1, 28, 10, 14, 3);
+    g.fillRoundedRect(45, 28, 10, 14, 3);
+    g.fillStyle(MIKU, 1);
+    g.fillCircle(6, 32, 2);
+    g.fillCircle(50, 32, 2);
+    g.lineStyle(2, GRAPHITE, 1);
+    g.lineBetween(5, 40, 14, 48);
+    g.fillStyle(0xeb5757, 1);
+    g.fillCircle(14, 48, 1.6);
+
+    g.fillStyle(INK, 1);
+    g.fillEllipse(23, 44, 6, 8);
+    g.fillEllipse(34, 44, 6, 8);
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(24, 42.5, 1.5);
+    g.fillCircle(35, 42.5, 1.5);
+    g.lineStyle(2.2, INK, 1);
+    g.beginPath();
+    g.arc(28.5, 52, 4.5, Math.PI * 0.15, Math.PI * 0.85);
+    g.strokePath();
   }
 }
 

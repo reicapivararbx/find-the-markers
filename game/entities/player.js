@@ -1,28 +1,73 @@
-// Movimentação TOP-DOWN: livre no plano X+Y (WASD / setas), sem gravidade/pulo.
-// Depth = y dos pés para oclusão 2.5D. Sombra no chão sob o personagem.
-import { PHYSICS } from "../config/game-config.js";
+import { PHYSICS, PLAYER_CHARACTERS } from "../config/game-config.js";
+import { state } from "../state.js";
+
+export function resolvePlayerTextureKey(character = null) {
+  const id = character || state.saveManager?.save?.playerCharacter || "male";
+  const def = PLAYER_CHARACTERS[id] || PLAYER_CHARACTERS.male;
+  return def.textureKey;
+}
+
+export function resolvePlayerDisplayHeight(character = null) {
+  const id = character || state.saveManager?.save?.playerCharacter || "male";
+  const def = PLAYER_CHARACTERS[id] || PLAYER_CHARACTERS.male;
+  return def.displayHeight;
+}
 
 export class Player {
   constructor(scene, x, y, input) {
     this.scene = scene;
     this.input = input;
 
-    // sombra no chão (elipse achatada) — depth abaixo do sprite
     this.shadow = scene.add.ellipse(x, y - 4, 36, 14, 0x1a1a22, 0.28).setDepth(y - 1);
 
-    this.sprite = scene.physics.add.sprite(x, y, "player");
+    const textureKey = resolvePlayerTextureKey();
+    const fallback = scene.textures.exists(textureKey)
+      ? textureKey
+      : scene.textures.exists("player")
+        ? "player"
+        : textureKey;
+
+    this.sprite = scene.physics.add.sprite(x, y, fallback);
     this.sprite.setOrigin(0.5, 1);
+    this.applyCharacterVisuals(state.saveManager?.save?.playerCharacter);
     this.sprite.setData("ySort", true);
     this.sprite.setData("depthBias", PHYSICS.depthBias);
     this.sprite.setDepth(y + PHYSICS.depthBias);
-    this.sprite.body.setSize(PHYSICS.bodyWidth, PHYSICS.bodyHeight);
-    this.sprite.body.setOffset(PHYSICS.bodyOffsetX, PHYSICS.bodyOffsetY);
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setMaxVelocity(PHYSICS.maxSpeed, PHYSICS.maxSpeed);
     this.sprite.body.setAllowGravity(false);
     this.sprite.setDrag(0, 0);
 
     this.walkPhase = 0;
+  }
+
+  applyCharacterVisuals(character = null) {
+    const id = character || state.saveManager?.save?.playerCharacter || "male";
+    const def = PLAYER_CHARACTERS[id] || PLAYER_CHARACTERS.male;
+    const key = this.scene.textures.exists(def.textureKey)
+      ? def.textureKey
+      : this.scene.textures.exists("player")
+        ? "player"
+        : def.textureKey;
+
+    if (this.sprite.texture?.key !== key && this.scene.textures.exists(key)) {
+      this.sprite.setTexture(key);
+    }
+
+    const displayH = def.displayHeight;
+    const src = this.sprite.texture?.getSourceImage?.();
+    const srcH = src?.height || displayH;
+    const srcW = src?.width || PHYSICS.playerWidth;
+    const scale = displayH / srcH;
+    this.sprite.setScale(scale);
+
+    const displayW = srcW * scale;
+    const bodyW = PHYSICS.bodyWidth;
+    const bodyH = PHYSICS.bodyHeight;
+    const offsetX = (displayW - bodyW) / 2 / scale;
+    const offsetY = (displayH - bodyH) / scale;
+    this.sprite.body.setSize(bodyW / scale, bodyH / scale);
+    this.sprite.body.setOffset(offsetX, offsetY);
   }
 
   get body() {
@@ -42,7 +87,6 @@ export class Player {
     this.sprite.setAngle(0);
   }
 
-  // Deve rodar após input.beginFrame(); dt em ms.
   update(dt, blocked = false) {
     const body = this.sprite.body;
 
@@ -58,7 +102,6 @@ export class Player {
     if (dir.x < 0) this.sprite.setFlipX(true);
     else if (dir.x > 0) this.sprite.setFlipX(false);
 
-    // balanço sutil ao andar (pseudo-passos)
     const moving = dir.x !== 0 || dir.y !== 0;
     if (moving) {
       this.walkPhase += dt * 0.012;

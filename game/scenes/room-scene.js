@@ -143,6 +143,8 @@ export class RoomScene extends Phaser.Scene {
     hud.setCounter(save.collectedMarkerIds.length);
     hud.setArea(ROOM_NAMES[this.roomId] || this.roomId);
     hud.updateEggs(save.discoveredEggIds.length, 5);
+    hud.updateCoins(save.coins ?? 0);
+    hud.updateMusicNotes(save.discoveredMusicNoteIds?.length ?? 0, 5);
 
     // entrada na sala (relógio real: monotônico entre restarts da cena)
     this.enteredAt = performance.now();

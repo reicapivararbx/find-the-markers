@@ -1,14 +1,15 @@
-// Ponto de entrada: boot do Phaser, save, HUD, menu e ponte com os
-// controles touch. Debug (com API de QA) só ativa com ?debug=1.
 import { SAVE_STORAGE_KEY } from "./config/game-config.js";
 import { SaveManager } from "./save/save-manager.js";
 import { Hud } from "./ui/hud.js";
 import { MenuUI } from "./ui/menu.js";
+import { CharacterSelectUI } from "./ui/character-select.js";
 import { BootScene } from "./scenes/boot-scene.js";
 import { RoomScene } from "./scenes/room-scene.js";
 import { setMuted } from "./core/audio-manager.js";
 import { state } from "./state.js";
 import { TOTAL_MARKERS, MARKERS } from "./config/marker-registry.js";
+
+void SAVE_STORAGE_KEY;
 
 const params = new URLSearchParams(window.location.search);
 state.debug = params.get("debug") === "1";
@@ -22,9 +23,12 @@ const hud = new Hud();
 state.hud = hud;
 const menu = new MenuUI();
 state.menu = menu;
+const characterSelect = new CharacterSelectUI();
+state.characterSelect = characterSelect;
 
 function startRoom(roomId, arriveAt = "default") {
   menu.hide();
+  characterSelect.hide();
   hud.showGameplay();
   hud.updateSoundLabel(saveManager.save.settings.sound);
   const scene = state.game.scene;
@@ -35,17 +39,67 @@ function startRoom(roomId, arriveAt = "default") {
 
 function returnToMenu() {
   hud.hideGameplay();
+  characterSelect.hide();
   const scene = state.game.scene;
   if (scene.isActive("RoomScene")) scene.stop("RoomScene");
   if (!scene.isActive("BootScene")) scene.start("BootScene");
   menu.show();
 }
 
+function beginNewGame() {
+  saveManager.reset();
+  menu.hide();
+  characterSelect.show({ mode: "new", allowBack: true });
+}
+
+function continueOrSelect() {
+  if (!saveManager.hasPlayerCharacter()) {
+    menu.hide();
+    characterSelect.show({ mode: "continue", allowBack: true });
+    return;
+  }
+  startRoom(saveManager.save.currentRoom, "default");
+}
+
+function applyCharacterPick(character, mode) {
+  saveManager.setPlayerCharacter(character);
+  characterSelect.hide();
+
+  if (mode === "swap") {
+    const scene = state.game.scene.getScene("RoomScene");
+    if (scene?.player) {
+      scene.player.applyCharacterVisuals(character);
+    }
+    hud.hidePause();
+    hud.toast(character === "female" ? "Personagem: Mulher" : "Personagem: Homem", {
+      icon: "👤",
+      duration: 1800
+    });
+    return;
+  }
+
+  if (mode === "continue") {
+    startRoom(saveManager.save.currentRoom || "room_09_spawn", "default");
+    return;
+  }
+
+  startRoom("room_09_spawn", "default");
+}
+
 menu.bind({
-  onContinue: () => startRoom(saveManager.save.currentRoom, "default"),
-  onNewGame: () => {
-    saveManager.reset();
-    startRoom("room_09_spawn", "default");
+  onContinue: () => continueOrSelect(),
+  onNewGame: () => beginNewGame()
+});
+
+characterSelect.bind({
+  onPick: (character, mode) => applyCharacterPick(character, mode),
+  onBack: () => {
+    characterSelect.hide();
+    if (state.game?.scene?.isActive("RoomScene")) {
+      hud.showPause();
+      return;
+    }
+    menu.show();
   }
 });
 
@@ -64,7 +118,12 @@ hud.bind({
   onReset: () => {
     saveManager.reset();
     hud.toast("Progresso apagado.", { icon: "🗑", duration: 2200 });
-    startRoom("room_09_spawn", "default");
+    menu.hide();
+    characterSelect.show({ mode: "new", allowBack: false });
+  },
+  onChangeCharacter: () => {
+    hud.hidePause(false);
+    characterSelect.show({ mode: "swap", allowBack: true });
   }
 });
 
@@ -125,7 +184,6 @@ function createGame() {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    // No debug/QA o loop roda por setTimeout (ambientes sem rAF, ex.: headless).
     fps: state.debug ? { forceSetTimeOut: true } : undefined,
     input: { activePointers: 4 },
     scene: [BootScene, RoomScene]
@@ -135,7 +193,7 @@ function createGame() {
   bindTouch();
 
   window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") return; // tratado dentro da cena
+    if (event.key === "Escape") return;
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(event.key)) {
       event.preventDefault();
     }
@@ -155,7 +213,8 @@ function createGame() {
           x: Math.round(scene.player.x),
           y: Math.round(scene.player.y),
           count: saveManager.markerCount,
-          transitioning: scene.transitioning
+          transitioning: scene.transitioning,
+          character: saveManager.save.playerCharacter
         };
       },
       setPos: (x, y) => {
@@ -179,9 +238,15 @@ function createGame() {
         }
         return false;
       },
+      setCharacter: (id) => {
+        if (!saveManager.setPlayerCharacter(id)) return false;
+        const scene = state.game.scene.getScene("RoomScene");
+        scene?.player?.applyCharacterVisuals(id);
+        return true;
+      },
       reset: () => {
         saveManager.reset();
-        startRoom("room_09_spawn", "default");
+        characterSelect.show({ mode: "new", allowBack: false });
       }
     });
     console.log("[FTM] Debug ativo — use window.FTM para QA.");
@@ -190,13 +255,10 @@ function createGame() {
   window.FTMStartRoom = startRoom;
   window.FTMReturnToMenu = returnToMenu;
 
-  // QA: em ambientes sem rAF o boot do Phaser pode não chegar ao loop.start().
   if (state.debug) {
     window.setTimeout(() => {
       const g = state.game;
       if (g && g.loop && !g.loop.started) g.loop.start(g.step.bind(g));
-      // rAF realmente dispara? Se não (headless/oculto), desativa os ticks
-      // automáticos para o QA dirigir o loop manualmente com steps monotônicos.
       let rafFired = false;
       requestAnimationFrame(() => {
         rafFired = true;

@@ -2,7 +2,7 @@
 // Bloqueado: mostra 🔒 + número exigido e "Colete mais N marcador(es)."
 // with destination null (gate futuro): "Em breve" quando liberado.
 import { GAMEPLAY } from "../config/game-config.js";
-import { canEnter, missingMarkerMessage } from "../config/room-connections.js";
+import { canEnter, blockedReason } from "../config/room-connections.js";
 import { bus, Events } from "../core/event-bus.js";
 import { Sfx } from "../core/audio-manager.js";
 
@@ -19,11 +19,7 @@ export class Gate {
     this.enabled = true;
 
     const required = connection.requiredMarkers ?? 0;
-    const lockedByCount = required > save.collectedMarkerIds.length;
-    const lockedByCondition = Boolean(
-      connection.condition && !save.puzzleStates[connection.condition]
-    );
-    this.locked = lockedByCount || lockedByCondition;
+    this.locked = !canEnter(connection, save);
 
     // top-down: zonas de gate nas bordas (mais largas horizontalmente se custom)
     const zoneRect = zone || {
@@ -110,7 +106,6 @@ export class Gate {
   evaluate() {
     const open = canEnter(this.connection, this.save);
 
-    // Destino ainda não definido (ex.: gate de 30 da feira).
     if (open && this.connection.to === null) {
       this.hud.toast("Em breve…", { icon: "✨", duration: 2200 });
       Sfx.reveal();
@@ -124,9 +119,7 @@ export class Gate {
 
     if (this.scene.time.now < this.blockedFeedbackAt) return;
     this.blockedFeedbackAt = this.scene.time.now + 1800;
-    const message =
-      missingMarkerMessage(this.connection, this.save) ||
-      "Volte quando tiver resolvido o puzzle.";
+    const message = blockedReason(this.connection, this.save) || "Passagem bloqueada.";
     this.hud.toast(message, { icon: "🔒", duration: 2400 });
     Sfx.gateBlocked();
     bus.emit(Events.GATE_BLOCKED, this.id);

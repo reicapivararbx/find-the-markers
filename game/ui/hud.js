@@ -15,6 +15,8 @@ export class Hud {
     this.root = document.querySelector("#game-ui");
     this.counterEl = document.querySelector("#hud-markers");
     this.eggsEl = document.querySelector("#hud-eggs");
+    this.coinsEl = document.querySelector("#hud-coins");
+    this.notesEl = document.querySelector("#hud-notes");
     this.areaEl = document.querySelector("#hud-area");
     this.toastEl = document.querySelector("#toast");
     this.noteEl = document.querySelector("#marker-notification");
@@ -47,6 +49,9 @@ export class Hud {
     document.querySelector("#pause-resume").addEventListener("click", () => this.hidePause(true));
     document.querySelector("#pause-menu").addEventListener("click", () => this.callbacks?.onMenu());
     document.querySelector("#pause-sound").addEventListener("click", () => this.callbacks?.onSoundToggle());
+    document.querySelector("#pause-character")?.addEventListener("click", () => {
+      this.callbacks?.onChangeCharacter?.();
+    });
     document.querySelector("#pause-reset").addEventListener("click", () => this.showPauseReset());
     document.querySelector("#pause-reset-yes").addEventListener("click", () => {
       this.hidePauseReset();
@@ -57,6 +62,12 @@ export class Hud {
 
     bus.on(Events.MARKER_COLLECTED, () => this.setCounter());
     bus.on(Events.MARKER_COUNT_CHANGED, () => this.setCounter());
+    bus.on(Events.COIN_COLLECTED, () => this.updateCoins());
+    bus.on(Events.MUSIC_NOTE_FOUND, () => this.updateMusicNotes());
+    bus.on(Events.SAVE_CHANGED, () => {
+      this.updateCoins();
+      this.updateMusicNotes();
+    });
   }
 
   bind(callbacks) {
@@ -76,7 +87,7 @@ export class Hud {
   }
 
   isModalOpen() {
-    return this.collectionOpen || this.pauseOpen;
+    return this.collectionOpen || this.pauseOpen || Boolean(state.characterSelect?.isOpen?.());
   }
 
   // ---------- valores ----------
@@ -92,6 +103,19 @@ export class Hud {
   updateEggs(found, total = 5) {
     this.eggsEl.textContent = `${found}/${total}`;
     this.eggsEl.closest(".hud-counter")?.classList.toggle("has-eggs", found > 0);
+  }
+
+  updateCoins(count = null) {
+    if (!this.coinsEl) return;
+    const value = count ?? state.saveManager?.save?.coins ?? 0;
+    this.coinsEl.textContent = String(value);
+  }
+
+  updateMusicNotes(found = null, total = 5) {
+    if (!this.notesEl) return;
+    const value = found ?? state.saveManager?.save?.discoveredMusicNoteIds?.length ?? 0;
+    this.notesEl.textContent = `${value}/${total}`;
+    this.notesEl.closest(".hud-counter")?.classList.toggle("has-notes", value > 0);
   }
 
   // ---------- toasts ----------

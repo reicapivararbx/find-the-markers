@@ -17,6 +17,23 @@ export const PHYSICS = Object.freeze({
   depthBias: 10
 });
 
+export const PLAYER_CHARACTERS = Object.freeze({
+  male: Object.freeze({
+    id: "male",
+    label: "Homem",
+    textureKey: "player_male",
+    path: "imagens/player/human.png",
+    displayHeight: 100
+  }),
+  female: Object.freeze({
+    id: "female",
+    label: "Mulher",
+    textureKey: "player_female",
+    path: "imagens/player/miku.png",
+    displayHeight: 108
+  })
+});
+
 export const TRANSITION = Object.freeze({
   fadeMs: 280,
   cooldownMs: 450
@@ -34,7 +51,26 @@ export const GAMEPLAY = Object.freeze({
 
 // Chave do localStorage. NÃO incluir nenhum número temático aqui.
 export const SAVE_STORAGE_KEY = "find-the-markers-reuters-mix-save";
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
+
+export const ECONOMY = Object.freeze({
+  slotCost: 3,
+  pitySoft: 30,
+  pityHard: 50,
+  totalCoins: 37
+});
+
+export const AREA_SEAL_IDS = Object.freeze([
+  "seal_garden",
+  "seal_harbor",
+  "seal_factory",
+  "seal_mine",
+  "seal_lab",
+  "seal_ruins",
+  "seal_peak",
+  "seal_vault",
+  "seal_citadel_gate"
+]);
 
 export const COLORS = Object.freeze({
   skyTop: 0xbfe8f7,

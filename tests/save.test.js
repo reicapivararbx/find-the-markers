@@ -70,9 +70,48 @@ test("migrate: campos ausentes viram defaults, versão normalizada", () => {
   const migrated = migrateSave({ collectedMarkerIds: ["a", "a", "b"], currentRoom: "room_01_market" });
   assert.deepEqual(migrated.collectedMarkerIds, ["a", "b"]);
   assert.equal(migrated.currentRoom, "room_01_market");
-  assert.equal(migrated.version, 1);
+  assert.equal(migrated.version, 2);
   assert.equal(migrated.settings.sound, true);
   assert.deepEqual(migrated.puzzleStates, createDefaultSave().puzzleStates);
+  assert.equal(migrated.coins, 0);
+  assert.deepEqual(migrated.discoveredMusicNoteIds, []);
+  assert.equal(migrated.mikuMarkerUnlocked, false);
+  assert.deepEqual(migrated.slot, createDefaultSave().slot);
+});
+
+test("miku: notas e unlock do marker", () => {
+  const manager = new SaveManager(new MemoryStorage());
+  manager.load();
+  assert.equal(manager.discoverMusicNote("music_note_1"), true);
+  assert.equal(manager.discoverMusicNote("music_note_1"), false);
+  assert.equal(manager.save.discoveredMusicNoteIds.length, 1);
+  manager.unlockMikuMarker();
+  assert.equal(manager.save.mikuMarkerUnlocked, true);
+  assert.equal(manager.save.puzzleStates.mikuPuzzleSolved, true);
+});
+
+test("playerCharacter: null no save novo; set male/female persiste e não apaga progresso", () => {
+  const storage = new MemoryStorage();
+  const manager = new SaveManager(storage);
+  manager.load();
+  assert.equal(manager.save.playerCharacter, null);
+  assert.equal(manager.hasPlayerCharacter(), false);
+  assert.equal(manager.setPlayerCharacter("alien"), false);
+  assert.equal(manager.setPlayerCharacter("male"), true);
+  assert.equal(manager.save.playerCharacter, "male");
+  assert.equal(manager.hasPlayerCharacter(), true);
+
+  manager.collectMarker("some_marker");
+  manager.addCoins(5);
+  assert.equal(manager.setPlayerCharacter("female"), true);
+  assert.equal(manager.save.playerCharacter, "female");
+  assert.equal(manager.markerCount, 1);
+  assert.equal(manager.save.coins, 5);
+
+  const reloaded = new SaveManager(storage);
+  reloaded.load();
+  assert.equal(reloaded.save.playerCharacter, "female");
+  assert.equal(reloaded.markerCount, 1);
 });
 
 test("caixas: duas abertas resolvem creditsBoxesSolved (sem ordem secreta)", () => {

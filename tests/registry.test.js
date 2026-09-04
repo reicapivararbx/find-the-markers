@@ -47,7 +47,10 @@ test("markers apontam para salas existentes e posições dentro da tela", () => 
     assert.ok(ROOMS[m.room], `sala inexistente: ${m.room}`);
     assert.ok(m.x >= 0 && m.x <= 1440, `x fora da tela: ${m.id}`);
     assert.ok(m.y >= 0 && m.y <= 810, `y fora da tela: ${m.id}`);
-    assert.ok(["touch", "hidden", "quest", "puzzle"].includes(m.mode), `modo inválido: ${m.mode}`);
+    assert.ok(
+      ["touch", "hidden", "quest", "puzzle", "slot", "miku"].includes(m.mode),
+      `modo inválido: ${m.mode}`
+    );
   });
 });
 
@@ -57,6 +60,10 @@ test("markers especiais existem com o modo certo", () => {
   assert.equal(MARKER_BY_ID.forest_egg_demon.mode, "quest");
   assert.equal(MARKER_BY_ID.orchard_difficulty_final.mode, "puzzle");
   assert.equal(MARKER_BY_ID.credits_box_marker.difficulty, "Hard");
+  assert.equal(MARKER_BY_ID.hatsune_miku_marker.mode, "miku");
+  assert.equal(MARKER_BY_ID.hatsune_miku_marker.room, "secret_digital_stage");
+  assert.equal(MARKER_BY_ID.jackpot_marker.mode, "slot");
+  assert.ok(TOTAL_MARKERS >= 140, `expansão deve ter 140+ markers, got ${TOTAL_MARKERS}`);
 });
 
 test("cada sala da conexão existe e tem spawns", () => {

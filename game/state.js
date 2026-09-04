@@ -4,6 +4,7 @@ export const state = {
   saveManager: null,
   hud: null,
   menu: null,
+  characterSelect: null,
   game: null,
   debug: false
 };

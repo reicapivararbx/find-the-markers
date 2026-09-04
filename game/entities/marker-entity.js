@@ -24,7 +24,10 @@ export class MarkerEntity {
     this.collected = false;
     this.destroyed = false;
     this.hidden =
-      def.mode === "hidden" && !saveManager.save.puzzleStates.creditsBoxesSolved;
+      (def.mode === "hidden" && !saveManager.save.puzzleStates.creditsBoxesSolved) ||
+      (def.mode === "miku" &&
+        !saveManager.save.mikuMarkerUnlocked &&
+        !saveManager.save.puzzleStates.mikuPuzzleSolved);
     this.blockFeedbackAt = 0;
 
     const key = ensureMarkerTexture(scene, def.difficulty, def.style);
@@ -87,8 +90,45 @@ export class MarkerEntity {
 
     if (this.hidden) this.sprite.setVisible(false);
     else if (def.mode === "puzzle") {
-      // marker do medidor: visível, mas bloqueado até resolver o puzzle
       this.sprite.setAlpha(0.55);
+    } else if (def.mode === "slot") {
+      this.sprite.setVisible(false);
+      if (this.shadow) this.shadow.setVisible(false);
+    }
+
+    if (def.style === "miku" && !this.hidden) {
+      const aura = scene.add.circle(def.x, def.y - 4, 36, 0x39c5bb, 0.12).setDepth(depth - 2);
+      scene.tweens.add({
+        targets: aura,
+        alpha: { from: 0.08, to: 0.22 },
+        scale: { from: 0.95, to: 1.12 },
+        duration: 1100,
+        yoyo: true,
+        repeat: -1
+      });
+      this.aura = aura;
+      scene.time.addEvent({
+        delay: 1800,
+        loop: true,
+        callback: () => {
+          if (this.collected || this.destroyed || this.hidden) return;
+          const note = scene.add
+            .text(def.x + (Math.random() * 40 - 20), def.y - 50, Math.random() > 0.5 ? "♪" : "♫", {
+              fontFamily: "sans-serif",
+              fontSize: "14px",
+              color: "#39c5bb"
+            })
+            .setAlpha(0.75)
+            .setDepth(depth + 20);
+          scene.tweens.add({
+            targets: note,
+            y: note.y - 40,
+            alpha: 0,
+            duration: 1200,
+            onComplete: () => note.destroy()
+          });
+        }
+      });
     }
 
     if (def.style === "demon") {
@@ -137,10 +177,32 @@ export class MarkerEntity {
     if (this.collected || this.destroyed) return;
     this.collected = true;
 
-    Sfx.collect();
+    if (this.def.style === "miku") Sfx.mikuCollect();
+    else Sfx.collect();
     const bx = this.def.x;
     const by = this.def.y - 24;
     this.spawnBurst(bx, by);
+    if (this.def.style === "miku") {
+      for (let i = 0; i < 8; i += 1) {
+        const note = this.scene.add
+          .text(bx, by, i % 2 ? "♪" : "♫", {
+            fontFamily: "sans-serif",
+            fontSize: "16px",
+            color: "#39c5bb"
+          })
+          .setDepth(by + 50);
+        const angle = (Math.PI * 2 * i) / 8;
+        this.scene.tweens.add({
+          targets: note,
+          x: bx + Math.cos(angle) * 60,
+          y: by + Math.sin(angle) * 40 - 20,
+          alpha: 0,
+          duration: 700,
+          onComplete: () => note.destroy()
+        });
+      }
+      this.hud.toast("🎤 Hatsune Miku Marker encontrado!", { icon: "♪", duration: 3200 });
+    }
     this.sm.collectMarker(this.def.id);
     this.hud.notifyMarker(this.def);
 
@@ -158,24 +220,26 @@ export class MarkerEntity {
     if (this.shadow) {
       this.scene.tweens.add({ targets: this.shadow, alpha: 0, duration: 280 });
     }
+    if (this.aura) {
+      this.scene.tweens.add({ targets: this.aura, alpha: 0, duration: 280 });
+    }
     if (this.zone) {
       this.zone.body.enable = false;
       this.scene.time.delayedCall(50, () => this.zone.destroy());
     }
   }
 
-  // Revela markers escondidos (caixas dos créditos) ou libera os de puzzle.
   reveal() {
-    if (!this.hidden && this.def.mode !== "puzzle") return;
+    if (!this.hidden && this.def.mode !== "puzzle" && this.def.mode !== "miku") return;
     this.hidden = false;
     if (this.shadow) this.shadow.setVisible(true);
+    if (this.aura) this.aura.setVisible(true);
     if (!this.sprite.visible) {
       this.sprite.setVisible(true);
       this.sprite.setScale(0.2);
       this.scene.tweens.add({ targets: this.sprite, scale: 1, duration: 420, ease: "Back.out" });
       this.spawnBurst(this.def.x, this.def.y - 24);
     }
-    // brilho de "pode me coletar"
     this.scene.tweens.add({
       targets: this.sprite,
       scaleX: 1.12,
@@ -210,6 +274,7 @@ export class MarkerEntity {
     if (this.wingFollow) this.wingFollow.destroy();
     if (this.sprite) this.sprite.destroy();
     if (this.shadow) this.shadow.destroy();
+    if (this.aura) this.aura.destroy();
     if (this.zone) this.zone.destroy();
   }
 }
