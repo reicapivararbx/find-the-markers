@@ -109,3 +109,34 @@ test("backtracking: idas progressivas têm volta livre (incl. pomar↔floresta e
   assert.equal(ROOM_CONNECTIONS.room_07_forest.orchard.requiredMarkers ?? 0, 0);
   assert.equal(canEnter(ROOM_CONNECTIONS.room_07_forest.orchard, saveWith(0)), true);
 });
+
+test("casa na mata: floresta direita→casa, casa esquerda→floresta (espelho livre)", async () => {
+  const { ROOM_CONNECTIONS } = await import("../game/config/room-connections.js");
+  const { ROOMS } = await import("../game/rooms/index.js");
+
+  const forestToHouse = ROOM_CONNECTIONS.room_07_forest.right;
+  const houseToForest = ROOM_CONNECTIONS.room_05_house.left;
+
+  assert.equal(forestToHouse.to, "room_05_house");
+  assert.equal(forestToHouse.requiredMarkers ?? 0, 0);
+  assert.equal(forestToHouse.arriveAt, "from_room_07");
+
+  assert.equal(houseToForest.to, "room_07_forest");
+  assert.equal(houseToForest.requiredMarkers ?? 0, 0);
+  assert.equal(houseToForest.arriveAt, "from_room_05");
+  assert.equal(ROOM_CONNECTIONS.room_05_house.right, undefined);
+
+  assert.equal(canEnter(forestToHouse, saveWith(0)), true);
+  assert.equal(canEnter(houseToForest, saveWith(0)), true);
+
+  assert.ok(ROOMS.room_05_house.spawns.from_room_07);
+  assert.ok(ROOMS.room_07_forest.spawns.from_room_05);
+  const houseLeftGate = ROOMS.room_05_house.gates.find((g) => g.key === "left");
+  assert.ok(houseLeftGate, "casa precisa de gate left");
+  assert.ok(houseLeftGate.x < 120, "gate left deve ficar na borda esquerda");
+  assert.equal(
+    ROOMS.room_05_house.gates.some((g) => g.key === "right"),
+    false,
+    "casa não deve ter gate right (volta era espelhada errada)"
+  );
+});
