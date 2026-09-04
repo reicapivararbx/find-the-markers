@@ -736,4 +736,346 @@ body {
     bottom: 170px;
     font-size: 15px;
   }
+
+  .menu-champion-mascot {
+    top: 8px;
+    right: 10px;
+    width: 52px;
+    height: 64px;
+  }
+
+  .menu-card-world {
+    padding: 28px 18px 22px;
+  }
+}
+
+/* ---------- menu world backdrop + champion secret ---------- */
+#menu-screen {
+  overflow: hidden;
+}
+
+.menu-world {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.menu-world-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.menu-world-sky {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, #7eb8e8 0%, transparent 55%),
+    linear-gradient(180deg, #5a9fd4 0%, #8bc4a0 42%, #6a9b5a 100%);
+}
+
+.menu-world-hills {
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 78%, #4a7a3a 0%, transparent 70%),
+    radial-gradient(ellipse 55% 35% at 85% 82%, #3d6b32 0%, transparent 65%),
+    radial-gradient(ellipse 90% 30% at 50% 95%, #2f5a28 0%, transparent 70%);
+  opacity: 0.9;
+}
+
+.menu-world-trees {
+  background-image:
+    radial-gradient(circle at 12% 62%, #1e4a22 0 18px, transparent 19px),
+    radial-gradient(circle at 18% 58%, #2a5e2c 0 28px, transparent 29px),
+    radial-gradient(circle at 78% 55%, #1a4520 0 22px, transparent 23px),
+    radial-gradient(circle at 88% 60%, #2d6230 0 34px, transparent 35px),
+    radial-gradient(circle at 8% 70%, #163818 0 14px, transparent 15px),
+    radial-gradient(circle at 92% 72%, #1c4a24 0 16px, transparent 17px);
+  animation: menu-parallax-trees 18s ease-in-out infinite alternate;
+}
+
+.menu-world-path {
+  background:
+    radial-gradient(ellipse 28% 12% at 50% 88%, #c4a574 0%, transparent 70%),
+    radial-gradient(ellipse 18% 8% at 42% 78%, #b89560 0%, transparent 70%),
+    radial-gradient(ellipse 16% 7% at 58% 72%, #c4a574 0%, transparent 70%);
+  opacity: 0.55;
+}
+
+.menu-world-dust {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 240, 0.55) 0 1.5px, transparent 2px),
+    radial-gradient(circle, rgba(255, 250, 200, 0.4) 0 1px, transparent 2px);
+  background-size: 120px 90px, 80px 110px;
+  background-position: 0 0, 40px 30px;
+  animation: menu-dust-drift 22s linear infinite;
+  opacity: 0.45;
+}
+
+.menu-world-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 18, 24, 0.42);
+  backdrop-filter: blur(2px);
+}
+
+@keyframes menu-parallax-trees {
+  from { transform: translateX(-8px); }
+  to { transform: translateX(10px); }
+}
+
+@keyframes menu-dust-drift {
+  from { background-position: 0 0, 40px 30px; }
+  to { background-position: 120px -90px, -40px 140px; }
+}
+
+.menu-card-world {
+  position: relative;
+  z-index: 2;
+  background: rgba(253, 250, 241, 0.94);
+  backdrop-filter: blur(6px);
+}
+
+.menu-save-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 auto 14px;
+  padding: 8px 14px;
+  max-width: 320px;
+  border: 2px solid rgba(51, 51, 61, 0.25);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+}
+
+.menu-save-card[hidden] {
+  display: none !important;
+}
+
+.menu-save-label {
+  font-weight: 800;
+  letter-spacing: 1px;
+  opacity: 0.55;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.menu-save-summary {
+  font-weight: 700;
+}
+
+.menu-champion-mascot {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 64px;
+  height: 78px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 5;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  outline: none;
+}
+
+.menu-champion-mascot:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+.menu-champion-body {
+  display: block;
+  width: 44px;
+  height: 52px;
+  margin: 14px auto 0;
+  border-radius: 14px 14px 18px 18px;
+  background: linear-gradient(180deg, #fffef8 0%, #f2c94c 45%, #e8a13c 100%);
+  border: 2.5px solid #2a2418;
+  box-shadow: 0 4px 0 rgba(42, 36, 24, 0.2), 0 0 0 0 rgba(242, 201, 76, 0);
+  position: relative;
+}
+
+.menu-champion-crown {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+  line-height: 1;
+  color: #f2c94c;
+  text-shadow: 0 1px 0 #2a2418;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.menu-champion-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #2a2418;
+  pointer-events: none;
+}
+
+.menu-champion-bubble {
+  position: absolute;
+  top: -4px;
+  left: -8px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #fff;
+  border: 2px solid #2a2418;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 18px;
+  pointer-events: none;
+}
+
+.menu-champion-bubble[hidden] {
+  display: none !important;
+}
+
+.menu-champion-spark {
+  position: absolute;
+  font-size: 12px;
+  color: #f2c94c;
+  pointer-events: none;
+  animation: menu-spark-rise 0.7s ease-out forwards;
+}
+
+@keyframes menu-spark-rise {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-28px) scale(1.4); }
+}
+
+.menu-champion-mascot.rx-sway .menu-champion-body {
+  animation: menu-sway 0.45s ease-in-out;
+}
+
+.menu-champion-mascot.rx-look .menu-champion-face {
+  transform: translateX(3px);
+  transition: transform 0.2s ease;
+}
+
+.menu-champion-mascot.rx-irritate .menu-champion-body {
+  animation: menu-shake 0.35s ease-in-out;
+}
+
+.menu-champion-mascot.rx-nudge {
+  transform: translate(4px, -3px);
+  transition: transform 0.15s ease;
+}
+
+.menu-champion-mascot.rx-glow .menu-champion-body,
+.menu-champion-mascot.is-solved .menu-champion-body {
+  box-shadow: 0 4px 0 rgba(42, 36, 24, 0.2), 0 0 18px 4px rgba(242, 201, 76, 0.55);
+}
+
+.menu-champion-mascot.rx-blink .menu-champion-face {
+  animation: menu-blink 0.6s ease-in-out 2;
+}
+
+.menu-champion-mascot.rx-spark .menu-champion-body {
+  filter: brightness(1.08);
+}
+
+.menu-champion-mascot.rx-freeze .menu-champion-body {
+  animation: none;
+  filter: saturate(0.7);
+}
+
+.menu-champion-mascot.is-awakening .menu-champion-body {
+  animation: menu-awaken-pulse 0.8s ease-in-out infinite;
+}
+
+.menu-champion-mascot.is-awakened .menu-champion-crown {
+  color: #fff8c8;
+  text-shadow: 0 0 8px #f2c94c, 0 1px 0 #2a2418;
+}
+
+@keyframes menu-sway {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(-8deg); }
+  70% { transform: rotate(8deg); }
+}
+
+@keyframes menu-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+@keyframes menu-blink {
+  0%, 100% { opacity: 1; }
+  40%, 60% { opacity: 0.15; }
+}
+
+@keyframes menu-awaken-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 12px 2px rgba(242, 201, 76, 0.4); }
+  50% { transform: scale(1.08); box-shadow: 0 0 28px 8px rgba(242, 201, 76, 0.75); }
+}
+
+.menu-champion-awaken {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 10, 14, 0.72);
+  pointer-events: none;
+}
+
+.menu-champion-awaken.is-visible {
+  display: flex;
+  animation: menu-awaken-fade 2.8s ease forwards;
+}
+
+.menu-champion-awaken p {
+  text-align: center;
+  color: #f6efdd;
+  font-size: clamp(18px, 3.5vw, 28px);
+  font-weight: 700;
+  line-height: 1.45;
+  text-shadow: 0 0 24px rgba(242, 201, 76, 0.6);
+  padding: 0 24px;
+}
+
+.menu-champion-awaken strong {
+  color: #f2c94c;
+  font-size: 1.15em;
+}
+
+@keyframes menu-awaken-fade {
+  0% { opacity: 0; }
+  12% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.marker-chip .chip-area {
+  display: block;
+  font-size: 10px;
+  opacity: 0.7;
+  margin-top: 2px;
+  line-height: 1.25;
+  max-width: 110px;
+}
+
+.marker-chip .chip-hint {
+  font-style: italic;
+  opacity: 0.65;
+}
+
+.marker-chip.is-menu-champion.is-locked .chip-diff {
+  color: #c9a227;
 }

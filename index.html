@@ -17,14 +17,40 @@
 
       <!-- ================= TELA DE TÍTULO ================= -->
       <section id="menu-screen" class="screen" aria-labelledby="game-title">
-        <div class="menu-card">
+        <div class="menu-world" aria-hidden="true">
+          <div class="menu-world-layer menu-world-sky"></div>
+          <div class="menu-world-layer menu-world-hills"></div>
+          <div class="menu-world-layer menu-world-trees"></div>
+          <div class="menu-world-layer menu-world-path"></div>
+          <div class="menu-world-layer menu-world-dust"></div>
+          <div class="menu-world-dim"></div>
+        </div>
+        <div class="menu-card menu-card-world">
+          <button
+            type="button"
+            id="menu-champion-mascot"
+            class="menu-champion-mascot"
+            aria-label="Decorative marker"
+          >
+            <span class="menu-champion-crown" aria-hidden="true">♛</span>
+            <span class="menu-champion-body" aria-hidden="true">
+              <span id="menu-champion-face" class="menu-champion-face">·‿·</span>
+            </span>
+            <span id="menu-champion-bubble" class="menu-champion-bubble" hidden>?</span>
+          </button>
           <p class="eyebrow">2D · EXPLORAÇÃO · COLEÇÃO</p>
-          <h1 id="game-title">Find the Markers <small>(Reuter's Mix)</small></h1>
+          <h1 id="game-title">FIND THE MARKERS <small>(Reuter's Mix)</small></h1>
           <p class="menu-description">
             Explore as áreas, encontre os markers, resolva puzzles e desbloqueie novas regiões.
           </p>
+          <div id="menu-save-card" class="menu-save-card" hidden>
+            <span class="menu-save-label">Save</span>
+            <span id="menu-save-summary" class="menu-save-summary">0 markers</span>
+          </div>
           <div class="menu-actions">
-            <button id="btn-continue" class="button button-primary" type="button">Continuar</button>
+            <button id="btn-continue" class="button button-primary" type="button">
+              <span id="btn-play-label">▶ CONTINUAR</span>
+            </button>
             <button id="btn-new" class="button button-ghost" type="button">Novo jogo</button>
           </div>
           <div id="new-confirm" class="confirm-box">
@@ -52,6 +78,9 @@
             <span><strong>clique/toque</strong> puzzles</span>
           </div>
           <p class="menu-credits">Made by Miguel Reuter (Owner) · Matteo Zanona (Tester) · Raphael José (Co-Owner)</p>
+        </div>
+        <div id="menu-champion-awaken" class="menu-champion-awaken" aria-live="polite">
+          <p id="menu-champion-awaken-msg"></p>
         </div>
       </section>
 
