@@ -14,20 +14,32 @@ function idleTweenFor(style, def) {
   if (style === "glitch" || style === "null_void") {
     return { y: y - 8, angle: { from: -4, to: 4 }, duration: 720, delay: 0 };
   }
-  if (style === "neon_emit" || style === "neon" || style === "lantern") {
+  if (style === "neon_emit" || style === "neon" || style === "lantern" || style === "foghorn") {
     return { y: y - 6, alpha: { from: 0.82, to: 1 }, duration: 700 };
   }
-  if (style === "ice" || style === "crystal") {
+  if (style === "ice" || style === "crystal" || style === "ore") {
     return { y: y - 4, angle: { from: -2, to: 2 }, duration: 1400 };
   }
-  if (style === "sewer" || style === "pond") {
+  if (style === "sewer" || style === "pond" || style === "tide" || style === "buoy") {
     return { y: y - 3, scaleX: { from: 0.97, to: 1.03 }, duration: 1100 };
   }
-  if (style === "bee" || style === "bloom" || style === "petal") {
+  if (style === "bee" || style === "bloom" || style === "petal" || style === "sail") {
     return { y: y - 10, angle: { from: -6, to: 6 }, duration: 800 };
   }
-  if (style === "vine" || style === "moss" || style === "root") {
+  if (style === "vine" || style === "moss" || style === "root" || style === "rope" || style === "net") {
     return { y: y - 4, angle: { from: -1.5, to: 1.5 }, duration: 1300 };
+  }
+  if (style === "cog" || style === "gear" || style === "bolt" || style === "wrench") {
+    return { y: y - 3, angle: { from: -8, to: 8 }, duration: 1600 };
+  }
+  if (style === "smokestack" || style === "oil" || style === "pipe" || style === "rust") {
+    return { y: y - 4, alpha: { from: 0.88, to: 1 }, duration: 1200 };
+  }
+  if (style === "cart" || style === "rail" || style === "conveyor") {
+    return { y: y - 2, x: def.x + 4, duration: 900 };
+  }
+  if (style === "dynamite" || style === "coal" || style === "shaft") {
+    return { y: y - 5, scaleY: { from: 0.96, to: 1.04 }, duration: 1000 };
   }
   if (style === "miku") {
     return { y: y - 7, duration: 1100 };

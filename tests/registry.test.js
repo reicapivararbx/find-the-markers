@@ -102,12 +102,20 @@ test("cada sala com markers tem seus próprios markers registrados", () => {
   }
 });
 
+function assertOrganicArea(roomId, expectedStyles) {
+  const markers = markersForRoom(roomId).filter((m) => m.mode === "touch");
+  assert.equal(markers.length, 10);
+  const styles = markers.map((m) => m.style);
+  assert.equal(new Set(styles).size, 10, `${roomId}: silhuetas únicas`);
+  assert.deepEqual(styles, expectedStyles);
+  const xs = markers.map((m) => m.x);
+  const ys = markers.map((m) => m.y);
+  assert.ok(Math.max(...xs) - Math.min(...xs) > 400, `${roomId}: layout X orgânico`);
+  assert.ok(Math.max(...ys) - Math.min(...ys) > 200, `${roomId}: layout Y orgânico`);
+}
+
 test("Jardim: 10 markers com silhuetas únicas e layout orgânico", () => {
-  const garden = markersForRoom("room_11_garden").filter((m) => m.mode === "touch");
-  assert.equal(garden.length, 10);
-  const styles = garden.map((m) => m.style);
-  assert.equal(new Set(styles).size, 10, "cada marker do jardim deve ter silhueta própria");
-  const expected = [
+  assertOrganicArea("room_11_garden", [
     "moss",
     "vine",
     "bloom",
@@ -118,10 +126,44 @@ test("Jardim: 10 markers com silhuetas únicas e layout orgânico", () => {
     "root",
     "petal",
     "greenhouse"
-  ];
-  assert.deepEqual(styles, expected);
-  const xs = garden.map((m) => m.x);
-  assert.ok(Math.max(...xs) - Math.min(...xs) > 400, "layout espalhado no eixo X");
-  const ys = garden.map((m) => m.y);
-  assert.ok(Math.max(...ys) - Math.min(...ys) > 200, "layout espalhado no eixo Y");
+  ]);
+});
+
+test("Porto/Fábrica/Minas: silhuetas únicas e layout orgânico", () => {
+  assertOrganicArea("room_12_harbor", [
+    "anchor",
+    "buoy",
+    "crane",
+    "dock",
+    "foghorn",
+    "net",
+    "pier",
+    "rope",
+    "sail",
+    "tide"
+  ]);
+  assertOrganicArea("room_13_factory", [
+    "bolt",
+    "cog",
+    "conveyor",
+    "gear",
+    "oil",
+    "pipe",
+    "press",
+    "rust",
+    "smokestack",
+    "wrench"
+  ]);
+  assertOrganicArea("room_14_mine", [
+    "cart",
+    "coal",
+    "crystal",
+    "dynamite",
+    "helmet",
+    "lantern",
+    "ore",
+    "pickaxe",
+    "rail",
+    "shaft"
+  ]);
 });

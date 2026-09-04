@@ -43,7 +43,35 @@ const STYLES = Object.freeze([
   "sewer",
   "ice",
   "neon_emit",
-  "null_void"
+  "null_void",
+  "anchor",
+  "buoy",
+  "crane",
+  "dock",
+  "foghorn",
+  "net",
+  "pier",
+  "rope",
+  "sail",
+  "tide",
+  "bolt",
+  "cog",
+  "conveyor",
+  "gear",
+  "oil",
+  "pipe",
+  "press",
+  "rust",
+  "smokestack",
+  "wrench",
+  "cart",
+  "coal",
+  "dynamite",
+  "helmet",
+  "ore",
+  "pickaxe",
+  "rail",
+  "shaft"
 ]);
 
 const GARDEN_STYLES = Object.freeze([
@@ -70,6 +98,84 @@ const GARDEN_LAYOUT = Object.freeze([
   { x: 420, y: 720 },
   { x: 960, y: 720 },
   { x: 1280, y: 480 }
+]);
+
+const HARBOR_STYLES = Object.freeze([
+  "anchor",
+  "buoy",
+  "crane",
+  "dock",
+  "foghorn",
+  "net",
+  "pier",
+  "rope",
+  "sail",
+  "tide"
+]);
+
+const HARBOR_LAYOUT = Object.freeze([
+  { x: 160, y: 480 },
+  { x: 320, y: 680 },
+  { x: 480, y: 400 },
+  { x: 640, y: 620 },
+  { x: 800, y: 360 },
+  { x: 940, y: 700 },
+  { x: 1080, y: 480 },
+  { x: 1220, y: 640 },
+  { x: 400, y: 540 },
+  { x: 1280, y: 400 }
+]);
+
+const FACTORY_STYLES = Object.freeze([
+  "bolt",
+  "cog",
+  "conveyor",
+  "gear",
+  "oil",
+  "pipe",
+  "press",
+  "rust",
+  "smokestack",
+  "wrench"
+]);
+
+const FACTORY_LAYOUT = Object.freeze([
+  { x: 180, y: 400 },
+  { x: 360, y: 640 },
+  { x: 520, y: 360 },
+  { x: 680, y: 700 },
+  { x: 840, y: 420 },
+  { x: 980, y: 620 },
+  { x: 1120, y: 380 },
+  { x: 1260, y: 560 },
+  { x: 300, y: 520 },
+  { x: 720, y: 500 }
+]);
+
+const MINE_STYLES = Object.freeze([
+  "cart",
+  "coal",
+  "crystal",
+  "dynamite",
+  "helmet",
+  "lantern",
+  "ore",
+  "pickaxe",
+  "rail",
+  "shaft"
+]);
+
+const MINE_LAYOUT = Object.freeze([
+  { x: 200, y: 420 },
+  { x: 380, y: 680 },
+  { x: 540, y: 360 },
+  { x: 700, y: 640 },
+  { x: 860, y: 400 },
+  { x: 1000, y: 720 },
+  { x: 1140, y: 480 },
+  { x: 1280, y: 600 },
+  { x: 320, y: 540 },
+  { x: 920, y: 540 }
 ]);
 
 const AREA_SPECS = Object.freeze([
@@ -107,7 +213,9 @@ const AREA_SPECS = Object.freeze([
       "Sail Marker",
       "Tide Marker"
     ],
-    count: 10
+    count: 10,
+    styles: HARBOR_STYLES,
+    layout: HARBOR_LAYOUT
   },
   {
     room: "room_13_factory",
@@ -124,7 +232,9 @@ const AREA_SPECS = Object.freeze([
       "Smokestack Marker",
       "Wrench Marker"
     ],
-    count: 10
+    count: 10,
+    styles: FACTORY_STYLES,
+    layout: FACTORY_LAYOUT
   },
   {
     room: "room_14_mine",
@@ -141,7 +251,9 @@ const AREA_SPECS = Object.freeze([
       "Rail Marker",
       "Shaft Marker"
     ],
-    count: 10
+    count: 10,
+    styles: MINE_STYLES,
+    layout: MINE_LAYOUT
   },
   {
     room: "room_15_lab",
@@ -352,24 +464,18 @@ export const COIN_DEFS = Object.freeze([
   { id: "coin_garden_02", room: "room_11_garden", x: 620, y: 460 },
   { id: "coin_garden_03", room: "room_11_garden", x: 980, y: 580 },
   { id: "coin_garden_04", room: "room_11_garden", x: 1120, y: 720 },
-  ...Array.from({ length: 4 }, (_, i) => ({
-    id: `coin_harbor_${String(i + 1).padStart(2, "0")}`,
-    room: "room_12_harbor",
-    x: 280 + i * 240,
-    y: 690
-  })),
-  ...Array.from({ length: 4 }, (_, i) => ({
-    id: `coin_factory_${String(i + 1).padStart(2, "0")}`,
-    room: "room_13_factory",
-    x: 260 + i * 250,
-    y: 700
-  })),
-  ...Array.from({ length: 4 }, (_, i) => ({
-    id: `coin_mine_${String(i + 1).padStart(2, "0")}`,
-    room: "room_14_mine",
-    x: 300 + i * 220,
-    y: 680
-  })),
+  { id: "coin_harbor_01", room: "room_12_harbor", x: 220, y: 560 },
+  { id: "coin_harbor_02", room: "room_12_harbor", x: 560, y: 720 },
+  { id: "coin_harbor_03", room: "room_12_harbor", x: 900, y: 440 },
+  { id: "coin_harbor_04", room: "room_12_harbor", x: 1180, y: 680 },
+  { id: "coin_factory_01", room: "room_13_factory", x: 240, y: 480 },
+  { id: "coin_factory_02", room: "room_13_factory", x: 580, y: 700 },
+  { id: "coin_factory_03", room: "room_13_factory", x: 920, y: 400 },
+  { id: "coin_factory_04", room: "room_13_factory", x: 1200, y: 620 },
+  { id: "coin_mine_01", room: "room_14_mine", x: 260, y: 500 },
+  { id: "coin_mine_02", room: "room_14_mine", x: 600, y: 700 },
+  { id: "coin_mine_03", room: "room_14_mine", x: 940, y: 380 },
+  { id: "coin_mine_04", room: "room_14_mine", x: 1220, y: 640 },
   ...Array.from({ length: 4 }, (_, i) => ({
     id: `coin_lab_${String(i + 1).padStart(2, "0")}`,
     room: "room_15_lab",
