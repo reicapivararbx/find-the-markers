@@ -62,6 +62,50 @@ test("feira future30: abre Jardim (30 markers, room_11_garden, MARKER_GATES.mark
   assert.equal(canEnter(future, saveWith(30)), true);
 });
 
+test("Jardim Suspenso: cadeia feira↔jardim↔estufa com spawns e volta livre", async () => {
+  const { ROOM_CONNECTIONS } = await import("../game/config/room-connections.js");
+  const { ROOMS } = await import("../game/rooms/index.js");
+  const { isPositionWalkable } = await import("../game/physics/walkability.js");
+  const { VIEW } = await import("../game/config/game-config.js");
+
+  assert.ok(ROOMS.room_11_garden, "room_11_garden registrada");
+  assert.ok(ROOMS.secret_11_greenhouse, "secret_11_greenhouse registrada");
+
+  const future = ROOM_CONNECTIONS.room_01_market.future30;
+  const gardenLeft = ROOM_CONNECTIONS.room_11_garden.left;
+  const gardenSecret = ROOM_CONNECTIONS.room_11_garden.secret;
+  const greenhouseExit = ROOM_CONNECTIONS.secret_11_greenhouse.exit;
+
+  assert.equal(future.to, "room_11_garden");
+  assert.equal(gardenLeft.to, "room_01_market");
+  assert.equal(gardenLeft.requiredMarkers ?? 0, 0);
+  assert.equal(gardenLeft.arriveAt, "from_room_11");
+  assert.equal(gardenSecret.to, "secret_11_greenhouse");
+  assert.equal(greenhouseExit.to, "room_11_garden");
+  assert.equal(greenhouseExit.arriveAt, "from_secret");
+
+  assert.equal(canEnter(gardenLeft, saveWith(0)), true);
+  assert.equal(canEnter(gardenSecret, saveWith(0)), true);
+  assert.equal(canEnter(greenhouseExit, saveWith(0)), true);
+
+  assert.ok(ROOMS.room_11_garden.spawns.from_room_01);
+  assert.ok(ROOMS.room_11_garden.spawns.from_secret);
+  assert.ok(ROOMS.room_01_market.spawns.from_room_11);
+  assert.ok(ROOMS.secret_11_greenhouse.spawns.from_room_11 || ROOMS.secret_11_greenhouse.spawns.default);
+
+  const leftGate = ROOMS.room_11_garden.gates.find((g) => g.key === "left");
+  assert.ok(leftGate, "gate left no jardim");
+  assert.ok(leftGate.x < 120);
+
+  for (const [label, spawn] of Object.entries(ROOMS.room_11_garden.spawns)) {
+    assert.equal(
+      isPositionWalkable(spawn.x, spawn.y, [], VIEW),
+      true,
+      `spawn ${label} deve ser walkable sem solids`
+    );
+  }
+});
+
 test("digital stage: exige 5 notas musicais", () => {
   const exit = { to: "secret_digital_stage", requireMusicNotes: 5 };
   assert.equal(canEnter(exit, saveWith(0)), false);
