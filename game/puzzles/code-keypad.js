@@ -1,4 +1,5 @@
 import { Sfx } from "../core/audio-manager.js";
+import { state } from "../state.js";
 
 const KEYS = Object.freeze([
   ["1", "2", "3"],
@@ -17,6 +18,9 @@ export class CodeKeypad {
     this.value = "";
     this.closed = false;
     this.depth = 50000;
+
+    state.hud?.setPuzzleModal?.(true);
+    scene.physics?.pause?.();
 
     this.root = scene.add.container(720, 405).setDepth(this.depth).setScrollFactor(0);
     this.block = scene.add
@@ -145,19 +149,27 @@ export class CodeKeypad {
 
   submit() {
     if (this.value.length < this.length) {
-      this.hintText.setText("Digite os 6 números").setColor("#d1495b");
+      this.hintText.setText("Código incompleto").setColor("#d1495b");
       Sfx.puzzleError();
       return;
     }
     const ok = this.value === this.expected;
     if (!ok) {
-      this.hintText.setText("Código incorreto").setColor("#d1495b");
+      this.hintText.setText("❌ Código incorreto").setColor("#d1495b");
       Sfx.puzzleError();
+      this.scene.tweens.add({
+        targets: this.displayText,
+        x: { from: -8, to: 0 },
+        duration: 80,
+        yoyo: true,
+        repeat: 3
+      });
       this.value = "";
       this.displayText.setText(this.formatDisplay());
       this.onSubmit?.(false, this.value);
       return;
     }
+    this.hintText.setText("ACESSO LIBERADO").setColor("#2f7a4f");
     Sfx.puzzleSolved();
     this.close();
     this.onSubmit?.(true, this.value);
@@ -174,5 +186,9 @@ export class CodeKeypad {
     this.closed = true;
     window.removeEventListener("keydown", this.keyHandler);
     this.root.destroy(true);
+    state.hud?.setPuzzleModal?.(false);
+    if (!this.scene.scene?.isPaused?.() && !state.hud?.pauseOpen) {
+      this.scene.physics?.resume?.();
+    }
   }
 }
