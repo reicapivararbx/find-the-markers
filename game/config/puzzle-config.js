@@ -53,3 +53,24 @@ export const CREDITS_BOXES = Object.freeze([
   { id: "box_left", x: 1150, y: 640 },
   { id: "box_right", x: 1260, y: 640 }
 ]);
+
+// Dois códigos DISTINTOS — nunca misturar (porta ≠ capivara).
+export const POOL_HALL_DOOR_CODE = "321123";
+export const CAPYBARA_CODE = "234567";
+
+export const SHADOW_WATCHER = Object.freeze({
+  positions: Object.freeze([
+    Object.freeze({ x: 320, y: 560 }),
+    Object.freeze({ x: 980, y: 500 }),
+    Object.freeze({ x: 620, y: 640 })
+  ]),
+  fragments: Object.freeze(["23", "45", "67"]),
+  displayMs: 2000
+});
+
+export const SECRET_POOL = Object.freeze({
+  roomId: "secret_pool_room",
+  capybara: Object.freeze({ x: 1080, y: 580 }),
+  markerSpawn: Object.freeze({ x: 1180, y: 600 }),
+  whiteDoor: Object.freeze({ x: 1345, y: 420 })
+});

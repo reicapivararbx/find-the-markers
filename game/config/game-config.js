@@ -34,6 +34,19 @@ export const PLAYER_CHARACTERS = Object.freeze({
   })
 });
 
+export const SECRET_NPC_SPRITES = Object.freeze({
+  shadow_watcher: Object.freeze({
+    textureKey: "npc_shadow_watcher",
+    path: "imagens/npcs-secretos/o-observador.png",
+    displayHeight: 120
+  }),
+  mysterious_capybara: Object.freeze({
+    textureKey: "npc_mysterious_capybara",
+    path: "imagens/npcs-secretos/capivara.png",
+    displayHeight: 96
+  })
+});
+
 export const TRANSITION = Object.freeze({
   fadeMs: 280,
   cooldownMs: 450

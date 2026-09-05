@@ -102,5 +102,10 @@ export const Sfx = {
   reveal: () => {
     tone({ freq: 520, duration: 0.1, type: "sine", volume: 0.1 });
     tone({ freq: 780, duration: 0.16, type: "sine", volume: 0.1, delay: 0.09 });
-  }
+  },
+  glitch: () => {
+    noise({ duration: 0.12, volume: 0.045 });
+    tone({ freq: 180, endFreq: 90, duration: 0.14, type: "sawtooth", volume: 0.05, delay: 0.02 });
+  },
+  keypad: () => tone({ freq: 640, duration: 0.04, type: "square", volume: 0.05 })
 };

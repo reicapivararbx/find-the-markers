@@ -1,6 +1,6 @@
 import Phaser from "../phaser-global.js";
 import { generateAllTextures, markerTextureKey } from "../assets/textures.js";
-import { VIEW, PLAYER_CHARACTERS } from "../config/game-config.js";
+import { VIEW, PLAYER_CHARACTERS, SECRET_NPC_SPRITES } from "../config/game-config.js";
 import { METER_ROWS } from "../config/difficulty-metadata.js";
 
 export class BootScene extends Phaser.Scene {
@@ -12,8 +12,11 @@ export class BootScene extends Phaser.Scene {
     Object.values(PLAYER_CHARACTERS).forEach((def) => {
       this.load.image(def.textureKey, def.path);
     });
+    Object.values(SECRET_NPC_SPRITES).forEach((def) => {
+      this.load.image(def.textureKey, def.path);
+    });
     this.load.on("loaderror", (file) => {
-      console.error(`[Boot] Falha ao carregar sprite do player: ${file?.key} → ${file?.url}`);
+      console.error(`[Boot] Falha ao carregar sprite: ${file?.key} → ${file?.url}`);
     });
   }
 
@@ -21,6 +24,11 @@ export class BootScene extends Phaser.Scene {
     Object.values(PLAYER_CHARACTERS).forEach((def) => {
       if (!this.textures.exists(def.textureKey)) {
         console.error(`[Boot] Textura ausente após load: ${def.textureKey} (${def.path})`);
+      }
+    });
+    Object.values(SECRET_NPC_SPRITES).forEach((def) => {
+      if (!this.textures.exists(def.textureKey)) {
+        console.error(`[Boot] Textura NPC ausente: ${def.textureKey} (${def.path})`);
       }
     });
     generateAllTextures(this);

@@ -1,8 +1,11 @@
 // Event bus minimalista para desacoplar HUD/puzzles/save.
 export const Events = {
   MARKER_COLLECTED: "marker:collected",
+  MARKER_UNLOCKED: "marker:unlocked",
   MARKER_COUNT_CHANGED: "markerCount:changed",
   EGG_FOUND: "egg:found",
+  PUZZLE_STARTED: "puzzle:started",
+  PUZZLE_PROGRESS: "puzzle:progress",
   PUZZLE_SOLVED: "puzzle:solved",
   PUZZLE_STEP: "puzzle:step",
   PUZZLE_RESET: "puzzle:reset",
