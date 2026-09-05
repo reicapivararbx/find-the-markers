@@ -49,10 +49,10 @@ export default {
     ]);
 
     kit.tree(scene, ctx, 340, 480, { scale: 1.25, fruits: 7 });
-    kit.tree(scene, ctx, 700, 460, { scale: 1.05, fruits: 5, canopy: 0x8fba6a });
-    kit.tree(scene, ctx, 990, 500, { scale: 1.15, fruits: 6 });
+    kit.tree(scene, ctx, 640, 460, { scale: 1.05, fruits: 5, canopy: 0x8fba6a });
+    kit.tree(scene, ctx, 860, 500, { scale: 1.15, fruits: 6 });
     kit.bush(scene, ctx, 200, 700, 1.0);
-    kit.bush(scene, ctx, 850, 680, 0.9);
+    kit.bush(scene, ctx, 760, 680, 0.9);
 
     kit.crate(scene, ctx, 180, 620, 70, 48, 0xb98a5a);
     kit.crate(scene, ctx, 560, 640, 70, 48, 0xb98a5a);
@@ -60,17 +60,15 @@ export default {
     kit.rocks(scene, ctx, 450, 360, 0.9);
     kit.branch(scene, ctx, 250, 420, 380);
 
-    // torre do medidor
-    const towerBase = 640;
-    kit.shadow(scene, 1205, towerBase + 4, 200, 28, 0.3);
-    const tower = scene.add.graphics().setDepth(towerBase);
-    tower.fillStyle(0xd8d2c2, 1);
-    tower.fillRoundedRect(1110, towerBase - 280, 190, 280, 10);
-    tower.lineStyle(4, 0x33333d, 0.9);
-    tower.strokeRoundedRect(1110, towerBase - 280, 190, 280, 10);
-    tower.fillStyle(0x000000, 0.1);
-    tower.fillRect(1260, towerBase - 280, 40, 280);
-    ctx.solid(1120, towerBase - 36, 170, 40);
+    const standX = 1180;
+    const standBase = 700;
+    kit.shadow(scene, standX, standBase + 4, 160, 24, 0.28);
+    const stand = scene.add.graphics().setDepth(standBase - 40);
+    stand.fillStyle(0xc4b8a0, 1);
+    stand.fillRoundedRect(standX - 70, standBase - 36, 140, 36, 6);
+    stand.lineStyle(3, 0x33333d, 0.85);
+    stand.strokeRoundedRect(standX - 70, standBase - 36, 140, 36, 6);
+    ctx.solid(standX - 64, standBase - 28, 128, 30);
   },
 
   wire(ctx) {
@@ -78,8 +76,8 @@ export default {
 
     const keeper = new Npc(scene, {
       id: "meter_keeper",
-      x: 1200,
-      y: 340,
+      x: 980,
+      y: 520,
       texture: ensureMarkerTexture(scene, "Hard", "note"),
       scale: 1.3,
       dialogue:
@@ -88,8 +86,8 @@ export default {
     ctx.addNpc(keeper);
 
     scene.difficultyMeter = new DifficultyMeterPuzzle(scene, {
-      cx: 1200,
-      topY: 380,
+      cx: 1180,
+      topY: 200,
       saveManager: sm,
       hud,
       onSolved: () => {

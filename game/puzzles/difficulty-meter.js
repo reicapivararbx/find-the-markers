@@ -7,8 +7,22 @@ import { METER_ROWS, difficultyColor } from "../config/difficulty-metadata.js";
 import { GAMEPLAY } from "../config/game-config.js";
 import { Sfx } from "../core/audio-manager.js";
 
-const ROW_HEIGHT = 20;
-const ROW_WIDTH = 200;
+const LAYOUT = Object.freeze({
+  panelW: 300,
+  padX: 14,
+  padTop: 44,
+  padBottom: 14,
+  titleY: 18,
+  rowH: 28,
+  rowGap: 3,
+  corner: 12,
+  depth: 400
+});
+
+function panelHeight() {
+  const rowsH = METER_ROWS.length * LAYOUT.rowH + (METER_ROWS.length - 1) * LAYOUT.rowGap;
+  return LAYOUT.padTop + rowsH + LAYOUT.padBottom;
+}
 
 export class DifficultyMeterPuzzle {
   constructor(scene, { cx, topY, saveManager, hud, onSolved }) {
@@ -19,63 +33,83 @@ export class DifficultyMeterPuzzle {
     this.progress = 0;
     this.solved = saveManager.save.puzzleStates.difficultySolved;
     this.playerNear = false;
+    this.cx = cx;
+    this.topY = topY;
 
-    this.container = scene.add.container(cx, topY).setDepth(9);
+    const h = panelHeight();
+    const halfW = LAYOUT.panelW / 2;
 
-    // corpo do medidor
+    this.container = scene.add.container(cx, topY).setDepth(LAYOUT.depth);
+
     const body = scene.add.graphics();
-    const totalHeight = METER_ROWS.length * ROW_HEIGHT + 16;
-    body.fillStyle(0xfdfaf1, 1);
-    body.fillRoundedRect(-ROW_WIDTH / 2 - 10, -8, ROW_WIDTH + 20, totalHeight + 16, 10);
+    body.fillStyle(0xf6f2e8, 1);
+    body.fillRoundedRect(-halfW, 0, LAYOUT.panelW, h, LAYOUT.corner);
     body.lineStyle(4, 0x33333d, 1);
-    body.strokeRoundedRect(-ROW_WIDTH / 2 - 10, -8, ROW_WIDTH + 20, totalHeight + 16, 10);
+    body.strokeRoundedRect(-halfW, 0, LAYOUT.panelW, h, LAYOUT.corner);
+    body.fillStyle(0x33333d, 0.08);
+    body.fillRoundedRect(-halfW + 4, 4, LAYOUT.panelW - 8, 32, 8);
     this.container.add(body);
 
-    // 12 linhas clicáveis, ordem visual do desenho (Finale no topo ... Effortless na base)
+    const title = scene.add
+      .text(0, LAYOUT.titleY, "DIFFICULTY METER", {
+        fontFamily: '"Comic Sans MS", "Segoe UI", sans-serif',
+        fontSize: "15px",
+        fontStyle: "bold",
+        color: "#33333d"
+      })
+      .setOrigin(0.5);
+    this.container.add(title);
+
+    const rowW = LAYOUT.panelW - LAYOUT.padX * 2;
     this.rows = METER_ROWS.map((label, index) => {
-      const y = index * ROW_HEIGHT + ROW_HEIGHT / 2 + 2;
+      const y = LAYOUT.padTop + index * (LAYOUT.rowH + LAYOUT.rowGap) + LAYOUT.rowH / 2;
       const rowColor = difficultyColor(label);
-      const rect = scene.add.rectangle(0, y, ROW_WIDTH, ROW_HEIGHT - 2, rowColor, 0.92);
+      const rect = scene.add.rectangle(0, y, rowW, LAYOUT.rowH, rowColor, 0.95);
+      rect.setStrokeStyle(2, 0x33333d, 0.55);
+      rect.setInteractive({ useHandCursor: true });
+
       const text = scene.add
         .text(0, y, label, {
           fontFamily: '"Comic Sans MS", "Segoe UI", sans-serif',
-          fontSize: "13px",
+          fontSize: "14px",
           fontStyle: "bold",
           color: "#ffffff",
-          stroke: "#33333d",
-          strokeThickness: 2.5
+          stroke: "#2b2b33",
+          strokeThickness: 3
         })
         .setOrigin(0.5);
+
       this.container.add([rect, text]);
 
-      rect.on("pointerover", () => rect.setScale(1.04, 1.08));
+      rect.on("pointerover", () => {
+        if (!this.solved) rect.setScale(1.02, 1.06);
+      });
       rect.on("pointerout", () => rect.setScale(1, 1));
       rect.on("pointerdown", () => this.click(label, rect));
 
-      return { label, rect, index };
+      return { label, rect, text, index };
     });
 
     if (this.solved) {
       this.rows.forEach((row) => row.rect.setFillStyle(0x62c462, 0.55));
     }
 
-    // contador discreto de progresso
     this.progressText = scene.add
-      .text(cx, topY + totalHeight + 22, this.solved ? "Sequência correta! ✓" : "Clique na ordem das dificuldades", {
+      .text(cx, topY + h + 18, this.solved ? "Sequência correta! ✓" : "Clique na ordem das dificuldades", {
         fontFamily: '"Comic Sans MS", "Segoe UI", sans-serif',
-        fontSize: "15px",
+        fontSize: "14px",
         color: "#33333d",
-        backgroundColor: "#fdfaf1dd",
-        padding: { x: 8, y: 4 }
+        backgroundColor: "#fdfaf1ee",
+        padding: { x: 10, y: 5 }
       })
       .setOrigin(0.5)
-      .setDepth(9);
+      .setDepth(LAYOUT.depth);
 
     this.flashRect = scene.add
-      .rectangle(cx, topY + totalHeight / 2, ROW_WIDTH + 20, totalHeight + 16, 0xffffff, 0)
-      .setDepth(10);
+      .rectangle(cx, topY + h / 2, LAYOUT.panelW, h, 0xffffff, 0)
+      .setDepth(LAYOUT.depth + 1);
 
-    this.interactiveEnabled = false;
+    this.rows.forEach((row) => row.rect.disableInteractive());
   }
 
   click(label, rect) {
@@ -87,7 +121,9 @@ export class DifficultyMeterPuzzle {
       Sfx.puzzleStep();
       this.scene.tweens.add({
         targets: rect,
-        alpha: { from: 1, to: 0.35 },
+        alpha: { from: 1, to: 0.4 },
+        scaleX: { from: 1, to: 1.04 },
+        scaleY: { from: 1, to: 1.08 },
         duration: 90,
         yoyo: true,
         repeat: 1
@@ -124,10 +160,10 @@ export class DifficultyMeterPuzzle {
     if (this.onSolved) this.onSolved();
   }
 
-  // Cliques só valem perto do medidor (evita clicar "através" das paredes).
   update(px, py) {
     if (this.solved) return;
-    const near = Math.hypot(px - this.container.x, py - this.container.y - 100) <= GAMEPLAY.puzzleClickRadius;
+    const centerY = this.topY + panelHeight() / 2;
+    const near = Math.hypot(px - this.cx, py - centerY) <= GAMEPLAY.puzzleClickRadius;
     if (near === this.playerNear) return;
     this.playerNear = near;
     this.rows.forEach((row) => {
