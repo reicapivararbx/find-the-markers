@@ -131,8 +131,8 @@ function buildOrganicGarden(ctx, t) {
     ],
     { scale: 0.9, canopy: 0x5d8f46 }
   );
-  kit.forestBelt(scene, ctx, [[40, 520], [50, 640], [45, 740]], { scale: 0.8 });
-  kit.forestBelt(scene, ctx, [[1400, 520], [1390, 640], [1410, 740]], { scale: 0.8 });
+  kit.forestBelt(scene, ctx, [[95, 500], [55, 640], [50, 740]], { scale: 0.8 });
+  kit.forestBelt(scene, ctx, [[1345, 500], [1390, 640], [1410, 740]], { scale: 0.8 });
   kit.thicket(scene, ctx, 40, 780, 140, 48);
   kit.thicket(scene, ctx, 1260, 780, 140, 44);
 
@@ -491,7 +491,7 @@ function buildOrganicPeak(ctx, t) {
   kit.iceSpike(scene, 480, 460, 55);
   kit.iceSpike(scene, 880, 440, 50);
   kit.iceSpike(scene, 1120, 470, 40);
-  kit.flagPole(scene, ctx, 720, 360, 90, 0xd1495b);
+  kit.flagPole(scene, ctx, 780, 380, 90, 0xd1495b);
   kit.flagPole(scene, ctx, 400, 500, 70, 0x56ccf2);
   kit.rocks(scene, ctx, 340, 640, 1.0);
   kit.rocks(scene, ctx, 960, 660, 1.1);
