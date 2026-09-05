@@ -186,6 +186,8 @@ export class RoomScene extends Phaser.Scene {
     if (state.debug) {
       window.FTMScene = this;
       this.createDebugLayer();
+      this.drawDebugSpawns(room);
+      this.drawDebugGates();
     }
   }
 
@@ -256,6 +258,18 @@ export class RoomScene extends Phaser.Scene {
     });
   }
 
+  flushPositionToSave() {
+    if (!this.player || this.transitioning) return;
+    const px = this.player.x;
+    const py = this.player.y;
+    state.saveManager.setPlayerPosition(px, py);
+    if (isPositionWalkable(px, py, this.solids, VIEW)) {
+      state.saveManager.setLastSafePosition({ areaId: this.roomId, x: px, y: py });
+    } else {
+      state.saveManager.persist();
+    }
+  }
+
   togglePause() {
     if (this.paused) {
       this.paused = false;
@@ -265,16 +279,7 @@ export class RoomScene extends Phaser.Scene {
       this.paused = true;
       this.physics.pause();
       this.player.stop();
-      if (this.player) {
-        const px = this.player.x;
-        const py = this.player.y;
-        state.saveManager.setPlayerPosition(px, py);
-        if (isPositionWalkable(px, py, this.solids, VIEW)) {
-          state.saveManager.setLastSafePosition({ areaId: this.roomId, x: px, y: py });
-        } else {
-          state.saveManager.persist();
-        }
-      }
+      this.flushPositionToSave();
       state.hud.showPause();
     }
   }
@@ -393,13 +398,41 @@ export class RoomScene extends Phaser.Scene {
     if (this._stuckAcc >= SOFTLOCK.stuckMs) {
       this._stuckAcc = 0;
       const result = this.unstuck("auto");
-      if (result?.ok && !result.warped) {
+      if (result?.ok) {
         state.hud.toast("✅ Personagem movido para um local seguro.", {
           icon: "🛟",
           duration: 2400
         });
       }
     }
+  }
+
+  drawDebugSpawns(room) {
+    const spawns = room?.spawns || {};
+    for (const [key, sp] of Object.entries(spawns)) {
+      if (!sp || !Number.isFinite(sp.x) || !Number.isFinite(sp.y)) continue;
+      this.add.circle(sp.x, sp.y, 10, 0x3b82f6, 0.55).setDepth(99997);
+      this.add
+        .text(sp.x, sp.y - 18, key, {
+          fontFamily: "monospace",
+          fontSize: "11px",
+          color: "#93c5fd",
+          backgroundColor: "#00000088",
+          padding: { x: 3, y: 1 }
+        })
+        .setOrigin(0.5)
+        .setDepth(99997);
+    }
+  }
+
+  drawDebugGates() {
+    this.gates.forEach((gate) => {
+      const z = gate.zone;
+      if (!z) return;
+      this.add
+        .rectangle(z.x, z.y, z.width || z.body?.width || 70, z.height || z.body?.height || 220, 0x22c55e, 0.18)
+        .setDepth(99996);
+    });
   }
 
   createDebugLayer() {
@@ -414,6 +447,8 @@ export class RoomScene extends Phaser.Scene {
       })
       .setDepth(99999);
 
+    this.debugFeet = this.add.rectangle(0, 0, 28, 18, 0xfacc15, 0.45).setDepth(99998).setOrigin(0.5, 1);
+
     this.events.on("update", () => {
       if (!this.debugText) return;
       const px = this.player?.x ?? 0;
@@ -423,6 +458,12 @@ export class RoomScene extends Phaser.Scene {
       const safeStr = safe
         ? `${safe.areaId}@${Math.round(safe.x)},${Math.round(safe.y)}`
         : "--";
+      const feet = playerFeetRect(px, py);
+      if (this.debugFeet) {
+        this.debugFeet.setPosition(px, py);
+        this.debugFeet.setSize(feet.w, feet.h);
+        this.debugFeet.setFillStyle(walkable ? 0xfacc15 : 0xef4444, 0.45);
+      }
       this.debugText.setText(
         [
           `room: ${this.roomId}`,

@@ -227,6 +227,7 @@ export class Hud {
     this.hidePauseReset();
     this.hidePauseUnstuck();
     this.refreshUnstuckButton();
+    this._startUnstuckTicker();
   }
 
   hidePause(resumeGameplay = false) {
@@ -234,7 +235,26 @@ export class Hud {
     this.pauseEl.classList.remove("is-open");
     this.hidePauseReset();
     this.hidePauseUnstuck();
+    this._stopUnstuckTicker();
     if (resumeGameplay) this.callbacks?.onResume();
+  }
+
+  _startUnstuckTicker() {
+    this._stopUnstuckTicker();
+    this._unstuckTicker = window.setInterval(() => {
+      if (!this.pauseOpen) {
+        this._stopUnstuckTicker();
+        return;
+      }
+      this.refreshUnstuckButton();
+    }, 250);
+  }
+
+  _stopUnstuckTicker() {
+    if (this._unstuckTicker != null) {
+      window.clearInterval(this._unstuckTicker);
+      this._unstuckTicker = null;
+    }
   }
 
   showPauseReset() {
