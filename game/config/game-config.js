@@ -62,6 +62,13 @@ export const GAMEPLAY = Object.freeze({
   portalCooldownMs: 450
 });
 
+export const SOFTLOCK = Object.freeze({
+  safeSampleMs: 350,
+  stuckMs: 1100,
+  unstuckCooldownMs: 5000,
+  globalStart: Object.freeze({ roomId: "room_09_spawn", x: 360, y: 640 })
+});
+
 // Chave do localStorage. NÃO incluir nenhum número temático aqui.
 export const SAVE_STORAGE_KEY = "find-the-markers-reuters-mix-save";
 export const SAVE_VERSION = 2;

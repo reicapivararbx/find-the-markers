@@ -58,6 +58,19 @@ export const CREDITS_BOXES = Object.freeze([
 export const POOL_HALL_DOOR_CODE = "321123";
 export const CAPYBARA_CODE = "234567";
 
+export const POOL_HALL_DOOR = Object.freeze({
+  code: POOL_HALL_DOOR_CODE,
+  codeLength: 6,
+  panel: Object.freeze({ x: 1248, y: 520 }),
+  door: Object.freeze({ x: 1345, y: 480, w: 110, h: 200 }),
+  note: Object.freeze({
+    id: "egg_area_code_note",
+    room: "room_05_house",
+    x: 927,
+    y: 620
+  })
+});
+
 export const SHADOW_WATCHER = Object.freeze({
   positions: Object.freeze([
     Object.freeze({ x: 320, y: 560 }),
