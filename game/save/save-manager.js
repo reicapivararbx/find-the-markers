@@ -17,7 +17,14 @@ export function createDefaultSave() {
       runesSolved: false,
       fragmentsSolved: false,
       firewallSolved: false,
-      mikuPuzzleSolved: false
+      mikuPuzzleSolved: false,
+      poolHallDoorUnlocked: false,
+      shadowWatcherStarted: false,
+      shadowWatcherFragments: 0,
+      shadowWatcherSolved: false,
+      mysteriousCapybaraSolved: false,
+      capybaraCodeMarkerUnlocked: false,
+      capybaraCodeMarkerCollected: false
     },
     openedBoxes: [],
     unlockedRooms: [],
@@ -73,6 +80,33 @@ export function migrateSave(raw) {
     ? [...new Set(raw.discoveredMusicNoteIds)]
     : [];
   save.mikuMarkerUnlocked = Boolean(raw.mikuMarkerUnlocked) || Boolean(save.puzzleStates.mikuPuzzleSolved);
+  const frag = Math.floor(Number(save.puzzleStates.shadowWatcherFragments) || 0);
+  save.puzzleStates.shadowWatcherFragments = Math.max(0, Math.min(3, frag));
+  save.puzzleStates.poolHallDoorUnlocked = Boolean(save.puzzleStates.poolHallDoorUnlocked);
+  save.puzzleStates.shadowWatcherStarted = Boolean(save.puzzleStates.shadowWatcherStarted);
+  save.puzzleStates.shadowWatcherSolved = Boolean(save.puzzleStates.shadowWatcherSolved);
+  save.puzzleStates.mysteriousCapybaraSolved = Boolean(save.puzzleStates.mysteriousCapybaraSolved);
+  save.puzzleStates.capybaraCodeMarkerUnlocked = Boolean(save.puzzleStates.capybaraCodeMarkerUnlocked);
+  save.puzzleStates.capybaraCodeMarkerCollected = Boolean(save.puzzleStates.capybaraCodeMarkerCollected);
+  if (save.puzzleStates.shadowWatcherSolved) {
+    save.puzzleStates.shadowWatcherFragments = 3;
+    save.puzzleStates.shadowWatcherStarted = true;
+  } else if (save.puzzleStates.shadowWatcherFragments > 0) {
+    save.puzzleStates.shadowWatcherStarted = true;
+  }
+  if (save.puzzleStates.capybaraCodeMarkerCollected || save.collectedMarkerIds.includes("capybara_code_marker")) {
+    save.puzzleStates.capybaraCodeMarkerCollected = true;
+    save.puzzleStates.capybaraCodeMarkerUnlocked = true;
+    save.puzzleStates.mysteriousCapybaraSolved = true;
+  } else if (save.puzzleStates.capybaraCodeMarkerUnlocked) {
+    save.puzzleStates.mysteriousCapybaraSolved = true;
+  }
+  if (
+    save.puzzleStates.poolHallDoorUnlocked &&
+    !save.unlockedRooms.includes("secret_pool_room")
+  ) {
+    save.unlockedRooms.push("secret_pool_room");
+  }
   save.coins = Math.max(0, Number.isFinite(raw.coins) ? Math.floor(raw.coins) : save.collectedCoinIds.length);
   save.slot.spins = Math.max(0, Math.floor(Number(save.slot.spins) || 0));
   save.slot.pity = Math.max(0, Math.floor(Number(save.slot.pity) || 0));
@@ -163,6 +197,52 @@ export class SaveManager {
     }
     this.persist();
     bus.emit(Events.PUZZLE_SOLVED, "mikuPuzzleSolved");
+  }
+
+  unlockPoolHallDoor() {
+    const ps = this.save.puzzleStates;
+    if (ps.poolHallDoorUnlocked) return false;
+    ps.poolHallDoorUnlocked = true;
+    if (!this.save.unlockedRooms.includes("secret_pool_room")) {
+      this.save.unlockedRooms.push("secret_pool_room");
+      bus.emit(Events.ROOM_UNLOCKED, "secret_pool_room");
+    }
+    this.persist();
+    bus.emit(Events.PUZZLE_SOLVED, "poolHallDoorUnlocked");
+    return true;
+  }
+
+  setShadowWatcherFragments(count) {
+    const n = Math.max(0, Math.min(3, Math.floor(Number(count) || 0)));
+    const ps = this.save.puzzleStates;
+    ps.shadowWatcherStarted = true;
+    ps.shadowWatcherFragments = n;
+    if (n >= 3) {
+      ps.shadowWatcherSolved = true;
+      bus.emit(Events.PUZZLE_SOLVED, "shadowWatcherSolved");
+    }
+    this.persist();
+    bus.emit(Events.PUZZLE_STEP, { key: "shadowWatcher", fragments: n });
+    return n;
+  }
+
+  unlockCapybaraCodeMarker() {
+    const ps = this.save.puzzleStates;
+    if (ps.capybaraCodeMarkerUnlocked) return false;
+    ps.mysteriousCapybaraSolved = true;
+    ps.capybaraCodeMarkerUnlocked = true;
+    this.persist();
+    bus.emit(Events.PUZZLE_SOLVED, "mysteriousCapybaraSolved");
+    bus.emit(Events.MARKER_UNLOCKED, "capybara_code_marker");
+    return true;
+  }
+
+  markCapybaraCodeMarkerCollected() {
+    const ps = this.save.puzzleStates;
+    ps.capybaraCodeMarkerCollected = true;
+    ps.capybaraCodeMarkerUnlocked = true;
+    ps.mysteriousCapybaraSolved = true;
+    this.persist();
   }
 
   collectCoin(coinId, amount = 1) {
