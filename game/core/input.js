@@ -34,7 +34,7 @@ export class InputController {
     this.pauseWasDown = false;
     this.collectionWasDown = false;
 
-    this.onShutdown = () => this.releaseAll();
+    this.onShutdown = () => this.destroy();
     scene.events.once("shutdown", this.onShutdown);
     scene.events.once("destroy", this.onShutdown);
   }
@@ -55,6 +55,27 @@ export class InputController {
     this.virtual.up = false;
     this.virtual.down = false;
     this.virtual.interact = false;
+    this.interactJustDownFlag = false;
+    this.pauseJustDownFlag = false;
+    this.collectionJustDownFlag = false;
+    this.interactWasDown = false;
+    this.pauseWasDown = false;
+    this.collectionWasDown = false;
+  }
+
+  destroy() {
+    if (this._destroyed) return;
+    this._destroyed = true;
+    this.releaseAll();
+    const kb = this.scene?.input?.keyboard;
+    if (kb && this.keys) {
+      for (const key of Object.values(this.keys)) {
+        if (key != null) kb.removeKey(key, true);
+      }
+    }
+    this.keys = null;
+    if (Bridge.current === this) Bridge.current = null;
+    if (globalThis.FTMInput === this) globalThis.FTMInput = null;
   }
 
   // Deve ser chamado 1x por frame no início do update.

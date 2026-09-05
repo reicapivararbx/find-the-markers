@@ -34,7 +34,7 @@ test("ESC: abre e fecha pause com JustDown (1 ação)", () => {
   );
 });
 
-test("ESC: dessync pauseOpen sem paused fecha overlay", () => {
+test("ESC: dessync pauseOpen sem paused resume via hidePause(true)", () => {
   assert.equal(
     resolveEscAction({ topModal: false, paused: false, pauseOpen: true, collectionOpen: false }),
     "hide-pause-desync"

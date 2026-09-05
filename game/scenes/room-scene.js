@@ -49,6 +49,8 @@ export class RoomScene extends Phaser.Scene {
     this._safeSampleAcc = 0;
     this._stuckAcc = 0;
     this._lastUnstuckAt = 0;
+    this._didShutdown = false;
+    this._debugUpdateHandler = null;
   }
 
   create() {
@@ -193,6 +195,41 @@ export class RoomScene extends Phaser.Scene {
       this.drawDebugSpawns(room);
       this.drawDebugGates();
     }
+
+    this.events.once("shutdown", () => this.shutdown());
+  }
+
+  shutdown() {
+    if (this._didShutdown) return;
+    this._didShutdown = true;
+
+    if (this._debugUpdateHandler) {
+      this.events.off("update", this._debugUpdateHandler);
+      this._debugUpdateHandler = null;
+    }
+    this.debugText = null;
+    this.debugFeet = null;
+    if (window.FTMScene === this) window.FTMScene = null;
+
+    this.gates?.forEach((g) => g.destroy?.());
+    this.markers?.forEach((m) => m.destroy?.());
+    this.npcs?.forEach((n) => n.destroy?.());
+    this.updatables?.forEach((u) => u.destroy?.());
+    this.eggQuest?.destroy?.();
+    this.redButtons?.destroy?.();
+    this.difficultyMeter?.destroy?.();
+    this.casinoDoor?.destroy?.();
+    this.exitDoor?.destroy?.();
+
+    this.gates = [];
+    this.markers = [];
+    this.npcs = [];
+    this.updatables = [];
+    this.markerEntities?.clear?.();
+    this.solids = [];
+
+    this.inputController?.destroy?.();
+    this.inputController = null;
   }
 
   resolveSpawnPoint(room, save, arriveAt) {
@@ -470,7 +507,7 @@ export class RoomScene extends Phaser.Scene {
 
     this.debugFeet = this.add.rectangle(0, 0, 28, 18, 0xfacc15, 0.45).setDepth(99998).setOrigin(0.5, 1);
 
-    this.events.on("update", () => {
+    this._debugUpdateHandler = () => {
       if (!this.debugText) return;
       const px = this.player?.x ?? 0;
       const py = this.player?.y ?? 0;
@@ -496,7 +533,8 @@ export class RoomScene extends Phaser.Scene {
           `lastSafe: ${safeStr}`
         ].join("\n")
       );
-    });
+    };
+    this.events.on("update", this._debugUpdateHandler);
   }
 
   update(time, delta) {
@@ -513,7 +551,7 @@ export class RoomScene extends Phaser.Scene {
       if (!topModal) {
         if (this.paused || hud.pauseOpen) {
           if (this.paused) this.togglePause();
-          else hud.hidePause(false);
+          else hud.hidePause(true);
         } else if (hud.collectionOpen) {
           hud.toggleCollection(false);
         } else {
