@@ -1,5 +1,6 @@
 // PÁGINA 5 — CASA NA MATA (top-down 2.5D, subárea da floresta).
 import { kit } from "../scenes/room-kit.js";
+import { Interactable } from "../entities/interactable.js";
 
 export default {
   id: "room_05_house",
@@ -23,12 +24,16 @@ export default {
     kit.cloud(scene, 1060, 90, 0.9);
     kit.cloud(scene, 1240, 200, 0.8);
     kit.ground(scene, ctx, 0x8fbc66);
-    kit.dirtPath(scene, [
-      [200, 560],
-      [500, 580],
-      [900, 560],
-      [1400, 520]
-    ], 64);
+    kit.dirtPath(
+      scene,
+      [
+        [200, 560],
+        [500, 580],
+        [900, 560],
+        [1400, 520]
+      ],
+      64
+    );
     kit.grassTufts(scene, [
       [300, 700],
       [520, 680],
@@ -81,7 +86,40 @@ export default {
 
     kit.bush(scene, ctx, 480, 700, 1.0);
     kit.bush(scene, ctx, 1380, 700, 0.9);
+
+    // papel dos 5 ovos — clue da porta branca (321123)
+    const paper = scene.add.graphics().setDepth(610);
+    paper.fillStyle(0xfdfaf1, 1);
+    paper.fillRoundedRect(900, 590, 54, 36, 4);
+    paper.lineStyle(2, 0x33333d, 0.7);
+    paper.strokeRoundedRect(900, 590, 54, 36, 4);
+    paper.lineStyle(1.5, 0x33333d, 0.45);
+    paper.lineBetween(910, 600, 944, 600);
+    paper.lineBetween(910, 608, 940, 608);
+    paper.lineBetween(910, 616, 936, 616);
+    scene.add
+      .text(927, 608, "321123", {
+        fontFamily: "monospace",
+        fontSize: "9px",
+        color: "#33333d"
+      })
+      .setOrigin(0.5)
+      .setDepth(611)
+      .setAlpha(0.55);
   },
 
-  wire() {}
+  wire(ctx) {
+    const { scene, hud } = ctx;
+    const paper = new Interactable(scene, {
+      id: "egg_area_paper",
+      x: 927,
+      y: 620,
+      radius: 90,
+      prompt: "[E] Papel amassado",
+      action: () => {
+        hud.toast("No papel: 321123", { icon: "📝", duration: 2800 });
+      }
+    });
+    ctx.addUpdatable(paper);
+  }
 };
