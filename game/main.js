@@ -72,7 +72,8 @@ function applyCharacterPick(character, mode) {
     if (scene?.player) {
       scene.player.applyCharacterVisuals(character);
     }
-    hud.hidePause();
+    if (scene?.paused) scene.togglePause();
+    else hud.hidePause(false);
     hud.toast(character === "female" ? "Personagem: Mulher" : "Personagem: Homem", {
       icon: "👤",
       duration: 1800
@@ -98,6 +99,12 @@ characterSelect.bind({
   onBack: () => {
     characterSelect.hide();
     if (state.game?.scene?.isActive("RoomScene")) {
+      const scene = state.game.scene.getScene("RoomScene");
+      if (scene && !scene.paused) {
+        scene.paused = true;
+        scene.physics?.pause?.();
+        scene.player?.stop?.();
+      }
       hud.showPause();
       return;
     }
@@ -106,7 +113,26 @@ characterSelect.bind({
 });
 
 hud.bind({
-  onResume: () => state.game.scene.getScene("RoomScene")?.togglePause?.(),
+  onPause: () => {
+    const scene = state.game?.scene?.getScene?.("RoomScene");
+    if (!scene) {
+      hud.showPause();
+      return;
+    }
+    if (scene.paused) {
+      if (!hud.pauseOpen) hud.showPause();
+      return;
+    }
+    scene.togglePause();
+  },
+  onResume: () => {
+    const scene = state.game?.scene?.getScene?.("RoomScene");
+    if (scene?.paused) {
+      scene.togglePause();
+      return;
+    }
+    hud.hidePause(false);
+  },
   onMenu: () => {
     hud.hidePause();
     returnToMenu();

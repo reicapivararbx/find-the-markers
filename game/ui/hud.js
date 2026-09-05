@@ -47,7 +47,10 @@ export class Hud {
 
     document.querySelector("#btn-collection").addEventListener("click", () => this.toggleCollection());
     document.querySelector("#btn-close-collection").addEventListener("click", () => this.toggleCollection(false));
-    document.querySelector("#btn-pause").addEventListener("click", () => this.showPause());
+    document.querySelector("#btn-pause").addEventListener("click", () => {
+      if (this.callbacks?.onPause) this.callbacks.onPause();
+      else this.showPause();
+    });
     document.querySelector("#btn-sound").addEventListener("click", () => this.callbacks?.onSoundToggle());
     document.querySelector("#pause-resume").addEventListener("click", () => this.hidePause(true));
     document.querySelector("#pause-menu").addEventListener("click", () => this.callbacks?.onMenu());

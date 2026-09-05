@@ -247,12 +247,29 @@ export class RoomScene extends Phaser.Scene {
   travel(connection) {
     if (this.transitioning) return;
     if (performance.now() - this.enteredAt < TRANSITION.cooldownMs) return;
+    if (!connection?.to) {
+      console.warn("[AREA_TRANSITION] destino nulo", { from: this.roomId, connection });
+      return;
+    }
+    if (!ROOMS[connection.to]) {
+      console.error("[AREA] Unknown target area:", connection.to, {
+        from: this.roomId,
+        arriveAt: connection.arriveAt
+      });
+      state.hud?.toast?.("Área indisponível.", { icon: "⚠️", duration: 2200 });
+      return;
+    }
     this.transitioning = true;
     this.player.stop();
     if (this.player) {
       state.saveManager.setPlayerPosition(this.player.x, this.player.y);
     }
     state.hud.clearAllInteractions();
+    console.debug("[AREA_TRANSITION]", {
+      fromArea: this.roomId,
+      targetArea: connection.to,
+      targetSpawn: connection.arriveAt || "default"
+    });
     Sfx.transition();
     this.cameras.main.fadeOut(TRANSITION.fadeMs, 10, 14, 20);
     this.cameras.main.once("camerafadeoutcomplete", () => {
@@ -487,10 +504,22 @@ export class RoomScene extends Phaser.Scene {
     if (!input || !this.player) return;
     input.beginFrame();
 
-    if (input.pauseJustDown && !state.hud.isModalOpen()) {
-      this.togglePause();
-    } else if (this.paused && input.pauseJustDown) {
-      this.togglePause();
+    if (input.pauseJustDown) {
+      const hud = state.hud;
+      const topModal =
+        hud.puzzleModalOpen ||
+        Boolean(document.querySelector("#slot-overlay.is-open")) ||
+        Boolean(state.characterSelect?.isOpen?.());
+      if (!topModal) {
+        if (this.paused || hud.pauseOpen) {
+          if (this.paused) this.togglePause();
+          else hud.hidePause(false);
+        } else if (hud.collectionOpen) {
+          hud.toggleCollection(false);
+        } else {
+          this.togglePause();
+        }
+      }
     }
 
     if (input.collectionJustDown) {
