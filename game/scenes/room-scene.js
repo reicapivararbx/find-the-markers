@@ -121,7 +121,11 @@ export class RoomScene extends Phaser.Scene {
       .filter((def) => !save.collectedMarkerIds.includes(def.id))
       .filter((def) => {
         if (def.mode === "menu_champion") return Boolean(save.menuSecrets?.championSolved);
-        if (def.mode === "slot") return false;
+        if (def.mode === "slot") {
+          if (def.id === "jackpot_marker") return Boolean(save.slot?.jackpotWon);
+          if (def.id === "high_roller_marker") return Boolean(save.slot?.highRollerWon);
+          return false;
+        }
         if (def.mode === "capybara") {
           return Boolean(
             save.puzzleStates?.capybaraCodeMarkerUnlocked || save.puzzleStates?.mysteriousCapybaraSolved

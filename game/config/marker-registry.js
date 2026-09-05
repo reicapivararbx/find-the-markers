@@ -8,7 +8,7 @@
 //   hidden  -> não aparece até ser revelado por um puzzle/interação
 //   quest   -> só coleta quando a missão associada estiver completa
 //   puzzle  -> só coleta quando o puzzle associado estiver resolvido
-//   slot    -> só via slot machine (não no chão)
+//   slot    -> no chão só após jackpot/high-roller na CAPY SLOT
 //
 // style: variação visual do sprite (desenho à mão do PDF).
 // Coordenadas: top-down — (x, y) = pés no chão walkable.
@@ -131,6 +131,8 @@ export function isCollectible(marker, save) {
     case "quest":
       return (save.discoveredEggIds || []).length >= 5;
     case "slot":
+      if (marker.id === "jackpot_marker") return Boolean(save.slot?.jackpotWon);
+      if (marker.id === "high_roller_marker") return Boolean(save.slot?.highRollerWon);
       return false;
     case "miku":
       return Boolean(save.mikuMarkerUnlocked || save.puzzleStates?.mikuPuzzleSolved);

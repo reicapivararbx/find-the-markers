@@ -147,6 +147,57 @@
         <div id="collection-grid"></div>
       </section>
 
+      <!-- ================= CAPY SLOT ================= -->
+      <section
+        id="slot-overlay"
+        class="slot-overlay"
+        aria-label="CAPY SLOT"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div id="slot-card" class="slot-card" role="document">
+          <div id="slot-lights" class="slot-lights" aria-hidden="true"></div>
+          <header class="slot-header">
+            <p class="slot-eyebrow">CASINO · CAPYBARA</p>
+            <h2 class="slot-title">🎰 CAPY SLOT</h2>
+            <button id="slot-close" class="slot-close icon-button" type="button" aria-label="Fechar slot">×</button>
+          </header>
+          <div class="slot-balance-row">
+            <span class="slot-balance-label">🪙 Coins</span>
+            <strong id="slot-balance" class="slot-balance">0</strong>
+            <span id="slot-delta" class="slot-delta" aria-live="polite"></span>
+          </div>
+          <div class="slot-machine-frame" aria-label="Três rolos">
+            <div class="slot-payline" aria-hidden="true"></div>
+            <div class="slot-reels">
+              <div id="slot-reel-0" class="slot-reel" data-reel="1">
+                <div class="slot-window">
+                  <div class="slot-strip"></div>
+                </div>
+              </div>
+              <div id="slot-reel-1" class="slot-reel" data-reel="2">
+                <div class="slot-window">
+                  <div class="slot-strip"></div>
+                </div>
+              </div>
+              <div id="slot-reel-2" class="slot-reel" data-reel="3">
+                <div class="slot-window">
+                  <div class="slot-strip"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p id="slot-status" class="slot-status" role="status" aria-live="polite">Pressione GIRAR</p>
+          <div class="slot-actions">
+            <button id="slot-spin" class="button button-primary slot-spin-btn" type="button">
+              GIRAR (<span id="slot-cost">3</span> 🪙)
+            </button>
+          </div>
+          <p class="slot-hint">Enter / Espaço · Esc fecha</p>
+        </div>
+      </section>
+
       <!-- ================= PAUSA ================= -->
       <section id="pause-overlay" aria-label="Pausa">
         <div class="pause-card">

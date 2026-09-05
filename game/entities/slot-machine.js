@@ -1,16 +1,11 @@
-import { ECONOMY } from "../config/game-config.js";
+import { SLOT_CONFIG } from "../config/slot-config.js";
+import { resolveSpin, applySpinResult } from "../config/slot-engine.js";
+import { MARKER_BY_ID } from "../config/marker-registry.js";
 import { Interactable } from "./interactable.js";
+import { MarkerEntity } from "./marker-entity.js";
 import { bus, Events } from "../core/event-bus.js";
 import { Sfx } from "../core/audio-manager.js";
-
-function rollOutcome(slot) {
-  if (!slot.jackpotWon && slot.pity >= ECONOMY.pityHard) return "jackpot";
-  if (!slot.highRollerWon && slot.pity >= ECONOMY.pitySoft && Math.random() < 0.35) return "highRoller";
-  if (!slot.jackpotWon && Math.random() < 0.04) return "jackpot";
-  if (!slot.highRollerWon && Math.random() < 0.08) return "highRoller";
-  if (Math.random() < 0.35) return "coins";
-  return "miss";
-}
+import { getSlotMachineUI } from "../ui/slot-machine-ui.js";
 
 export class SlotMachine {
   constructor(scene, { x, y, saveManager, hud }) {
@@ -18,6 +13,9 @@ export class SlotMachine {
     this.sm = saveManager;
     this.hud = hud;
     this.busy = false;
+    this.uiOpen = false;
+    this._appliedSpinIds = new Set();
+    this.pos = { x, y };
 
     const base = y;
     scene.add.ellipse(x, base + 4, 90, 24, 0x1a1a22, 0.3).setDepth(base);
@@ -47,46 +45,143 @@ export class SlotMachine {
       x,
       y: base,
       radius: 130,
-      prompt: `[E] Girar (${ECONOMY.slotCost} coins)`,
-      action: () => this.spin()
+      prompt: `[E] Jogar Slot (${SLOT_CONFIG.cost} coins)`,
+      action: () => this.open()
+    });
+
+    this.ui = getSlotMachineUI();
+    this.ui.bind({
+      onSpinRequest: () => this.handleSpinRequest(),
+      onClosed: () => this.onUiClosed()
+    });
+
+    this.ensureUnlockedMarkersVisible();
+  }
+
+  open() {
+    if (this.uiOpen || this.busy) return;
+    if (this.ui.isOpen()) return;
+    this.uiOpen = true;
+    this.scene.physics?.pause?.();
+    this.ui.show({ coins: this.sm.save.coins });
+    Sfx.interact();
+  }
+
+  onUiClosed() {
+    this.uiOpen = false;
+    this.busy = false;
+    if (!this.scene.paused) this.scene.physics?.resume?.();
+  }
+
+  handleSpinRequest() {
+    if (!this.uiOpen || this.busy || this.ui.isSpinning()) return;
+
+    const preview = resolveSpin(this.sm.save, { busy: false });
+    if (!preview.ok) {
+      if (preview.reason === "insufficient") {
+        this.ui.setStatus(preview.message);
+        this.ui.refreshSpinButton(this.sm.save.coins);
+        this.hud?.toast?.(preview.message, { icon: "🪙", duration: 2200 });
+      }
+      return;
+    }
+
+    if (!this.sm.spendCoins(preview.cost)) {
+      this.ui.setStatus(`❌ Você precisa de ${SLOT_CONFIG.cost} Coins`);
+      this.ui.refreshSpinButton(this.sm.save.coins);
+      return;
+    }
+
+    this.busy = true;
+    const coinsAfterDebit = this.sm.save.coins;
+    this.hud?.updateCoins?.(coinsAfterDebit);
+
+    this.ui.playSpin(preview, {
+      coinsAfterDebit,
+      onComplete: (result) => this.onSpinAnimationDone(result)
     });
   }
 
-  spin() {
-    if (this.busy) return;
-    if (!this.sm.spendCoins(ECONOMY.slotCost)) {
-      this.hud.toast(`Precisa de ${ECONOMY.slotCost} coins.`, { icon: "🪙", duration: 2200 });
+  onSpinAnimationDone(result) {
+    if (!result?.ok) {
+      this.busy = false;
       return;
     }
-    this.busy = true;
-    Sfx.interact();
-    const outcome = rollOutcome(this.sm.save.slot);
-    const jackpot = outcome === "jackpot";
-    const highRoller = outcome === "highRoller";
-    this.sm.recordSlotSpin({ jackpot, highRoller });
-
-    if (jackpot && this.sm.collectMarker("jackpot_marker")) {
-      this.hud.notifyMarker?.({ name: "Jackpot Marker", difficulty: "Insane" });
-      this.hud.toast("JACKPOT!", { icon: "🎰", duration: 3200 });
-    } else if (highRoller && this.sm.collectMarker("high_roller_marker")) {
-      this.hud.notifyMarker?.({ name: "High Roller 10 Coins", difficulty: "Challenging" });
-      this.sm.addCoins(10);
-      this.hud.toast("High Roller! +10 coins", { icon: "🎰", duration: 2800 });
-    } else if (outcome === "coins") {
-      const gain = 1 + Math.floor(Math.random() * 4);
-      this.sm.addCoins(gain);
-      this.hud.toast(`+${gain} coins`, { icon: "🪙", duration: 2000 });
-    } else {
-      this.hud.toast("Quase… tente de novo.", { icon: "🎰", duration: 1800 });
+    if (this._appliedSpinIds.has(result.spinId)) {
+      this.busy = false;
+      return;
+    }
+    this._appliedSpinIds.add(result.spinId);
+    if (this._appliedSpinIds.size > 40) {
+      const first = this._appliedSpinIds.values().next().value;
+      this._appliedSpinIds.delete(first);
     }
 
-    bus.emit(Events.SLOT_SPIN, { outcome, pity: this.sm.save.slot.pity });
-    this.scene.time.delayedCall(400, () => {
-      this.busy = false;
+    applySpinResult(this.sm, result, { alreadyDebited: true });
+    this.hud?.updateCoins?.(this.sm.save.coins);
+
+    if (result.unlockJackpot) {
+      this.spawnSlotMarker(SLOT_CONFIG.jackpotMarkerId, "Jackpot Marker");
+    }
+    if (result.unlockHighRoller) {
+      this.spawnSlotMarker(SLOT_CONFIG.highRollerMarkerId, "High Roller 10 Coins");
+    }
+
+    bus.emit(Events.SLOT_SPIN, {
+      spinId: result.spinId,
+      kind: result.kind,
+      pity: this.sm.save.slot.pity,
+      coinsDelta: result.coinsDelta
     });
+
+    this.busy = false;
+  }
+
+  spawnSlotMarker(markerId, fallbackName) {
+    const def = MARKER_BY_ID[markerId];
+    if (!def) return;
+    if (this.sm.hasCollected(markerId)) return;
+
+    let entity = this.scene.markerEntities?.get(markerId);
+    if (!entity) {
+      entity = new MarkerEntity(this.scene, def, this.sm, this.hud);
+      entity.hidden = false;
+      entity.sprite?.setVisible(true);
+      entity.shadow?.setVisible(true);
+      this.scene.markerEntities?.set(markerId, entity);
+      this.scene.markers?.push(entity);
+      this.scene.time.delayedCall(0, () => {
+        if (this.scene.player?.sprite && entity.zone) {
+          this.scene.physics.add.overlap(this.scene.player.sprite, entity.zone, () =>
+            entity.tryCollect()
+          );
+        }
+      });
+    } else {
+      entity.reveal?.();
+    }
+
+    bus.emit(Events.MARKER_UNLOCKED, markerId);
+    Sfx.reveal();
+    this.hud?.toast?.(`${fallbackName || def.name} apareceu no chão!`, {
+      icon: "🎰",
+      duration: 3200
+    });
+  }
+
+  ensureUnlockedMarkersVisible() {
+    const slot = this.sm.save.slot;
+    const collected = this.sm.save.collectedMarkerIds || [];
+    if (slot.jackpotWon && !collected.includes(SLOT_CONFIG.jackpotMarkerId)) {
+      this.spawnSlotMarker(SLOT_CONFIG.jackpotMarkerId, "Jackpot Marker");
+    }
+    if (slot.highRollerWon && !collected.includes(SLOT_CONFIG.highRollerMarkerId)) {
+      this.spawnSlotMarker(SLOT_CONFIG.highRollerMarkerId, "High Roller 10 Coins");
+    }
   }
 
   update(px, py, interactJustDown, hud) {
+    if (this.uiOpen) return false;
     return this.interactable.update(px, py, interactJustDown, hud);
   }
 }

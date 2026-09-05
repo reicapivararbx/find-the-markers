@@ -101,7 +101,8 @@ export class Hud {
       this.collectionOpen ||
       this.pauseOpen ||
       this.puzzleModalOpen ||
-      Boolean(state.characterSelect?.isOpen?.())
+      Boolean(state.characterSelect?.isOpen?.()) ||
+      Boolean(document.querySelector("#slot-overlay.is-open"))
     );
   }
 
