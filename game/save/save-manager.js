@@ -6,6 +6,9 @@ export function createDefaultSave() {
   return {
     version: SAVE_VERSION,
     currentRoom: "room_09_spawn",
+    playerX: null,
+    playerY: null,
+    lastSafePosition: null,
     collectedMarkerIds: [],
     discoveredEggIds: [],
     puzzleStates: {
@@ -39,6 +42,10 @@ export function createDefaultSave() {
       championClicks: 0,
       championSolved: false
     },
+    clues: {
+      eggAreaCodeNoteRead: false,
+      poolHallDoorCodeFound: false
+    },
     slot: {
       spins: 0,
       pity: 0,
@@ -62,11 +69,15 @@ export function migrateSave(raw) {
     puzzleStates: { ...defaults.puzzleStates, ...(raw.puzzleStates || {}) },
     settings: { ...defaults.settings, ...(raw.settings || {}) },
     slot: { ...defaults.slot, ...(raw.slot || {}) },
-    menuSecrets: { ...defaults.menuSecrets, ...(raw.menuSecrets || {}) }
+    menuSecrets: { ...defaults.menuSecrets, ...(raw.menuSecrets || {}) },
+    clues: { ...defaults.clues, ...(raw.clues || {}) }
   };
 
   save.version = SAVE_VERSION;
   save.currentRoom = typeof raw.currentRoom === "string" ? raw.currentRoom : defaults.currentRoom;
+  save.playerX = Number.isFinite(raw.playerX) ? raw.playerX : null;
+  save.playerY = Number.isFinite(raw.playerY) ? raw.playerY : null;
+  save.lastSafePosition = normalizeLastSafe(raw.lastSafePosition);
   save.collectedMarkerIds = Array.isArray(raw.collectedMarkerIds) ? [...new Set(raw.collectedMarkerIds)] : [];
   save.discoveredEggIds = Array.isArray(raw.discoveredEggIds) ? [...new Set(raw.discoveredEggIds)] : [];
   save.openedBoxes = Array.isArray(raw.openedBoxes) ? [...new Set(raw.openedBoxes)] : [];
@@ -123,7 +134,23 @@ export function migrateSave(raw) {
     save.menuSecrets.championClicks = 67;
   }
 
+  save.clues.eggAreaCodeNoteRead = Boolean(save.clues.eggAreaCodeNoteRead);
+  save.clues.poolHallDoorCodeFound = Boolean(save.clues.poolHallDoorCodeFound);
+  if (save.clues.eggAreaCodeNoteRead || save.clues.poolHallDoorCodeFound) {
+    save.clues.eggAreaCodeNoteRead = true;
+    save.clues.poolHallDoorCodeFound = true;
+  }
+
   return save;
+}
+
+function normalizeLastSafe(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const areaId = typeof raw.areaId === "string" ? raw.areaId : null;
+  const x = Number(raw.x);
+  const y = Number(raw.y);
+  if (!areaId || !Number.isFinite(x) || !Number.isFinite(y)) return null;
+  return { areaId, x, y };
 }
 
 export class SaveManager {
@@ -307,6 +334,9 @@ export class SaveManager {
   }
 
   solvePuzzle(key) {
+    if (key === "poolHallDoorUnlocked") {
+      return this.unlockPoolHallDoor();
+    }
     if (this.save.puzzleStates[key]) return false;
     this.save.puzzleStates[key] = true;
     if (key === "redButtonsSolved" && !this.save.unlockedRooms.includes("room_06_secret_computer")) {
@@ -315,6 +345,19 @@ export class SaveManager {
     }
     this.persist();
     bus.emit(Events.PUZZLE_SOLVED, key);
+    return true;
+  }
+
+  readEggAreaCodeNote() {
+    if (!this.save.clues) {
+      this.save.clues = { eggAreaCodeNoteRead: false, poolHallDoorCodeFound: false };
+    }
+    if (this.save.clues.eggAreaCodeNoteRead && this.save.clues.poolHallDoorCodeFound) {
+      return false;
+    }
+    this.save.clues.eggAreaCodeNoteRead = true;
+    this.save.clues.poolHallDoorCodeFound = true;
+    this.persist();
     return true;
   }
 
@@ -334,6 +377,32 @@ export class SaveManager {
     if (this.save.currentRoom === roomId) return;
     this.save.currentRoom = roomId;
     this.persist();
+  }
+
+  setPlayerPosition(x, y, { persist = true } = {}) {
+    const nx = Number.isFinite(x) ? x : null;
+    const ny = Number.isFinite(y) ? y : null;
+    if (this.save.playerX === nx && this.save.playerY === ny) return;
+    this.save.playerX = nx;
+    this.save.playerY = ny;
+    if (persist) this.persist();
+  }
+
+  setLastSafePosition(pos, { persist = true } = {}) {
+    const next = normalizeLastSafe(pos);
+    const prev = this.save.lastSafePosition;
+    if (
+      prev &&
+      next &&
+      prev.areaId === next.areaId &&
+      Math.abs(prev.x - next.x) < 0.5 &&
+      Math.abs(prev.y - next.y) < 0.5
+    ) {
+      return;
+    }
+    if (!prev && !next) return;
+    this.save.lastSafePosition = next;
+    if (persist) this.persist();
   }
 
   setSound(enabled) {

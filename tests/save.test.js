@@ -28,6 +28,54 @@ test("save novo: spawn com 0 markers e puzzles não resolvidos", () => {
   assert.equal(save.collectedMarkerIds.length, 0);
   assert.equal(save.puzzleStates.redButtonsSolved, false);
   assert.equal(save.discoveredEggIds.length, 0);
+  assert.equal(save.playerX, null);
+  assert.equal(save.playerY, null);
+  assert.equal(save.lastSafePosition, null);
+});
+
+test("setLastSafePosition e setPlayerPosition persistem e migrados", () => {
+  const storage = new MemoryStorage();
+  const a = new SaveManager(storage);
+  a.load();
+  a.setPlayerPosition(120, 340);
+  a.setLastSafePosition({ areaId: "room_09_spawn", x: 120, y: 340 });
+  assert.equal(a.save.playerX, 120);
+  assert.equal(a.save.lastSafePosition.areaId, "room_09_spawn");
+
+  const b = new SaveManager(storage);
+  b.load();
+  assert.equal(b.save.playerX, 120);
+  assert.equal(b.save.playerY, 340);
+  assert.deepEqual(b.save.lastSafePosition, { areaId: "room_09_spawn", x: 120, y: 340 });
+
+  const migrated = migrateSave({
+    currentRoom: "room_07_forest",
+    lastSafePosition: { areaId: "room_07_forest", x: "bad", y: 10 },
+    playerX: 50
+  });
+  assert.equal(migrated.lastSafePosition, null);
+  assert.equal(migrated.playerX, 50);
+  assert.equal(migrated.playerY, null);
+});
+
+test("setPlayerPosition/setLastSafePosition aceitam persist:false (amostra em memória)", () => {
+  const storage = new MemoryStorage();
+  const a = new SaveManager(storage);
+  a.load();
+  const before = storage.getItem("find-the-markers-reuters-mix-save");
+  a.setPlayerPosition(200, 400, { persist: false });
+  a.setLastSafePosition({ areaId: "room_09_spawn", x: 200, y: 400 }, { persist: false });
+  assert.equal(a.save.playerX, 200);
+  assert.deepEqual(a.save.lastSafePosition, { areaId: "room_09_spawn", x: 200, y: 400 });
+  assert.equal(storage.getItem("find-the-markers-reuters-mix-save"), before);
+
+  a.setPlayerPosition(200, 400);
+  a.persist();
+  const b = new SaveManager(storage);
+  b.load();
+  assert.equal(b.save.playerX, 200);
+  assert.equal(b.save.playerY, 400);
+  assert.deepEqual(b.save.lastSafePosition, { areaId: "room_09_spawn", x: 200, y: 400 });
 });
 
 test("collectMarker não duplica e contador é derivado", () => {

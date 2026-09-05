@@ -3,6 +3,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   POOL_HALL_DOOR_CODE,
+  POOL_HALL_DOOR,
   CAPYBARA_CODE,
   SHADOW_WATCHER,
   SECRET_POOL
@@ -82,6 +83,44 @@ test("save defaults: flags da sala secreta false/0", () => {
   assert.equal(d.puzzleStates.mysteriousCapybaraSolved, false);
   assert.equal(d.puzzleStates.capybaraCodeMarkerUnlocked, false);
   assert.equal(d.puzzleStates.capybaraCodeMarkerCollected, false);
+  assert.equal(d.clues.eggAreaCodeNoteRead, false);
+  assert.equal(d.clues.poolHallDoorCodeFound, false);
+});
+
+test("readEggAreaCodeNote persiste clues (relível, idempotente)", () => {
+  const storage = new MemoryStorage();
+  const a = new SaveManager(storage);
+  a.load();
+  assert.equal(a.readEggAreaCodeNote(), true);
+  assert.equal(a.save.clues.eggAreaCodeNoteRead, true);
+  assert.equal(a.save.clues.poolHallDoorCodeFound, true);
+  assert.equal(a.readEggAreaCodeNote(), false);
+
+  const b = new SaveManager(storage);
+  b.load();
+  assert.equal(b.save.clues.eggAreaCodeNoteRead, true);
+  assert.equal(b.save.clues.poolHallDoorCodeFound, true);
+  // pista NÃO desbloqueia a porta
+  assert.equal(b.save.puzzleStates.poolHallDoorUnlocked, false);
+});
+
+test("POOL_HALL_DOOR config: código, painel, nota na casa", () => {
+  assert.equal(POOL_HALL_DOOR.code, "321123");
+  assert.equal(POOL_HALL_DOOR.codeLength, 6);
+  assert.equal(POOL_HALL_DOOR.note.room, "room_05_house");
+  assert.equal(POOL_HALL_DOOR.note.id, "egg_area_code_note");
+  assert.ok(POOL_HALL_DOOR.panel.x > 0);
+  assert.ok(POOL_HALL_DOOR.door.w >= 100);
+});
+
+test("migrate: clues ausentes viram default; half-flags unificam", () => {
+  const bare = migrateSave({ version: 2 });
+  assert.equal(bare.clues.eggAreaCodeNoteRead, false);
+  assert.equal(bare.clues.poolHallDoorCodeFound, false);
+
+  const half = migrateSave({ clues: { eggAreaCodeNoteRead: true } });
+  assert.equal(half.clues.eggAreaCodeNoteRead, true);
+  assert.equal(half.clues.poolHallDoorCodeFound, true);
 });
 
 test("unlockPoolHallDoor desbloqueia sala e persiste", () => {
