@@ -28,12 +28,15 @@ export class Hud {
     this.collectionGrid = document.querySelector("#collection-grid");
     this.pauseEl = document.querySelector("#pause-overlay");
     this.pauseResetBox = document.querySelector("#pause-reset-confirm");
+    this.pauseUnstuckBox = document.querySelector("#pause-unstuck-confirm");
+    this.pauseUnstuckBtn = document.querySelector("#pause-unstuck");
 
     this.toastTimer = null;
     this.noteTimer = null;
     this.currentInteraction = null;
     this.collectionOpen = false;
     this.pauseOpen = false;
+    this.puzzleModalOpen = false;
 
     this.promptEl.addEventListener("click", () => {
       if (!this.currentInteraction) return;
@@ -59,6 +62,13 @@ export class Hud {
       this.callbacks?.onReset();
     });
     document.querySelector("#pause-reset-no").addEventListener("click", () => this.hidePauseReset());
+
+    this.pauseUnstuckBtn?.addEventListener("click", () => this.showPauseUnstuck());
+    document.querySelector("#pause-unstuck-yes")?.addEventListener("click", () => {
+      this.hidePauseUnstuck();
+      this.callbacks?.onUnstuck?.();
+    });
+    document.querySelector("#pause-unstuck-no")?.addEventListener("click", () => this.hidePauseUnstuck());
 
     bus.on(Events.MARKER_COLLECTED, () => this.setCounter());
     bus.on(Events.MARKER_COUNT_CHANGED, () => this.setCounter());
@@ -87,7 +97,17 @@ export class Hud {
   }
 
   isModalOpen() {
-    return this.collectionOpen || this.pauseOpen || Boolean(state.characterSelect?.isOpen?.());
+    return (
+      this.collectionOpen ||
+      this.pauseOpen ||
+      this.puzzleModalOpen ||
+      Boolean(state.characterSelect?.isOpen?.())
+    );
+  }
+
+  setPuzzleModal(open) {
+    this.puzzleModalOpen = Boolean(open);
+    if (this.puzzleModalOpen) this.clearAllInteractions();
   }
 
   // ---------- valores ----------
@@ -201,25 +221,50 @@ export class Hud {
     document.querySelector("#collection-count").textContent = `${collected.length}/${TOTAL_MARKERS}`;
   }
 
-  // ---------- pausa ----------
   showPause() {
     this.pauseOpen = true;
     this.pauseEl.classList.add("is-open");
     this.hidePauseReset();
+    this.hidePauseUnstuck();
+    this.refreshUnstuckButton();
   }
 
   hidePause(resumeGameplay = false) {
     this.pauseOpen = false;
     this.pauseEl.classList.remove("is-open");
+    this.hidePauseReset();
+    this.hidePauseUnstuck();
     if (resumeGameplay) this.callbacks?.onResume();
   }
 
   showPauseReset() {
+    this.hidePauseUnstuck();
     this.pauseResetBox.classList.add("is-visible");
   }
 
   hidePauseReset() {
     this.pauseResetBox.classList.remove("is-visible");
+  }
+
+  showPauseUnstuck() {
+    this.hidePauseReset();
+    this.pauseUnstuckBox?.classList.add("is-visible");
+  }
+
+  hidePauseUnstuck() {
+    this.pauseUnstuckBox?.classList.remove("is-visible");
+  }
+
+  refreshUnstuckButton() {
+    if (!this.pauseUnstuckBtn) return;
+    const remaining = this.callbacks?.unstuckCooldownMs?.() ?? 0;
+    if (remaining > 0) {
+      this.pauseUnstuckBtn.disabled = true;
+      this.pauseUnstuckBtn.textContent = `🛟 Aguarde ${Math.ceil(remaining / 1000)}s`;
+    } else {
+      this.pauseUnstuckBtn.disabled = false;
+      this.pauseUnstuckBtn.textContent = "🛟 DESTRAVAR PERSONAGEM";
+    }
   }
 
   updateSoundLabel(enabled) {

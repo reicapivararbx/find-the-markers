@@ -124,6 +124,30 @@ hud.bind({
   onChangeCharacter: () => {
     hud.hidePause(false);
     characterSelect.show({ mode: "swap", allowBack: true });
+  },
+  unstuckCooldownMs: () => {
+    const scene = state.game?.scene?.getScene("RoomScene");
+    return scene?.unstuckCooldownRemainingMs?.() ?? 0;
+  },
+  onUnstuck: () => {
+    const scene = state.game?.scene?.getScene("RoomScene");
+    if (!scene?.unstuck) {
+      hud.toast("Não foi possível destravar agora.", { icon: "⚠️", duration: 2000 });
+      return;
+    }
+    const result = scene.unstuck("manual");
+    hud.refreshUnstuckButton();
+    if (!result?.ok) {
+      if (result?.reason === "cooldown") {
+        const sec = Math.ceil((result.remainingMs || 0) / 1000);
+        hud.toast(`Aguarde ${sec}s para destravar de novo.`, { icon: "⏳", duration: 2000 });
+      } else {
+        hud.toast("Não foi possível destravar agora.", { icon: "⚠️", duration: 2000 });
+      }
+      return;
+    }
+    hud.hidePause(true);
+    hud.toast("✅ Personagem movido para um local seguro.", { icon: "🛟", duration: 2400 });
   }
 });
 
@@ -222,6 +246,10 @@ function createGame() {
         if (!scene?.player || !Number.isFinite(x) || !Number.isFinite(y)) return false;
         scene.player.sprite.body.reset(x, y);
         return true;
+      },
+      unstuck: () => {
+        const scene = state.game.scene.getScene("RoomScene");
+        return scene?.unstuck?.("debug") ?? { ok: false };
       },
       give: (id) => saveManager.collectMarker(id),
       addMarkers: (n) => {
