@@ -109,15 +109,16 @@ export default {
   },
 
   wire(ctx) {
-    const { scene, hud } = ctx;
+    const { scene, sm, hud } = ctx;
     const paper = new Interactable(scene, {
-      id: "egg_area_paper",
+      id: "egg_area_code_note",
       x: 927,
       y: 620,
       radius: 90,
-      prompt: "[E] Papel amassado",
+      prompt: "[E] Ler papel",
       action: () => {
-        hud.toast("No papel: 321123", { icon: "📝", duration: 2800 });
+        sm.readEggAreaCodeNote();
+        hud.toast("321123", { icon: "📝", duration: 3200 });
       }
     });
     ctx.addUpdatable(paper);
