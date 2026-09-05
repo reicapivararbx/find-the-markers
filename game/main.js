@@ -38,6 +38,8 @@ function startRoom(roomId, arriveAt = "default") {
 }
 
 function returnToMenu() {
+  const room = state.game?.scene?.getScene?.("RoomScene");
+  room?.flushPositionToSave?.();
   hud.hideGameplay();
   characterSelect.hide();
   const scene = state.game.scene;
