@@ -48,7 +48,7 @@ test("markers apontam para salas existentes e posições dentro da tela", () => 
     assert.ok(m.x >= 0 && m.x <= 1440, `x fora da tela: ${m.id}`);
     assert.ok(m.y >= 0 && m.y <= 810, `y fora da tela: ${m.id}`);
     assert.ok(
-      ["touch", "hidden", "quest", "puzzle", "slot", "miku", "menu_champion"].includes(m.mode),
+      ["touch", "hidden", "quest", "puzzle", "slot", "miku", "menu_champion", "capybara"].includes(m.mode),
       `modo inválido: ${m.mode}`
     );
   });
@@ -67,6 +67,10 @@ test("markers especiais existem com o modo certo", () => {
   assert.equal(MARKER_BY_ID.menu_champion_marker.name, "Menu Champion Marker");
   assert.equal(MARKER_BY_ID.menu_champion_marker.difficulty, "Champion");
   assert.equal(MARKER_BY_ID.menu_champion_marker.room, "room_09_spawn");
+  assert.equal(MARKER_BY_ID.capybara_code_marker.mode, "capybara");
+  assert.equal(MARKER_BY_ID.capybara_code_marker.name, "Capybara Code Marker");
+  assert.equal(MARKER_BY_ID.capybara_code_marker.difficulty, "Challenging");
+  assert.equal(MARKER_BY_ID.capybara_code_marker.room, "secret_pool_room");
   assert.ok(TOTAL_MARKERS >= 140, `expansão deve ter 140+ markers, got ${TOTAL_MARKERS}`);
 });
 

@@ -100,6 +100,11 @@ export class RoomScene extends Phaser.Scene {
       .filter((def) => {
         if (def.mode === "menu_champion") return Boolean(save.menuSecrets?.championSolved);
         if (def.mode === "slot") return false;
+        if (def.mode === "capybara") {
+          return Boolean(
+            save.puzzleStates?.capybaraCodeMarkerUnlocked || save.puzzleStates?.mysteriousCapybaraSolved
+          );
+        }
         return true;
       })
       .forEach((def) => {

@@ -143,7 +143,10 @@ export class MarkerEntity {
       (def.mode === "miku" &&
         !saveManager.save.mikuMarkerUnlocked &&
         !saveManager.save.puzzleStates.mikuPuzzleSolved) ||
-      (def.mode === "menu_champion" && !saveManager.save.menuSecrets?.championSolved);
+      (def.mode === "menu_champion" && !saveManager.save.menuSecrets?.championSolved) ||
+      (def.mode === "capybara" &&
+        !saveManager.save.puzzleStates.capybaraCodeMarkerUnlocked &&
+        !saveManager.save.puzzleStates.mysteriousCapybaraSolved);
     this.blockFeedbackAt = 0;
 
     const key = ensureMarkerTexture(scene, def.difficulty, def.style);
@@ -324,6 +327,9 @@ export class MarkerEntity {
         icon: "♛",
         duration: 3200
       });
+    } else if (this.def.mode === "capybara") {
+      this.hud.toast("🦫 Capybara Code Marker encontrado!", { icon: "🎩", duration: 3200 });
+      this.sm.markCapybaraCodeMarkerCollected?.();
     }
     this.sm.collectMarker(this.def.id);
     this.hud.notifyMarker(this.def);
@@ -352,7 +358,14 @@ export class MarkerEntity {
   }
 
   reveal() {
-    if (!this.hidden && this.def.mode !== "puzzle" && this.def.mode !== "miku") return;
+    if (
+      !this.hidden &&
+      this.def.mode !== "puzzle" &&
+      this.def.mode !== "miku" &&
+      this.def.mode !== "capybara"
+    ) {
+      return;
+    }
     this.hidden = false;
     if (this.shadow) this.shadow.setVisible(true);
     if (this.aura) this.aura.setVisible(true);

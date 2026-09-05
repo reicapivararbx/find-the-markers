@@ -51,7 +51,7 @@ export const MARKERS = Object.freeze([
   { id: "orchard_hard_1", name: "Canopy Marker", difficulty: "Hard", room: "room_08_orchard_difficulty", x: 920, y: 500, mode: "touch", style: "classic" },
   { id: "orchard_glitch", name: "Glitch Marker", difficulty: "Difficult", room: "room_08_orchard_difficulty", x: 560, y: 480, mode: "touch", style: "glitch" },
   { id: "orchard_difficult_marker", name: "Hiding Marker", difficulty: "Challenging", room: "room_08_orchard_difficulty", x: 1050, y: 640, mode: "touch", style: "classic" },
-  { id: "orchard_difficulty_final", name: "Difficulty Meter Marker", difficulty: "Hard", room: "room_08_orchard_difficulty", x: 1200, y: 520, mode: "puzzle", style: "note" },
+  { id: "orchard_difficulty_final", name: "Difficulty Meter Marker", difficulty: "Hard", room: "room_08_orchard_difficulty", x: 1180, y: 680, mode: "puzzle", style: "note" },
 
   // ---- room_07_forest (5) ----
   { id: "forest_easy_1", name: "Slingshot Marker", difficulty: "Easy", room: "room_07_forest", x: 360, y: 620, mode: "touch", style: "classic" },
@@ -90,6 +90,20 @@ export const MARKERS = Object.freeze([
   // ---- room_03_casino_pool (desenho: marker segurando o taco) ----
   { id: "casino_cue", name: "Pool Shark Marker", difficulty: "Challenging", room: "room_03_casino_pool", x: 380, y: 580, mode: "touch", style: "shark" },
 
+  {
+    id: "capybara_code_marker",
+    name: "Capybara Code Marker",
+    difficulty: "Challenging",
+    room: "secret_pool_room",
+    x: 1180,
+    y: 600,
+    mode: "capybara",
+    style: "tophat",
+    hint: "Two doors. Two codes. One strange capybara.",
+    hintPt: "Duas portas. Dois códigos. Uma capivara estranha.",
+    area: "Salão Secreto"
+  },
+
   ...EXPANSION_MARKERS
 ]);
 
@@ -122,6 +136,10 @@ export function isCollectible(marker, save) {
       return Boolean(save.mikuMarkerUnlocked || save.puzzleStates?.mikuPuzzleSolved);
     case "menu_champion":
       return Boolean(save.menuSecrets?.championSolved);
+    case "capybara":
+      return Boolean(
+        save.puzzleStates?.capybaraCodeMarkerUnlocked || save.puzzleStates?.mysteriousCapybaraSolved
+      );
     default:
       return true;
   }
@@ -141,6 +159,8 @@ export function lockedReason(marker, save) {
       return "Acerte o ritmo no Digital Stage primeiro.";
     case "menu_champion":
       return "Algo ainda não despertou…";
+    case "capybara":
+      return "Pergunte à Capivara Misteriosa.";
     default:
       return null;
   }
