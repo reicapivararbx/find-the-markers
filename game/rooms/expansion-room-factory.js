@@ -677,8 +677,8 @@ function buildSecretGreenhouse(ctx, t) {
   const { scene } = ctx;
   kit.interiorWall(scene, ctx, 0xd8f0d0, 0x6fae7c);
   kit.greenhouse(scene, ctx, 480, 520, 280, 160);
-  kit.flowerBed(scene, 200, 580, 120, 40, 0xd1495b);
-  kit.flowerBed(scene, 1000, 600, 140, 36, 0xf2a0c8);
+  kit.flowerBed(scene, 200, 580, [0xd1495b, 0xf2c94c, 0xe884b5]);
+  kit.flowerBed(scene, 1000, 600, [0xf2a0c8, 0x56ccf2, 0x62c462]);
   kit.hedgeWall(scene, ctx, 160, 480, 100, 50);
   kit.hedgeWall(scene, ctx, 1100, 500, 90, 48);
   kit.crate(scene, ctx, 360, 620, 70, 36, 0x8a6238);

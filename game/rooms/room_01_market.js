@@ -1,6 +1,6 @@
 // PÁGINA 1 — FEIRA / MARKET (top-down 2.5D).
 // Barracas, barraca de frutas, turbina, NPCs. Direita: cidade (livre).
-// Esquerda: gate futuro 30 markers (sem destino).
+// Esquerda: gate 30 markers → Jardim Suspenso (room_11_garden).
 import { ensureMarkerTexture } from "../assets/textures.js";
 import { kit } from "../scenes/room-kit.js";
 import { Npc } from "../entities/npc.js";
