@@ -104,20 +104,30 @@ export class CodeKeypad {
     this.keyHandler = (event) => {
       if (this.closed) return;
       if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
         this.cancel();
         return;
       }
       if (event.key === "Backspace") {
+        event.preventDefault();
         this.press("←");
         return;
       }
       if (event.key === "Enter") {
+        event.preventDefault();
         this.press("✓");
         return;
       }
-      if (/^[0-9]$/.test(event.key)) this.press(event.key);
+      if (/^[0-9]$/.test(event.key)) {
+        event.preventDefault();
+        this.press(event.key);
+      }
     };
     window.addEventListener("keydown", this.keyHandler);
+    this._onSceneEnd = () => this.close();
+    scene.events.once("shutdown", this._onSceneEnd);
+    scene.events.once("destroy", this._onSceneEnd);
   }
 
   formatDisplay() {
@@ -185,10 +195,15 @@ export class CodeKeypad {
     if (this.closed) return;
     this.closed = true;
     window.removeEventListener("keydown", this.keyHandler);
-    this.root.destroy(true);
+    if (this._onSceneEnd && this.scene?.events) {
+      this.scene.events.off("shutdown", this._onSceneEnd);
+      this.scene.events.off("destroy", this._onSceneEnd);
+      this._onSceneEnd = null;
+    }
+    this.root?.destroy?.(true);
     state.hud?.setPuzzleModal?.(false);
-    if (!this.scene.scene?.isPaused?.() && !state.hud?.pauseOpen) {
-      this.scene.physics?.resume?.();
+    if (!this.scene?.paused && !state.hud?.pauseOpen) {
+      this.scene?.physics?.resume?.();
     }
   }
 }

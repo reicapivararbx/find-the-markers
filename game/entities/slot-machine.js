@@ -55,7 +55,26 @@ export class SlotMachine {
       onClosed: () => this.onUiClosed()
     });
 
+    this._onSceneEnd = () => this.destroy();
+    scene.events.once("shutdown", this._onSceneEnd);
+    scene.events.once("destroy", this._onSceneEnd);
+
     this.ensureUnlockedMarkersVisible();
+  }
+
+  destroy() {
+    if (this._destroyed) return;
+    this._destroyed = true;
+    if (this._onSceneEnd && this.scene?.events) {
+      this.scene.events.off("shutdown", this._onSceneEnd);
+      this.scene.events.off("destroy", this._onSceneEnd);
+      this._onSceneEnd = null;
+    }
+    if (this.uiOpen || this.ui?.isOpen?.()) {
+      this.ui.hide();
+    }
+    this.uiOpen = false;
+    this.busy = false;
   }
 
   open() {
