@@ -807,6 +807,7 @@ export const kit = {
   },
 
   flowerBed(scene, x, baseY, colors = [0xd1495b, 0xf2c94c, 0xb37feb]) {
+    groundShadow(scene, x, baseY, 56, 14, 0.18);
     const gfx = g(scene, baseY - 1);
     gfx.fillStyle(0x6b4a2a, 0.85);
     gfx.fillEllipse(x, baseY, 70, 22);

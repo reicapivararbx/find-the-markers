@@ -44,45 +44,107 @@ function buildOrganicGarden(ctx, t) {
   kit.cloud(scene, 220, 110, 1.05);
   kit.cloud(scene, 680, 80, 0.75);
   kit.cloud(scene, 1180, 130, 0.95);
-  kit.ground(scene, ctx, t.ground);
+  kit.meadowFloor(scene, t.ground);
+  ctx.solid(0, 0, 18, 810);
+  ctx.solid(1422, 0, 18, 810);
+  ctx.solid(0, 0, 1440, 28);
+  ctx.solid(0, 792, 1440, 18);
 
-  kit.stonePath(scene, [
-    [40, 560],
-    [180, 540],
-    [320, 500],
-    [480, 520],
-    [620, 560],
-    [760, 540],
-    [920, 500],
-    [1100, 520],
-    [1280, 540],
-    [1400, 560]
-  ], 64);
-  kit.dirtPath(scene, [
-    [480, 520],
-    [520, 420],
-    [580, 340],
-    [720, 300],
-    [720, 240]
-  ], 48);
-  kit.dirtPath(scene, [
-    [760, 540],
-    [820, 620],
-    [900, 700],
-    [1040, 740]
-  ], 44);
-  kit.dirtPath(scene, [
-    [320, 500],
-    [280, 620],
-    [240, 700],
-    [180, 740]
-  ], 40);
+  kit.stonePath(
+    scene,
+    [
+      [40, 560],
+      [140, 545],
+      [220, 535],
+      [320, 500],
+      [440, 510],
+      [560, 535],
+      [620, 560],
+      [760, 540],
+      [920, 500],
+      [1100, 520],
+      [1280, 540],
+      [1400, 560]
+    ],
+    64
+  );
+  kit.dirtPath(
+    scene,
+    [
+      [480, 520],
+      [500, 460],
+      [540, 380],
+      [600, 320],
+      [720, 300],
+      [740, 360],
+      [680, 420],
+      [560, 460]
+    ],
+    48
+  );
+  kit.dirtPath(
+    scene,
+    [
+      [760, 540],
+      [800, 600],
+      [860, 660],
+      [940, 700],
+      [1040, 740],
+      [980, 640],
+      [860, 580]
+    ],
+    44
+  );
+  kit.dirtPath(
+    scene,
+    [
+      [320, 500],
+      [280, 560],
+      [240, 620],
+      [200, 700],
+      [180, 740],
+      [220, 640],
+      [280, 580]
+    ],
+    40
+  );
+  kit.dirtPath(scene, [[720, 300], [720, 240]], 40);
+
+  kit.organicPond(scene, ctx, 580, 450, 1.15);
+
+  kit.forestBelt(
+    scene,
+    ctx,
+    [
+      [30, 180],
+      [90, 160],
+      [160, 200],
+      [240, 170],
+      [320, 190],
+      [520, 180],
+      [620, 160],
+      [760, 170],
+      [920, 190],
+      [1080, 160],
+      [1240, 180],
+      [1380, 190]
+    ],
+    { scale: 0.9, canopy: 0x5d8f46 }
+  );
+  kit.forestBelt(scene, ctx, [[40, 520], [50, 640], [45, 740]], { scale: 0.8 });
+  kit.forestBelt(scene, ctx, [[1400, 520], [1390, 640], [1410, 740]], { scale: 0.8 });
+  kit.thicket(scene, ctx, 40, 780, 140, 48);
+  kit.thicket(scene, ctx, 1260, 780, 140, 44);
 
   kit.fountain(scene, ctx, 620, 480);
   kit.greenhouse(scene, ctx, 1080, 380, 180, 120);
-  kit.hedgeWall(scene, ctx, 400, 300, 140, 52);
-  kit.hedgeWall(scene, ctx, 560, 280, 100, 48);
-  kit.hedgeWall(scene, ctx, 720, 300, 130, 50);
+  kit.hedgeMaze(scene, ctx, [
+    { x: 360, y: 300, w: 120, h: 48 },
+    { x: 520, y: 280, w: 100, h: 44 },
+    { x: 680, y: 300, w: 130, h: 50 },
+    { x: 420, y: 360, w: 90, h: 44 }
+  ]);
+  kit.stoneArch(scene, ctx, 720, 280, 90, 80);
   kit.ruinPillar(scene, ctx, 200, 380, 100);
   kit.ruinPillar(scene, ctx, 280, 400, 72);
   kit.ruinPillar(scene, ctx, 1320, 420, 88);
@@ -110,6 +172,7 @@ function buildOrganicGarden(ctx, t) {
   kit.flowerBed(scene, 700, 640, [0xb37feb, 0x62c462, 0xf2c94c]);
   kit.flowerBed(scene, 1000, 500, [0xd1495b, 0x56ccf2, 0xe884b5]);
   kit.flowerBed(scene, 400, 740, [0xf2c94c, 0x7cae62, 0xb37feb]);
+  kit.flowerBed(scene, 1120, 700, [0xe884b5, 0x56ccf2, 0x62c462]);
 
   kit.bench(scene, ctx, 480, 580, 100);
   kit.bench(scene, ctx, 900, 560, 90);
@@ -131,7 +194,14 @@ function buildOrganicGarden(ctx, t) {
     [1200, 460]
   ]);
 
-  kit.water(scene, 560, 440, 120, 50);
+  kit.leafDrift(scene, [
+    [200, 320],
+    [480, 360],
+    [720, 260],
+    [980, 320],
+    [1120, 480],
+    [640, 520]
+  ]);
 }
 
 function buildOrganicHarbor(ctx, t) {
