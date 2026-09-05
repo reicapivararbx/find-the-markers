@@ -10,6 +10,7 @@ import room_08_orchard_difficulty from "./room_08_orchard_difficulty.js";
 import room_09_spawn from "./room_09_spawn.js";
 import room_10_credits from "./room_10_credits.js";
 import secret_digital_stage from "./secret_digital_stage.js";
+import secret_pool_room from "./secret_pool_room.js";
 import {
   room_11_garden,
   room_12_harbor,
@@ -68,5 +69,6 @@ export const ROOMS = Object.freeze({
   secret_20_throne,
   secret_backrooms,
   secret_developer,
-  secret_digital_stage
+  secret_digital_stage,
+  secret_pool_room
 });

@@ -65,7 +65,17 @@ export const ROOM_CONNECTIONS = Object.freeze({
   },
 
   room_03_casino_pool: {
-    back: { to: "room_02_casino_gallery", requiredMarkers: 0, arriveAt: "from_room_03" }
+    back: { to: "room_02_casino_gallery", requiredMarkers: 0, arriveAt: "from_room_03" },
+    secretPool: {
+      to: "secret_pool_room",
+      requiredMarkers: 0,
+      condition: "E",
+      arriveAt: "from_room_03"
+    }
+  },
+
+  secret_pool_room: {
+    exit: { to: "room_03_casino_pool", requiredMarkers: 0, arriveAt: "from_secret_pool" }
   },
 
   room_11_garden: {
@@ -190,6 +200,7 @@ export const ROOM_NAMES = Object.freeze({
   room_03_casino_pool: "Salão de Sinuca",
   room_01_market: "Feira",
   secret_digital_stage: "Digital Stage",
+  secret_pool_room: "Sala das Sombras",
   room_11_garden: "Jardim Suspenso",
   room_12_harbor: "Porto das Válvulas",
   room_13_factory: "Fábrica Enferrujada",
