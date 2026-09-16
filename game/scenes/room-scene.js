@@ -7,11 +7,12 @@ import { markersForRoom } from "../config/marker-registry.js";
 import { ROOMS } from "../rooms/index.js";
 import { Player } from "../entities/player.js";
 import { MarkerEntity } from "../entities/marker-entity.js";
-import { Gate } from "../entities/gate.js";
+import { Gate, gateZoneRects } from "../entities/gate.js";
 import { Npc } from "../entities/npc.js";
 import { InputController } from "../core/input.js";
 import { bus, Events } from "../core/event-bus.js";
-import { Sfx } from "../core/audio-manager.js";
+import { CutsceneController } from "../cinematic/cutscene-controller.js";
+import { Sfx, createAmbience } from "../core/audio-manager.js";
 import { state } from "../state.js";
 import { EggQuest } from "../puzzles/egg-quest.js";
 import { kit } from "./room-kit.js";
@@ -21,8 +22,13 @@ import {
   firstBlockingSolid,
   resolveSafePoint,
   buildUnstuckCandidates,
+  feetInsideAnyRect,
   playerFeetRect
 } from "../physics/walkability.js";
+
+// Margem mínima entre um spawn e a borda de um trigger (px). Spawn colado em
+// gate = ping-pong automático: o overlap re-dispara assim que o cooldown acaba.
+const SPAWN_ZONE_MARGIN = 4;
 
 export class RoomScene extends Phaser.Scene {
   constructor() {
@@ -32,7 +38,14 @@ export class RoomScene extends Phaser.Scene {
   init(data = {}) {
     this.roomId = data.roomId || (state.saveManager?.save.currentRoom || "room_09_spawn");
     this.arriveAt = data.arriveAt || "default";
-    this.transitioning = false;
+    this.arrival = data.cinematicArrival || null;
+    this.inCutscene = Boolean(this.arrival);
+    this.secretPainting = null;
+    this.archiveTerminal = null;
+    this.archiveDarkness = null;
+    this.cutscene = null;
+    this.ambience = null;
+    this.transitioning = Boolean(this.arrival);
     this.paused = false;
     this.solids = [];
     this.markers = [];
@@ -62,11 +75,12 @@ export class RoomScene extends Phaser.Scene {
     }
 
     this.room = room;
+    this.bounds = room.bounds || VIEW;
     this.kit = kit;
     // garante texturas base mesmo se o BootScene foi interrompido (idempotente)
     generateAllTextures(this);
-    this.physics.world.setBounds(0, 0, VIEW.width, VIEW.height);
-    this.cameras.main.setBounds(0, 0, VIEW.width, VIEW.height);
+    this.physics.world.setBounds(0, 0, this.bounds.width, this.bounds.height);
+    this.cameras.main.setBounds(0, 0, this.bounds.width, this.bounds.height);
 
     const save = state.saveManager.save;
     const hud = state.hud;
@@ -95,6 +109,8 @@ export class RoomScene extends Phaser.Scene {
     this.inputController = new InputController(this);
     this.player = new Player(this, spawnPoint.x, spawnPoint.y, this.inputController);
     globalThis.FTMInput = this.inputController;
+    this.configureCamera();
+    this.cutscene = new CutsceneController(this);
     if (spawnPoint.recovered) {
       hud.toast("Posição inválida detectada. Movendo para um local seguro.", {
         icon: "🛟",
@@ -175,19 +191,39 @@ export class RoomScene extends Phaser.Scene {
       this.kit.panelStrip(this, defs, save.collectedMarkerIds);
     }
 
-    // HUD
+    // HUD — estado modal da sala anterior nunca vaza para a nova área
+    hud.hidePause();
+    hud.toggleCollection(false);
     hud.showGameplay();
     hud.setCounter(save.collectedMarkerIds.length);
-    hud.setArea(ROOM_NAMES[this.roomId] || this.roomId);
+    hud.setArea(room.hidden ? (room.code || "???") : (ROOM_NAMES[this.roomId] || this.roomId));
     hud.updateEggs(save.discoveredEggIds.length, 5);
     hud.updateCoins(save.coins ?? 0);
     hud.updateMusicNotes(save.discoveredMusicNoteIds?.length ?? 0, 5);
 
     // entrada na sala (relógio real: monotônico entre restarts da cena)
     this.enteredAt = performance.now();
-    this.cameras.main.fadeIn(TRANSITION.fadeMs, 10, 14, 20);
+    this.ambience = createAmbience(room.ambience);
+    if (this.arrival) this.cutscene.arrive(this.arrival);
+    else {
+      hud.setCinematic(false);
+      this.archiveDarkness?.setAlpha(0);
+      this.cameras.main.fadeIn(TRANSITION.fadeMs, 10, 14, 20);
+      this.ambience?.setLevel(1, 0.6);
+    }
     save.currentRoom !== this.roomId && state.saveManager.setCurrentRoom(this.roomId);
     bus.emit(Events.ROOM_ENTERED, this.roomId);
+
+    if (state.debug) {
+      console.debug("[AREA_TRANSITION] loaded", {
+        area: this.roomId,
+        spawn: { source: spawnPoint.source, x: Math.round(spawnPoint.x), y: Math.round(spawnPoint.y) },
+        cameraBounds: { w: this.bounds.width, h: this.bounds.height },
+        solids: this.solids.length,
+        gates: this.gates.length,
+        result: "OK"
+      });
+    }
 
     if (state.debug) {
       window.FTMScene = this;
@@ -202,6 +238,9 @@ export class RoomScene extends Phaser.Scene {
   shutdown() {
     if (this._didShutdown) return;
     this._didShutdown = true;
+    this.cutscene?.destroy();
+    this.archiveTerminal?.destroy();
+    this.ambience?.stop();
 
     if (this._debugUpdateHandler) {
       this.events.off("update", this._debugUpdateHandler);
@@ -232,15 +271,29 @@ export class RoomScene extends Phaser.Scene {
     this.inputController = null;
   }
 
+  // Escolhe o primeiro candidato walkable E fora de qualquer trigger da sala.
+  // Se nenhum candidato safar-se dos triggers, aceita o melhor walkable
+  // (spawn válido >_sem spawn); a validação estática impede isso no comum.
+  pickSpawnPoint(candidates) {
+    const zones = gateZoneRects(this.room);
+    const pool = zones.length
+      ? candidates.filter((c) => !feetInsideAnyRect(c.x, c.y, zones, SPAWN_ZONE_MARGIN))
+      : candidates;
+    return resolveSafePoint(pool.length ? pool : candidates, this.solids, this.bounds);
+  }
+
   resolveSpawnPoint(room, save, arriveAt) {
     const named = room.spawns?.[arriveAt] || room.spawns?.default || SOFTLOCK.globalStart;
+    const zones = gateZoneRects(room);
     const sameRoom = save.currentRoom === this.roomId;
     const savedOk =
       sameRoom &&
+      !room.safeReload &&
       arriveAt === "default" &&
       Number.isFinite(save.playerX) &&
       Number.isFinite(save.playerY) &&
-      isPositionWalkable(save.playerX, save.playerY, this.solids, VIEW);
+      isPositionWalkable(save.playerX, save.playerY, this.solids, this.bounds) &&
+      !feetInsideAnyRect(save.playerX, save.playerY, zones, SPAWN_ZONE_MARGIN);
 
     if (savedOk) {
       return { x: save.playerX, y: save.playerY, source: "save", recovered: false, from: null };
@@ -256,10 +309,11 @@ export class RoomScene extends Phaser.Scene {
     if (named && Number.isFinite(named.x) && Number.isFinite(named.y)) {
       candidates.unshift({ x: named.x, y: named.y, source: `spawn:${arriveAt || "default"}` });
     }
-    const picked = resolveSafePoint(candidates, this.solids, VIEW);
+    const picked = this.pickSpawnPoint(candidates);
     if (picked) {
       const recovered =
         sameRoom &&
+        !room.safeReload &&
         arriveAt === "default" &&
         Number.isFinite(save.playerX) &&
         Number.isFinite(save.playerY) &&
@@ -285,7 +339,14 @@ export class RoomScene extends Phaser.Scene {
     if (this.transitioning) return;
     if (performance.now() - this.enteredAt < TRANSITION.cooldownMs) return;
     if (!connection?.to) {
-      console.warn("[AREA_TRANSITION] destino nulo", { from: this.roomId, connection });
+      // Conteúdo futuro/pendente (ex.: gate do quadro): feedback igual ao Gate,
+      // nunca um destino inexistente que derruba o player no spawn.
+      if (connection?.pending) {
+        state.hud?.toast?.("Em breve…", { icon: "✨", duration: 2200 });
+        Sfx.reveal();
+      } else {
+        console.warn("[AREA_TRANSITION] destino nulo", { from: this.roomId, connection });
+      }
       return;
     }
     if (!ROOMS[connection.to]) {
@@ -296,6 +357,7 @@ export class RoomScene extends Phaser.Scene {
       state.hud?.toast?.("Área indisponível.", { icon: "⚠️", duration: 2200 });
       return;
     }
+    if (connection.cinematic) return this.cutscene.depart(connection);
     this.transitioning = true;
     this.player.stop();
     if (this.player) {
@@ -303,17 +365,31 @@ export class RoomScene extends Phaser.Scene {
     }
     state.hud.clearAllInteractions();
     console.debug("[AREA_TRANSITION]", {
-      fromArea: this.roomId,
-      targetArea: connection.to,
-      targetSpawn: connection.arriveAt || "default"
+      from: this.roomId,
+      to: connection.to,
+      spawn: connection.arriveAt || "default",
+      player: { x: Math.round(this.player.x), y: Math.round(this.player.y) }
     });
     Sfx.transition();
     this.cameras.main.fadeOut(TRANSITION.fadeMs, 10, 14, 20);
     this.cameras.main.once("camerafadeoutcomplete", () => {
-      state.saveManager.setCurrentRoom(connection.to);
-      state.saveManager.setPlayerPosition(null, null);
-      this.scene.restart({ roomId: connection.to, arriveAt: connection.arriveAt || "default" });
+      this.loadArea(connection);
     });
+  }
+
+  // All transitions commit the destination only after the camera is black.
+  loadArea(connection, cinematicArrival = null) {
+    state.saveManager.setCurrentRoom(connection.to);
+    state.saveManager.setPlayerPosition(null, null);
+    this.scene.restart({ roomId: connection.to, arriveAt: connection.arriveAt || "default", cinematicArrival });
+  }
+
+  configureCamera() {
+    const cam = this.cameras.main;
+    cam.setBounds(0, 0, this.bounds.width, this.bounds.height);
+    cam.setZoom(this.room.zoom || 1);
+    cam.startFollow(this.player.sprite, true, 1, 1);
+    cam.centerOn(this.player.x, this.player.y);
   }
 
   flushPositionToSave() {
@@ -321,7 +397,7 @@ export class RoomScene extends Phaser.Scene {
     const px = this.player.x;
     const py = this.player.y;
     state.saveManager.setPlayerPosition(px, py);
-    if (isPositionWalkable(px, py, this.solids, VIEW)) {
+    if (isPositionWalkable(px, py, this.solids, this.bounds)) {
       state.saveManager.setLastSafePosition({ areaId: this.roomId, x: px, y: py });
     } else {
       state.saveManager.persist();
@@ -329,17 +405,20 @@ export class RoomScene extends Phaser.Scene {
   }
 
   togglePause() {
+    // Retomar é sempre permitido — o próprio pause é um "modal" para
+    // isModalOpen(), então checar o guard antes do resume travava o ESC.
     if (this.paused) {
       this.paused = false;
       this.physics.resume();
       state.hud.hidePause();
-    } else {
-      this.paused = true;
-      this.physics.pause();
-      this.player.stop();
-      this.flushPositionToSave();
-      state.hud.showPause();
+      return;
     }
+    if (this.inCutscene || this.transitioning || state.hud.isModalOpen()) return;
+    this.paused = true;
+    this.physics.pause();
+    this.player.stop();
+    this.flushPositionToSave();
+    state.hud.showPause();
   }
 
   canUnstuck() {
@@ -369,7 +448,7 @@ export class RoomScene extends Phaser.Scene {
       arriveAt: this.arriveAt || "default",
       globalStart: { ...SOFTLOCK.globalStart, source: "global:room_09_spawn" }
     });
-    let picked = resolveSafePoint(candidates, this.solids, VIEW);
+    let picked = this.pickSpawnPoint(candidates);
 
     if (!picked && this.roomId !== SOFTLOCK.globalStart.roomId) {
       this._lastUnstuckAt = performance.now();
@@ -438,7 +517,7 @@ export class RoomScene extends Phaser.Scene {
     if (!this.player || this.paused || this.transitioning) return;
     const x = this.player.x;
     const y = this.player.y;
-    const walkable = isPositionWalkable(x, y, this.solids, VIEW);
+    const walkable = isPositionWalkable(x, y, this.solids, this.bounds);
 
     if (walkable) {
       this._stuckAcc = 0;
@@ -487,8 +566,27 @@ export class RoomScene extends Phaser.Scene {
     this.gates.forEach((gate) => {
       const z = gate.zone;
       if (!z) return;
+      const w = z.width || z.body?.width || 70;
+      const h = z.height || z.body?.height || 220;
+      // VERDE = trigger; ROXO = transição (destino + spawn de chegada)
+      this.add.rectangle(z.x, z.y, w, h, 0x22c55e, 0.14).setDepth(99996);
       this.add
-        .rectangle(z.x, z.y, z.width || z.body?.width || 70, z.height || z.body?.height || 220, 0x22c55e, 0.18)
+        .rectangle(z.x, z.y, w, h)
+        .setStrokeStyle(2, 0xb37feb, 0.9)
+        .setDepth(99996);
+      const target = gate.connection?.to;
+      const label = target
+        ? `${gate.id.split(":")[1]} → ${target}${gate.connection?.arriveAt ? ` @${gate.connection.arriveAt}` : ""}`
+        : `${gate.id.split(":")[1]} → pendente`;
+      this.add
+        .text(z.x, z.y + h / 2 - 10, label, {
+          fontFamily: "monospace",
+          fontSize: "10px",
+          color: "#e0c8ff",
+          backgroundColor: "#4a3a68cc",
+          padding: { x: 3, y: 1 }
+        })
+        .setOrigin(0.5, 1)
         .setDepth(99996);
     });
   }
@@ -511,7 +609,7 @@ export class RoomScene extends Phaser.Scene {
       if (!this.debugText) return;
       const px = this.player?.x ?? 0;
       const py = this.player?.y ?? 0;
-      const walkable = isPositionWalkable(px, py, this.solids, VIEW);
+      const walkable = isPositionWalkable(px, py, this.solids, this.bounds);
       const safe = save.lastSafePosition;
       const safeStr = safe
         ? `${safe.areaId}@${Math.round(safe.x)},${Math.round(safe.y)}`
@@ -542,6 +640,18 @@ export class RoomScene extends Phaser.Scene {
     if (!input || !this.player) return;
     input.beginFrame();
 
+    if (this.inCutscene) {
+      this.player.update(delta, true);
+      input.endFrame();
+      return;
+    }
+
+    if (input.pauseJustDown && this.archiveTerminal?.isOpen) {
+      this.archiveTerminal.close();
+      input.endFrame();
+      return;
+    }
+
     if (input.pauseJustDown) {
       const hud = state.hud;
       const topModal =
@@ -560,11 +670,11 @@ export class RoomScene extends Phaser.Scene {
       }
     }
 
-    if (input.collectionJustDown) {
+    if (input.collectionJustDown && !state.hud.puzzleModalOpen) {
       state.hud.toggleCollection();
     }
 
-    if (this.paused || this.transitioning || state.hud.puzzleModalOpen) {
+    if (this.paused || this.transitioning || state.hud.isModalOpen()) {
       this.player.update(delta, true);
       input.endFrame();
       return;
@@ -577,7 +687,10 @@ export class RoomScene extends Phaser.Scene {
     this.sortDepthByY();
     this.tickSoftlock(delta);
 
-    this.updatables.forEach((u) => u.update?.(px, py, input.interactJustDown, state.hud));
+    for (const u of this.updatables) {
+      if (this.transitioning || state.hud.puzzleModalOpen) break;
+      u.update?.(px, py, input.interactJustDown, state.hud);
+    }
     this.difficultyMeter?.update(px, py);
     this.redButtons?.update(px, py);
     this.gates.forEach((gate) => gate.highlight(Math.hypot(px - gate.zone.x, py - gate.zone.y) < 190));

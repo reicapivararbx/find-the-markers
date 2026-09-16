@@ -26,6 +26,7 @@ export class InputController {
       collection: "C"
     });
     this.keys = keys;
+    this.locked = false;
 
     this.interactJustDownFlag = false;
     this.pauseJustDownFlag = false;
@@ -41,6 +42,7 @@ export class InputController {
 
   // Chamado pelos botões touch (DOM) via window.FTMInput.
   setVirtual(action, value) {
+    if (this.locked) return;
     if (!(action in this.virtual)) return;
     const wasDown = this.virtual[action];
     this.virtual[action] = value;
@@ -61,6 +63,15 @@ export class InputController {
     this.interactWasDown = false;
     this.pauseWasDown = false;
     this.collectionWasDown = false;
+  }
+
+  setLocked(locked) {
+    this.locked = Boolean(locked);
+    this.releaseAll();
+    // Held keys must not become a fresh E/ESC on the first unlocked frame.
+    this.interactWasDown = Boolean(this.keys?.interact.isDown || this.keys?.space.isDown);
+    this.pauseWasDown = Boolean(this.keys?.pause.isDown);
+    this.collectionWasDown = Boolean(this.keys?.collection.isDown);
   }
 
   destroy() {
@@ -102,6 +113,7 @@ export class InputController {
   }
 
   get axisX() {
+    if (this.locked) return 0;
     let x = 0;
     if (this.keys.left.isDown || this.keys.altLeft.isDown || this.virtual.left) x -= 1;
     if (this.keys.right.isDown || this.keys.altRight.isDown || this.virtual.right) x += 1;
@@ -109,6 +121,7 @@ export class InputController {
   }
 
   get axisY() {
+    if (this.locked) return 0;
     let y = 0;
     if (this.keys.up.isDown || this.keys.altUp.isDown || this.virtual.up) y -= 1;
     if (this.keys.down.isDown || this.keys.altDown.isDown || this.virtual.down) y += 1;
@@ -128,15 +141,15 @@ export class InputController {
   }
 
   get interactJustDown() {
-    return this.interactJustDownFlag;
+    return !this.locked && this.interactJustDownFlag;
   }
 
   get pauseJustDown() {
-    return this.pauseJustDownFlag;
+    return !this.locked && this.pauseJustDownFlag;
   }
 
   get collectionJustDown() {
-    return this.collectionJustDownFlag;
+    return !this.locked && this.collectionJustDownFlag;
   }
 }
 

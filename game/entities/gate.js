@@ -6,6 +6,25 @@ import { canEnter, blockedReason } from "../config/room-connections.js";
 import { bus, Events } from "../core/event-bus.js";
 import { Sfx } from "../core/audio-manager.js";
 
+// Retângulos normalizados das zonas de trigger de uma sala. Fonte única para
+// a física do Gate e para a validação de spawn (nenhum spawn pode nascer
+// dentro de um gate — spawn em trigger = ping-pong automático entre áreas).
+export function gateZoneRects(room) {
+  const list = [];
+  for (const gateDef of room?.gates || []) {
+    if (!gateDef) continue;
+    list.push(
+      gateDef.zone || {
+        x: gateDef.x - GAMEPLAY.gateZoneWidth / 2,
+        y: (gateDef.arrowY ?? 470) - GAMEPLAY.gateZoneHeight / 2,
+        width: GAMEPLAY.gateZoneWidth,
+        height: GAMEPLAY.gateZoneHeight
+      }
+    );
+  }
+  return list;
+}
+
 export class Gate {
   constructor(scene, { id, connection, x, arrowY = 470, zone, arrow, save, hud, onTravel, showArrow = true }) {
     this.scene = scene;
@@ -97,7 +116,7 @@ export class Gate {
   }
 
   onPlayerEnter() {
-    if (this.inside || !this.enabled || this.scene.transitioning) return;
+    if (this.inside || !this.enabled || this.scene.transitioning || this.scene.inCutscene) return;
     this.inside = true;
     this.evaluate();
     this.scene.time.delayedCall(300, () => (this.inside = false));

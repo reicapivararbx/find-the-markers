@@ -279,6 +279,7 @@ export class MarkerEntity {
 
   // Chamado pelo RoomScene quando o player encosta na zona.
   tryCollect() {
+    if (this.scene.transitioning || this.scene.inCutscene) return false;
     if (this.collected || this.destroyed || this.hidden) return false;
     if (!isCollectible(this.def, this.sm.save)) {
       if (this.hud && !this.blockFeedbackAt) {

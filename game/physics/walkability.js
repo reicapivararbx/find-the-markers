@@ -78,6 +78,23 @@ export function resolveSafePoint(candidates, solids = [], bounds = VIEW, opts = 
   return null;
 }
 
+// Pés do player sobre algum retângulo (zonas de gate/trigger). Usado para
+// impedir spawn/respawn dentro de um portal — spawn dentro de trigger causa
+// ping-pong automático entre áreas (o overlap re-dispara após o cooldown).
+export function feetInsideAnyRect(x, y, rects = [], margin = 0, bodyW = PHYSICS.bodyWidth, bodyH = PHYSICS.bodyHeight) {
+  const feet = playerFeetRect(x, y, bodyW, bodyH);
+  for (let i = 0; i < rects.length; i += 1) {
+    const r = rects[i];
+    if (!r) continue;
+    const w = r.width ?? r.w;
+    const h = r.height ?? r.h;
+    if (!Number.isFinite(w) || !Number.isFinite(h)) continue;
+    const rect = { x: r.x - margin, y: r.y - margin, w: w + margin * 2, h: h + margin * 2 };
+    if (aabbOverlap(feet, rect)) return true;
+  }
+  return false;
+}
+
 export function buildUnstuckCandidates({
   roomId,
   room,

@@ -700,8 +700,8 @@ function buildSecretBoiler(ctx, t) {
   kit.interiorWall(scene, ctx, 0xc8b8a8, 0x5a5048);
   kit.smokestack(scene, ctx, 520, 560, 120);
   kit.smokestack(scene, ctx, 900, 580, 100);
-  kit.pipeRun(scene, 300, 480, 400, 0);
-  kit.pipeRun(scene, 700, 440, 280, 0);
+  kit.pipeRun(scene, [[300, 480], [700, 480]]);
+  kit.pipeRun(scene, [[700, 440], [980, 440]]);
   kit.oilDrum(scene, ctx, 240, 600);
   kit.oilDrum(scene, ctx, 1100, 620);
   kit.gearDecor(scene, 720, 400, 40);
@@ -729,8 +729,8 @@ function buildSecretServer(ctx, t) {
   kit.serverRack(scene, ctx, 960, 560, 100);
   kit.serverRack(scene, ctx, 1120, 560, 100);
   kit.labBench(scene, ctx, 720, 620, 160);
-  kit.terminal(scene, 720, 480);
-  kit.laserBeam(scene, 200, 400, 200);
+  kit.terminal(scene, ctx, 720, 480);
+  kit.laserBeam(scene, 200, 400, 200, 480);
   kit.crate(scene, ctx, 200, 620, 70, 36, 0x3a8a9a);
 }
 
@@ -742,7 +742,7 @@ function buildSecretTomb(ctx, t) {
   kit.obelisk(scene, ctx, 1120, 560, 110);
   kit.sandDune(scene, 200, 640, 160, 40);
   kit.sandDune(scene, 1100, 660, 140, 36);
-  kit.mosaicTile(scene, 720, 580, 80);
+  kit.mosaicTile(scene, 720, 580);
   kit.ruinPillar(scene, ctx, 500, 520, 90);
   kit.ruinPillar(scene, ctx, 940, 520, 90);
 }
@@ -751,7 +751,7 @@ function buildSecretObservatory(ctx, t) {
   const { scene } = ctx;
   kit.interiorWall(scene, ctx, 0xe8f0f8, 0xc0d0e0);
   kit.mountainPeak(scene, 720, 400, 180, 120);
-  kit.flagPole(scene, 720, 280);
+  kit.flagPole(scene, ctx, 720, 280);
   kit.snowPatch(scene, 300, 580, 120, 40);
   kit.snowPatch(scene, 1000, 600, 140, 36);
   kit.iceSpike(scene, 400, 520, 50);
@@ -768,7 +768,7 @@ function buildSecretSafeRoom(ctx, t) {
   kit.goldBar(scene, 280, 600);
   kit.goldBar(scene, 320, 610);
   kit.goldBar(scene, 1100, 600);
-  kit.terminal(scene, 720, 560);
+  kit.terminal(scene, ctx, 720, 560);
   kit.crate(scene, ctx, 200, 620, 80, 40, 0x4a4858);
 }
 
@@ -813,7 +813,7 @@ function buildSecretDeveloper(ctx, t) {
   kit.interiorWall(scene, ctx, 0x1a1a22, 0x2a2a32);
   kit.serverRack(scene, ctx, 300, 560, 90);
   kit.serverRack(scene, ctx, 1100, 560, 90);
-  kit.terminal(scene, 720, 480);
+  kit.terminal(scene, ctx, 720, 480);
   kit.labBench(scene, ctx, 720, 620, 200);
   scene.add
     .text(720, 200, "DEBUG ROOM", {

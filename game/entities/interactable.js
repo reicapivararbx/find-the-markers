@@ -4,7 +4,7 @@ import { bus, Events } from "../core/event-bus.js";
 import { Sfx } from "../core/audio-manager.js";
 
 export class Interactable {
-  constructor(scene, { id, x, y, radius = GAMEPLAY.interactRadius, prompt, action, once = false }) {
+  constructor(scene, { id, x, y, radius = GAMEPLAY.interactRadius, prompt, action, once = false, silent = false }) {
     this.scene = scene;
     this.id = id;
     this.x = x;
@@ -12,12 +12,14 @@ export class Interactable {
     this.radius = radius;
     this.prompt = prompt;
     this.action = action;
+    this.silent = silent;
     this.once = once;
     this.done = false;
     this.near = false;
   }
 
   update(px, py, interactJustDown, hud) {
+    if (this.scene.transitioning || this.scene.inCutscene || hud.puzzleModalOpen) return false;
     if (this.done) {
       if (this.near) {
         this.near = false;
@@ -29,7 +31,7 @@ export class Interactable {
     const distance = Math.hypot(px - this.x, py - this.y);
     const near = distance <= this.radius;
 
-    if (near && !this.near) {
+    if (near && (!this.near || !hud.currentInteraction)) {
       this.near = true;
       hud.setInteraction(this);
     } else if (!near && this.near) {
@@ -38,7 +40,7 @@ export class Interactable {
     }
 
     if (near && interactJustDown) {
-      Sfx.interact();
+      if (!this.silent) Sfx.interact();
       if (this.once) this.done = true;
       hud.clearInteraction(this);
       bus.emit(Events.INTERACTION_COMPLETED, this.id);

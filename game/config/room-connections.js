@@ -1,3 +1,4 @@
+import { ARCHIVE_CONNECTIONS, ARCHIVE_RETURNS, ARCHIVE_ROOM, ARCHIVE_PENDING } from "./archive-config.js";
 // Conexões entre áreas — ÚNICA fonte de verdade para progressão/gates.
 // requiredMarkers: 0 ou ausente = passagem livre.
 // condition: nome de um puzzleState que precisa ser true.
@@ -6,7 +7,25 @@
 // arriveAt: spawn point nomeado na sala de destino.
 // to: null = destino ainda não definido (conteúdo futuro, nunca crasha).
 
+function archiveGraph() {
+  // Só entra no grafo quando TODOS os módulos do arquivo existirem
+  // (ARCHIVE_PENDING = false em archive-config.js). Enquanto pendente, o gate
+  // do quadro vira "Em breve" — destino inexistente jamais entra neste registro
+  // (a validação estática de tests/map-graph.test.js garante isso).
+  if (!ARCHIVE_PENDING) {
+    return {
+      ...ARCHIVE_RETURNS,
+      [ARCHIVE_ROOM]: {
+        ...ARCHIVE_CONNECTIONS,
+        exit: { to: "room_02_casino_gallery", arriveAt: "from_archive", cinematic: "exit" }
+      }
+    };
+  }
+  return {};
+}
+
 export const ROOM_CONNECTIONS = Object.freeze({
+  ...archiveGraph(),
   room_09_spawn: {
     left: { to: "room_08_orchard_difficulty", requiredMarkers: 8, arriveAt: "from_room_09" },
     right: { to: "room_10_credits", requiredMarkers: 0, arriveAt: "from_room_09" }
@@ -60,6 +79,9 @@ export const ROOM_CONNECTIONS = Object.freeze({
   },
 
   room_02_casino_gallery: {
+    archive: ARCHIVE_PENDING
+      ? { to: null, pending: true }
+      : { to: ARCHIVE_ROOM, arriveAt: "from_gallery", cinematic: "painting" },
     next: { to: "room_03_casino_pool", requiredMarkers: 0, arriveAt: "from_room_02" },
     exitCasino: { to: "room_04_city_casino", requiredMarkers: 0, interaction: "E", arriveAt: "outside_casino" }
   },

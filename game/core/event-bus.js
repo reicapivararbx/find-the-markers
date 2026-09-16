@@ -20,6 +20,8 @@ export const Events = {
   SECRET_UNLOCKED: "secret:unlocked",
   SLOT_SPIN: "slot:spin",
   MUSIC_NOTE_FOUND: "musicNote:found",
+  QUEST_PROGRESS: "quest:progress",
+  QUEST_COMPLETED: "quest:completed",
   MENU_CHAMPION_SOLVED: "menu:championPuzzleSolved"
 };
 

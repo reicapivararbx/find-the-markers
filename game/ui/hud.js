@@ -39,6 +39,7 @@ export class Hud {
     this.puzzleModalOpen = false;
 
     this.promptEl.addEventListener("click", () => {
+      if (this.cinematic || this.isModalOpen()) return;
       if (!this.currentInteraction) return;
       const interaction = this.currentInteraction;
       this.clearAllInteractions();
@@ -114,6 +115,14 @@ export class Hud {
     if (this.puzzleModalOpen) this.clearAllInteractions();
   }
 
+  setCinematic(active) {
+    this.cinematic = Boolean(active);
+    this.root.classList.toggle("is-cinematic", this.cinematic);
+    const mobile = document.querySelector("#mobile-controls");
+    if (mobile) mobile.inert = this.cinematic;
+    if (active) this.clearAllInteractions();
+  }
+
   // ---------- valores ----------
   setCounter(count = null) {
     const value = count ?? state.saveManager?.markerCount ?? 0;
@@ -164,6 +173,7 @@ export class Hud {
 
   // ---------- prompt [E] ----------
   setInteraction(interactable) {
+    if (this.cinematic || this.isModalOpen()) return;
     if (this.currentInteraction === interactable) return;
     this.currentInteraction = interactable;
     this.promptTextEl.textContent = interactable.prompt;
@@ -183,6 +193,7 @@ export class Hud {
 
   // ---------- coleção ----------
   toggleCollection(force) {
+    if (this.cinematic && force !== false) return;
     const open = force ?? !this.collectionOpen;
     if (open === this.collectionOpen) return;
     this.collectionOpen = open;
@@ -226,6 +237,7 @@ export class Hud {
   }
 
   showPause() {
+    if (this.cinematic || this.puzzleModalOpen) return;
     this.pauseOpen = true;
     this.pauseEl.classList.add("is-open");
     this.hidePauseReset();

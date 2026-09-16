@@ -9,6 +9,7 @@ export function createDefaultSave() {
     playerX: null,
     playerY: null,
     lastSafePosition: null,
+    secretComputerRoomDiscovered: false,
     collectedMarkerIds: [],
     discoveredEggIds: [],
     puzzleStates: {
@@ -27,8 +28,20 @@ export function createDefaultSave() {
       shadowWatcherSolved: false,
       mysteriousCapybaraSolved: false,
       capybaraCodeMarkerUnlocked: false,
-      capybaraCodeMarkerCollected: false
+      capybaraCodeMarkerCollected: false,
+      // markers conceituais (desenhos à mão) — puzzles/minigames deles
+      clockSolved: false,
+      machineSolved: false,
+      grumpyCalmed: false,
+      soccerSolved: false,
+      baseballSolved: false,
+      mechSolved: false
     },
+    // quests FIND-N reutilizáveis (game/progression/quests.js)
+    quests: {},
+    // data de coleta por marker (Dex — "encontrado em"); saves antigos não têm
+    markerLog: {},
+    lastCollectedMarkerId: null,
     openedBoxes: [],
     unlockedRooms: [],
     areaSeals: [],
@@ -74,6 +87,7 @@ export function migrateSave(raw) {
   };
 
   save.version = SAVE_VERSION;
+  save.secretComputerRoomDiscovered = raw.secretComputerRoomDiscovered === true;
   save.currentRoom = typeof raw.currentRoom === "string" ? raw.currentRoom : defaults.currentRoom;
   save.playerX = Number.isFinite(raw.playerX) ? raw.playerX : null;
   save.playerY = Number.isFinite(raw.playerY) ? raw.playerY : null;
@@ -141,7 +155,43 @@ export function migrateSave(raw) {
     save.clues.poolHallDoorCodeFound = true;
   }
 
+  // v3: quests, markerLog e unlocks dos markers conceituais (migração sem reset)
+  save.quests = normalizeQuests(raw.quests);
+  save.markerLog = normalizeMarkerLog(raw.markerLog);
+  save.lastCollectedMarkerId =
+    typeof raw.lastCollectedMarkerId === "string" ? raw.lastCollectedMarkerId : null;
+  [
+    "clockSolved",
+    "machineSolved",
+    "grumpyCalmed",
+    "soccerSolved",
+    "baseballSolved",
+    "mechSolved"
+  ].forEach((key) => {
+    save.puzzleStates[key] = Boolean(save.puzzleStates[key]);
+  });
+
   return save;
+}
+
+function normalizeQuests(raw) {
+  const out = {};
+  if (!raw || typeof raw !== "object") return out;
+  for (const [questId, value] of Object.entries(raw)) {
+    if (!value || typeof value !== "object") continue;
+    const foundIds = Array.isArray(value.foundIds) ? [...new Set(value.foundIds.map(String))] : [];
+    out[questId] = { foundIds, completed: Boolean(value.completed) };
+  }
+  return out;
+}
+
+function normalizeMarkerLog(raw) {
+  const out = {};
+  if (!raw || typeof raw !== "object") return out;
+  for (const [markerId, iso] of Object.entries(raw)) {
+    if (typeof iso === "string" && iso) out[markerId] = iso;
+  }
+  return out;
 }
 
 function normalizeLastSafe(raw) {
@@ -376,6 +426,12 @@ export class SaveManager {
   setCurrentRoom(roomId) {
     if (this.save.currentRoom === roomId) return;
     this.save.currentRoom = roomId;
+    this.persist();
+  }
+
+  discoverSecretComputerRoom() {
+    if (this.save.secretComputerRoomDiscovered) return;
+    this.save.secretComputerRoomDiscovered = true;
     this.persist();
   }
 

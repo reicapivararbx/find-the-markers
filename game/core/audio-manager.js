@@ -14,6 +14,7 @@ function ac() {
 
 export function setMuted(value) {
   muted = Boolean(value);
+  ambienceVoices.forEach((voice) => voice.refresh());
 }
 
 export function isMuted() {
@@ -36,6 +37,7 @@ function tone({ freq = 440, endFreq = null, duration = 0.12, type = "square", vo
   osc.connect(gain).connect(audio.destination);
   osc.start(t0);
   osc.stop(t0 + duration + 0.05);
+  osc.onended = () => { osc.disconnect(); gain.disconnect(); };
 }
 
 function noise({ duration = 0.25, volume = 0.06, delay = 0 }) {
@@ -53,6 +55,7 @@ function noise({ duration = 0.25, volume = 0.06, delay = 0 }) {
   src.buffer = buffer;
   src.connect(gain).connect(audio.destination);
   src.start(t0);
+  src.onended = () => { src.disconnect(); gain.disconnect(); };
 }
 
 export const Sfx = {
@@ -108,4 +111,59 @@ export const Sfx = {
     tone({ freq: 180, endFreq: 90, duration: 0.14, type: "sawtooth", volume: 0.05, delay: 0.02 });
   },
   keypad: () => tone({ freq: 640, duration: 0.04, type: "square", volume: 0.05 })
+};
+
+// Ambientes discretos no mesmo AudioContext/Sfx do jogo. Cada sala possui
+// seu handle; rampas continuam no relógio de áudio durante a troca de área.
+const ambienceVoices = new Set();
+export function createAmbience(kind) {
+  if (!kind) return null;
+  const audio = ac();
+  if (!audio) return null;
+  const gain = audio.createGain();
+  gain.gain.value = 0;
+  gain.connect(audio.destination);
+  const frequencies = kind === "casino" ? [98, 147] : kind === "archive" ? [58, 116] : [73, 109.5];
+  const oscillators = frequencies.map((freq) => {
+    const osc = audio.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    osc.connect(gain);
+    osc.start();
+    return osc;
+  });
+  let stopped = false;
+  let level = 0;
+  const voice = {
+    setLevel(value, seconds = 0.5) {
+      if (stopped) return;
+      level = value;
+      const now = audio.currentTime;
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.linearRampToValueAtTime(muted ? 0 : value * 0.016, now + seconds);
+    },
+    refresh() { voice.setLevel(level, 0.08); },
+    stop(seconds = 0.3) {
+      if (stopped) return;
+      voice.setLevel(0, seconds);
+      stopped = true;
+      ambienceVoices.delete(voice);
+      oscillators.forEach((osc) => { osc.onended = () => osc.disconnect(); osc.stop(audio.currentTime + seconds + 0.02); });
+      oscillators[0].onended = () => { oscillators[0].disconnect(); gain.disconnect(); };
+    }
+  };
+  ambienceVoices.add(voice);
+  return voice;
+}
+
+Sfx.mechanism = (heavy = false) => {
+  noise({ duration: heavy ? 0.09 : 0.04, volume: 0.026 });
+  tone({ freq: heavy ? 100 : 210, endFreq: 65, duration: 0.09, type: "triangle", volume: 0.035 });
+};
+Sfx.slide = () => noise({ duration: 0.85, volume: 0.023 });
+Sfx.thunk = () => tone({ freq: 86, endFreq: 35, duration: 0.19, type: "triangle", volume: 0.055 });
+Sfx.crt = () => {
+  tone({ freq: 1800, endFreq: 560, duration: 0.15, type: "sine", volume: 0.018 });
+  noise({ duration: 0.16, volume: 0.018 });
 };

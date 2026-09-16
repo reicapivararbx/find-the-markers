@@ -7,9 +7,11 @@ import { SlotMachine } from "../entities/slot-machine.js";
 export default {
   id: "room_02_casino_gallery",
   panelMarkerIds: [],
+  ambience: "casino",
 
   spawns: {
     default: { x: 180, y: 600 },
+    from_archive: { x: 270, y: 385 },
     from_casino_door: { x: 180, y: 600 },
     from_room_03: { x: 1280, y: 600 }
   },
@@ -27,7 +29,11 @@ export default {
     trim.fillRect(0, 240, 1440, 40);
 
     // quadros na parede de fundo (decoração, markers no chão à frente)
-    [270, 640, 1010].forEach((cx) => kit.goldFrame(scene, cx, 160, 140, 180));
+    const opening = scene.add.rectangle(270, 160, 116, 158, 0x010204).setDepth(159).setVisible(false);
+    const frame = kit.goldFrame(scene, 270, 160, 140, 180);
+    [640, 1010].forEach((cx) => kit.goldFrame(scene, cx, 160, 140, 180));
+    const shade = scene.add.ellipse(270, 215, 520, 360, 0x000000, 0).setDepth(158);
+    scene.secretPainting = { frame, opening, shade };
 
     // pedestais / banco no chão (obstáculos de base)
     kit.crate(scene, ctx, 200, 560, 120, 48, 0x8a6238);
@@ -60,6 +66,10 @@ export default {
 
   wire(ctx) {
     const { scene, sm, hud } = ctx;
+    ctx.addUpdatable(new Interactable(scene, {
+      id: "archive_painting", x: 270, y: 255, radius: 62, prompt: "???", silent: true,
+      action: () => ctx.travel("archive")
+    }));
     scene.exitDoor = new Interactable(scene, {
       id: "casino_exit",
       x: 115,
