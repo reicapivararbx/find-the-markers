@@ -170,7 +170,10 @@ export class CutsceneController {
     const short = state.saveManager.save.secretComputerRoomDiscovered;
     try {
       if (connection.cinematic === "painting") await this.painting(short);
-      else if (connection.cinematic === "digital") await this.digital(connection);
+      else if (connection.cinematic === "circus") {
+        this.scene.ambience?.setLevel(0, 0.28);
+        await this.fade(true, 280);
+      } else if (connection.cinematic === "digital") await this.digital(connection);
       else if (connection.cinematic === "return") {
         Sfx.glitch();
         this.scene.ambience?.setLevel(0, 0.5);
@@ -199,7 +202,7 @@ export class CutsceneController {
     const cam = s.cameras.main;
     cam.fadeOut(1, 0, 0, 0, true);
     cam.fadeEffect.alpha = 1;
-    cam.setZoom(data.kind === "painting" ? 1.06 : 1.04);
+    cam.setZoom(data.kind === "circus" ? (s.room.zoom || 1) : data.kind === "painting" ? 1.06 : 1.04);
     cam.centerOn(s.player.x, data.kind === "painting" ? 450 : s.player.y);
     s.player.sprite.setFlipX(false);
     try {
@@ -214,7 +217,7 @@ export class CutsceneController {
       } else if (data.kind === "digital" || data.kind === "return") {
         await Promise.all([this.fade(false, 170), this.glitch(0.9, 0, 800)]);
       } else await this.fade(false, 300);
-      await this.restoreCamera(data.kind === "exit" ? 300 : 400);
+      if (data.kind !== "circus") await this.restoreCamera(data.kind === "exit" ? 300 : 400);
       if (data.kind === "painting") state.saveManager.discoverSecretComputerRoom();
       this.finishCutscene();
     } catch (error) {

@@ -15,6 +15,8 @@ import { CutsceneController } from "../cinematic/cutscene-controller.js";
 import { Sfx, createAmbience } from "../core/audio-manager.js";
 import { state } from "../state.js";
 import { EggQuest } from "../puzzles/egg-quest.js";
+import { wireHandDrawnContent } from "../puzzles/hand-drawn-setup.js";
+import { isQuestCompleted } from "../progression/quests.js";
 import { kit } from "./room-kit.js";
 import { generateAllTextures } from "../assets/textures.js";
 import {
@@ -185,6 +187,23 @@ export class RoomScene extends Phaser.Scene {
     // conteúdo específico da área (puzzles, NPCs, portas com E)
     room.wire?.(ctx);
 
+    // conteúdo conceitual (quests FIND-N + puzzles/minigames dos desenhos à mão)
+    wireHandDrawnContent(ctx);
+
+    // quest/puzzle concluído → marker correspondente na sala se revela
+    this._revealOff = [
+      bus.on(Events.PUZZLE_SOLVED, (key) => {
+        this.markerEntities.forEach((entity) => {
+          if (entity.def.unlockKey === key) entity.reveal();
+        });
+      }),
+      bus.on(Events.QUEST_COMPLETED, ({ questId }) => {
+        this.markerEntities.forEach((entity) => {
+          if (entity.def.questId === questId) entity.reveal();
+        });
+      })
+    ];
+
     // painel superior de markers da área (como nos desenhos)
     if (room.panelMarkerIds?.length) {
       const defs = room.panelMarkerIds.map((id) => markersForRoom(this.roomId).find((m) => m.id === id)).filter(Boolean);
@@ -259,6 +278,9 @@ export class RoomScene extends Phaser.Scene {
     this.difficultyMeter?.destroy?.();
     this.casinoDoor?.destroy?.();
     this.exitDoor?.destroy?.();
+
+    (this._revealOff || []).forEach((off) => off?.());
+    this._revealOff = null;
 
     this.gates = [];
     this.markers = [];
@@ -695,6 +717,7 @@ export class RoomScene extends Phaser.Scene {
     this.redButtons?.update(px, py);
     this.gates.forEach((gate) => gate.highlight(Math.hypot(px - gate.zone.x, py - gate.zone.y) < 190));
     this.npcs.forEach((npc) => npc.update(px, py));
+    this.markers.forEach((m) => m.update?.(px, py, delta));
 
     input.endFrame();
   }

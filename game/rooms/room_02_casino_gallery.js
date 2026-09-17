@@ -12,6 +12,7 @@ export default {
   spawns: {
     default: { x: 180, y: 600 },
     from_archive: { x: 270, y: 385 },
+    from_digital_circus: { x: 640, y: 390 },
     from_casino_door: { x: 180, y: 600 },
     from_room_03: { x: 1280, y: 600 }
   },
@@ -32,6 +33,15 @@ export default {
     const opening = scene.add.rectangle(270, 160, 116, 158, 0x010204).setDepth(159).setVisible(false);
     const frame = kit.goldFrame(scene, 270, 160, 140, 180);
     [640, 1010].forEach((cx) => kit.goldFrame(scene, cx, 160, 140, 180));
+    // Small abstract painting inside the existing central frame; no distant sign.
+    const art = scene.add.graphics().setDepth(161).setName("digital_circus_painting");
+    art.fillStyle(0xf6cb74, 1).fillRect(584, 84, 112, 152);
+    for (let x = 584; x < 696; x += 28) art.fillStyle(0xd86965, 1).fillRect(x, 84, 14, 110);
+    art.fillStyle(0x8da8ae, 1).fillRect(584, 194, 112, 42);
+    art.fillStyle(0xfce0a0, 1).fillRoundedRect(633, 114, 17, 97, 6);
+    art.lineStyle(6, 0xb94653, 1);
+    for (let y = 130; y < 201; y += 22) art.lineBetween(622, y, 661, y + 12);
+    art.fillStyle(0xf9e6bc, 0.8).fillCircle(672, 106, 8);
     const shade = scene.add.ellipse(270, 215, 520, 360, 0x000000, 0).setDepth(158);
     scene.secretPainting = { frame, opening, shade };
 
@@ -66,6 +76,10 @@ export default {
 
   wire(ctx) {
     const { scene, sm, hud } = ctx;
+    ctx.addUpdatable(new Interactable(scene, {
+      id: "digital_circus_painting", x: 640, y: 280, radius: 76,
+      prompt: "[E] Entrar", action: () => ctx.travel("digitalCircus")
+    }));
     ctx.addUpdatable(new Interactable(scene, {
       id: "archive_painting", x: 270, y: 255, radius: 62, prompt: "???", silent: true,
       action: () => ctx.travel("archive")

@@ -6,7 +6,12 @@ Jogo 2D de exploração/coleta inspirado no desenho à mão do PDF de referênci
 - **Engine:** Phaser 3 (vendado em `vendor/phaser.min.js`, sem build)
 - **Arquitetura:** ES modules em `game/` (scenes, entities, puzzles, progression, save, ui, config, assets)
 - **Save:** `localStorage` versionado, com arquitetura trocável (`game/save/save-manager.js`)
-- **Total:** 40 markers únicos, missão dos 5 ovos, 3 puzzles, 10 áreas conectadas com backtracking
+- **Total:** 185 markers únicos, missão dos 5 ovos, 3 puzzles clássicos + puzzles/minigames
+  dos markers conceituais (relógio, máquina conectada, marker nervoso, futebol, baseball,
+  terminal do mecha), 6 quests FIND-N reutilizáveis, 10 áreas conectadas com backtracking,
+  12 salas secretas e o Arquivo Secreto (em breve)
+- **Marker Dex:** coleção completa com busca (nome/área/raridade), filtros
+  (status/dificuldade), páginas de área, desafios, conquistas e perfil — tecla C
 
 ## Como rodar
 

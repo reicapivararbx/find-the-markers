@@ -2,6 +2,7 @@
 // prompt [E], painel de coleção e menu de pausa (ESC).
 import { TOTAL_MARKERS, MARKERS } from "../config/marker-registry.js";
 import { DIFFICULTY_COLORS } from "../config/difficulty-metadata.js";
+import { MarkerDex } from "./marker-dex.js";
 import { bus, Events } from "../core/event-bus.js";
 import { state } from "../state.js";
 
@@ -37,6 +38,8 @@ export class Hud {
     this.collectionOpen = false;
     this.pauseOpen = false;
     this.puzzleModalOpen = false;
+    this.dex = new MarkerDex();
+    state.dex = this.dex;
 
     this.promptEl.addEventListener("click", () => {
       if (this.cinematic || this.isModalOpen()) return;
@@ -174,9 +177,10 @@ export class Hud {
   // ---------- prompt [E] ----------
   setInteraction(interactable) {
     if (this.cinematic || this.isModalOpen()) return;
-    if (this.currentInteraction === interactable) return;
+    const dynamic = typeof interactable.prompt === "function";
+    if (this.currentInteraction === interactable && !dynamic) return;
     this.currentInteraction = interactable;
-    this.promptTextEl.textContent = interactable.prompt;
+    this.promptTextEl.textContent = dynamic ? interactable.prompt() : interactable.prompt;
     this.promptEl.classList.add("is-visible");
   }
 
@@ -194,46 +198,9 @@ export class Hud {
   // ---------- coleção ----------
   toggleCollection(force) {
     if (this.cinematic && force !== false) return;
-    const open = force ?? !this.collectionOpen;
-    if (open === this.collectionOpen) return;
+    const open = force ?? !this.dex.isOpen();
     this.collectionOpen = open;
-    this.collectionEl.classList.toggle("is-open", open);
-    if (open) this.renderCollection();
-  }
-
-  renderCollection() {
-    const save = state.saveManager?.save;
-    const collected = save?.collectedMarkerIds || [];
-    this.collectionGrid.innerHTML = "";
-    MARKERS.forEach((def) => {
-      const has = collected.includes(def.id);
-      const isMenuChamp = def.mode === "menu_champion";
-      const solved = Boolean(save?.menuSecrets?.championSolved);
-      let name = has ? def.name : "???";
-      let areaHint = "";
-      if (isMenuChamp && !has) {
-        name = solved ? def.name : "???";
-        areaHint = solved
-          ? `<span class="chip-area">Area: Start</span>`
-          : `<span class="chip-area chip-hint">Some secrets exist before the game even begins.</span>`;
-      } else if (has && def.area) {
-        areaHint = `<span class="chip-area">Area: ${def.area}</span>`;
-      }
-      const chip = document.createElement("div");
-      chip.className = `marker-chip ${has ? "is-collected" : "is-locked"}${isMenuChamp ? " is-menu-champion" : ""}`;
-      chip.innerHTML = `
-        <span class="chip-body" style="--diff-color:${hex(def.difficulty)}">
-          <span class="chip-cap"></span>
-          <span class="chip-face">${has ? "·‿·" : "·_·"}</span>
-        </span>
-        <span class="chip-name">${name}</span>
-        <span class="chip-diff">${def.difficulty}</span>
-        ${areaHint}
-        <span class="chip-check">${has ? "✓" : ""}</span>
-      `;
-      this.collectionGrid.appendChild(chip);
-    });
-    document.querySelector("#collection-count").textContent = `${collected.length}/${TOTAL_MARKERS}`;
+    this.dex.toggle(open);
   }
 
   showPause() {

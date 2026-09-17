@@ -151,7 +151,7 @@ test("zonas de gate cabem dentro dos bounds da sala", () => {
     for (const z of gateZoneRects(room)) {
       assert.ok(z.x >= 0 && z.y >= 0, areaError(roomId, "-", `zona de gate com origem negativa (${z.x}, ${z.y})`));
       assert.ok(
-        z.x + z.width <= VIEW.width && z.y + z.height <= VIEW.height,
+        z.x + z.width <= (room.bounds || VIEW).width && z.y + z.height <= (room.bounds || VIEW).height,
         areaError(roomId, "-", "zona de gate extrapolia os bounds da sala")
       );
     }

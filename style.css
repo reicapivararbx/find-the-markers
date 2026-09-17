@@ -1389,3 +1389,103 @@ body {
   }
 }
 
+
+/* ============================ MARKER DEX ============================ */
+#dex-summary { display: flex; flex-direction: column; gap: 6px; margin: 10px 0 12px; }
+#dex-summary-text { margin: 0; font-weight: 800; letter-spacing: 0.06em; font-size: 13px; color: #33333d; }
+.dex-bar {
+  --dex-percent: 0%;
+  display: block; height: 10px; border-radius: 999px;
+  background: linear-gradient(90deg, #62c462 var(--dex-percent), #e5e0d0 var(--dex-percent));
+  border: 2px solid #33333d;
+}
+.dex-tabs { display: flex; gap: 8px; margin-bottom: 10px; }
+.dex-tabs button {
+  flex: 1; padding: 9px 10px; border-radius: 12px; cursor: pointer;
+  border: 3px solid #33333d; background: #f6f2e8; font-weight: 800; letter-spacing: 0.04em;
+  font-family: inherit; font-size: 13px; color: #33333d;
+}
+.dex-tabs button.is-active { background: #33333d; color: #f8f4ea; }
+.dex-toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
+.dex-toolbar.is-hidden { display: none; }
+#dex-search {
+  flex: 1 1 220px; padding: 9px 12px; border-radius: 12px; border: 3px solid #33333d;
+  font-family: inherit; font-size: 14px; background: #fffdf6; color: #33333d;
+}
+.dex-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.dex-chips button {
+  padding: 6px 10px; border-radius: 999px; border: 2px solid #33333d; background: #fffdf6;
+  font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; color: #33333d;
+}
+.dex-chips button.is-active { background: #62c462; color: #10310f; }
+#dex-difficulty {
+  padding: 8px 10px; border-radius: 12px; border: 3px solid #33333d;
+  font-family: inherit; font-size: 13px; background: #fffdf6; color: #33333d;
+}
+.marker-chip .chip-status {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.05em; color: #6b7280; text-transform: uppercase;
+}
+.marker-chip.is-collected .chip-status { color: #2f7a3f; }
+.marker-chip.is-secret { outline: 2px dashed #b37feb; outline-offset: 2px; }
+.dex-empty { grid-column: 1 / -1; text-align: center; padding: 24px 8px; color: #6b7280; font-weight: 700; }
+
+.dex-area-card {
+  display: flex; flex-direction: column; gap: 6px; text-align: left; cursor: pointer;
+  background: #fffdf6; border: 3px solid #33333d; border-radius: 14px; padding: 12px;
+  font-family: inherit;
+}
+.dex-area-card:hover { transform: translateY(-2px); }
+.dex-area-name { font-weight: 800; color: #33333d; }
+.dex-area-progress {
+  display: block; height: 8px; border-radius: 999px;
+  background: linear-gradient(90deg, #f2c94c var(--dex-percent), #e5e0d0 var(--dex-percent));
+  border: 2px solid #33333d;
+}
+.dex-area-meta { font-size: 12px; color: #6b7280; font-weight: 700; }
+.dex-back {
+  grid-column: 1 / -1; justify-self: start; padding: 8px 12px; border-radius: 10px;
+  border: 2px solid #33333d; background: #fffdf6; font-family: inherit; font-weight: 800;
+  cursor: pointer; color: #33333d;
+}
+.dex-area-head { grid-column: 1 / -1; }
+.dex-area-head h3 { margin: 0 0 4px; color: #33333d; }
+.dex-area-head p { margin: 0; color: #6b7280; font-size: 13px; font-weight: 600; }
+.dex-area-marker {
+  display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline;
+  background: #fffdf6; border: 2px solid #d9d2c0; border-radius: 10px; padding: 8px 10px;
+}
+.dex-area-marker.is-collected { border-color: #62c462; }
+.dex-area-marker-name { font-weight: 800; color: #33333d; }
+.dex-area-marker-diff { font-size: 12px; font-weight: 800; }
+.dex-area-marker-hint { font-size: 12px; color: #8a8a80; font-style: italic; flex-basis: 100%; }
+
+.dex-profile, .dex-quests, .dex-achievements, .dex-multiplayer {
+  grid-column: 1 / -1; background: #fffdf6; border: 3px solid #33333d; border-radius: 14px; padding: 14px;
+}
+.dex-profile h3, .dex-quests h3, .dex-achievements h3, .dex-multiplayer h3 { margin: 0 0 8px; color: #33333d; }
+.dex-profile p, .dex-quests p, .dex-achievements p, .dex-multiplayer p { margin: 4px 0; color: #4b5563; font-size: 14px; }
+.dex-quest { display: flex; justify-content: space-between; gap: 10px; font-weight: 700; }
+.dex-quest.is-done { color: #2f7a3f; }
+.dex-achievements p.is-done { color: #2f7a3f; font-weight: 800; }
+.dex-multiplayer p em { color: #b8860b; font-weight: 800; font-style: normal; }
+
+#dex-detail { display: block; }
+#dex-detail[hidden] { display: none; }
+.dex-detail-card { display: flex; flex-direction: column; gap: 6px; align-items: center; text-align: center; padding: 12px; }
+.dex-detail-card h3 { margin: 4px 0 0; color: #33333d; font-size: 22px; }
+.dex-detail-card p { margin: 0; color: #4b5563; font-size: 14px; font-weight: 600; }
+.dex-detail-hint { color: #8a6238 !important; font-style: italic; }
+.dex-detail-lore { color: #4b5563 !important; font-style: italic; }
+.dex-detail-method { color: #2f7a3f !important; font-weight: 800 !important; }
+.chip-body-large { width: 64px; height: 92px; transform: scale(1.6); margin: 14px 0 22px; }
+
+/* Home do menu: card CONTINUAR + navegação rápida */
+.menu-quicknav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 12px 0 4px; }
+.menu-quicknav .button { font-size: 12px; letter-spacing: 0.04em; }
+.menu-continue-meta { font-size: 12px; color: #6b7280; font-weight: 700; }
+
+@media (max-width: 720px) {
+  .dex-tabs button { font-size: 11px; padding: 8px 6px; }
+  .dex-toolbar { flex-direction: column; align-items: stretch; }
+  .marker-chip { font-size: 12px; }
+}

@@ -1582,8 +1582,818 @@ function gMarkerSilhouette(g, color, style) {
   return false;
 }
 
+// ---------------------------------------------------------------------------
+// Markers conceituais (desenhos à mão) — cada silhueta é reconhecível sozinha.
+// Canvas padrão 56x80 (pés em y≈76); tamanhos custom quando a def pedir.
+// ---------------------------------------------------------------------------
+const GRASS_LIGHT = 0x8fba6a;
+const GRASS_MID = 0x6fae5a;
+const GRASS_DARK = 0x3d6b2e;
+const BONE = 0xe8e4d8;
+const GOLD = 0xf2c94c;
+const GOLD_DARK = 0xb8860b;
+const PURPLE = 0x8b5cf6;
+const PURPLE_DARK = 0x5a4a78;
+
+function handFeet(g, ox = 0, baseY = 76) {
+  g.lineStyle(4, INK, 1);
+  g.lineBetween(22 + ox, baseY - 8, 20 + ox, baseY - 1);
+  g.lineBetween(34 + ox, baseY - 8, 36 + ox, baseY - 1);
+  g.fillStyle(INK, 1);
+  g.fillEllipse(18 + ox, baseY, 9, 4);
+  g.fillEllipse(38 + ox, baseY, 9, 4);
+}
+
+function handBody(g, fill, x = 12, y = 22, w = 32, h = 46) {
+  g.fillStyle(fill, 1);
+  g.fillRoundedRect(x, y, w, h, 8);
+  g.lineStyle(3, INK, 0.85);
+  g.strokeRoundedRect(x, y, w, h, 8);
+}
+
+function handFace(g, mood = "calm", cx = 28, ey = 44) {
+  g.fillStyle(INK, 1);
+  if (mood === "angry") {
+    g.fillEllipse(cx - 6, ey, 6, 7);
+    g.fillEllipse(cx + 6, ey, 6, 7);
+    g.lineStyle(3, INK, 1);
+    g.lineBetween(cx - 11, ey - 7, cx - 2, ey - 3);
+    g.lineBetween(cx + 11, ey - 7, cx + 2, ey - 3);
+    g.beginPath();
+    g.arc(cx, ey + 10, 4.5, Math.PI * 1.1, Math.PI * 1.9);
+    g.strokePath();
+  } else if (mood === "greedy") {
+    g.fillEllipse(cx - 6, ey, 5, 6);
+    g.fillEllipse(cx + 6, ey, 5, 6);
+    g.lineStyle(2.5, INK, 1);
+    g.beginPath();
+    g.arc(cx, ey + 8, 5, Math.PI * 0.15, Math.PI * 0.85);
+    g.strokePath();
+  } else {
+    g.fillEllipse(cx - 5, ey, 6, 8);
+    g.fillEllipse(cx + 5, ey, 6, 8);
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(cx - 3.8, ey - 1.4, 1.5);
+    g.fillCircle(cx + 6.2, ey - 1.4, 1.5);
+    g.fillStyle(INK, 1);
+    g.lineStyle(2.5, INK, 1);
+    g.beginPath();
+    g.arc(cx, ey + 8, 4.5, Math.PI * 0.18, Math.PI * 0.82);
+    g.strokePath();
+  }
+}
+
+function gHandDrawnSilhouette(g, color, style) {
+  switch (style) {
+    // Marker lilás calmo — quase um clássico, com faixa circular na tampa
+    case "lilac": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0x9b6dff, 1);
+      g.fillRoundedRect(14, 10, 28, 18, 5);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 10, 28, 18, 5);
+      g.lineStyle(2.5, 0xffffff, 0.8);
+      g.strokeCircle(28, 19, 5);
+      markerArms(g, 0x9b6dff);
+      handFace(g, "calm");
+      return true;
+    }
+    // Laranja manchado — textura porosa própria (mineral/esporo)
+    case "spotted": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0xe8873a, 1);
+      g.fillRoundedRect(14, 10, 28, 20, 5);
+      g.fillStyle(0xf8c890, 1);
+      [[19, 15, 3.4], [27, 12, 2.6], [35, 16, 3.8], [23, 22, 2.8], [33, 23, 3], [39, 12, 2.4]].forEach(([x, y, r]) => g.fillCircle(x, y, r));
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 10, 28, 20, 5);
+      markerArms(g, 0xe8873a);
+      handFace(g, "calm");
+      return true;
+    }
+    // Musgo/overgrown — vegetação desce pelo corpo, bordas irregulares
+    case "overgrown": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(GRASS_DARK, 1);
+      g.fillTriangle(28, 4, 10, 26, 46, 26);
+      g.fillStyle(GRASS_MID, 1);
+      g.fillEllipse(17, 20, 18, 14);
+      g.fillEllipse(39, 18, 16, 12);
+      g.fillStyle(GRASS_LIGHT, 0.85);
+      g.fillCircle(22, 14, 6);
+      g.fillCircle(35, 12, 5);
+      g.fillStyle(GRASS_MID, 1);
+      g.fillTriangle(16, 26, 12, 52, 20, 30);
+      g.fillTriangle(40, 26, 44, 50, 36, 30);
+      g.fillStyle(0xd1495b, 1);
+      g.fillCircle(14, 56, 2.6);
+      g.fillCircle(42, 62, 2.2);
+      g.lineStyle(2.5, INK, 0.8);
+      g.strokeRoundedRect(12, 22, 32, 46, 8);
+      handFace(g, "calm", 28, 46);
+      return true;
+    }
+    // Esqueleto — crânio, costelas, ossos soltos
+    case "skeleton": {
+      handFeet(g);
+      g.fillStyle(PURPLE, 1);
+      g.fillRoundedRect(14, 10, 28, 18, 5);
+      g.fillStyle(BONE, 1);
+      g.fillRoundedRect(15, 24, 26, 42, 6);
+      g.fillEllipse(28, 18, 26, 22);
+      g.lineStyle(2.5, INK, 0.9);
+      g.strokeRoundedRect(15, 24, 26, 42, 6);
+      g.strokeEllipse(28, 18, 26, 22);
+      g.fillStyle(0x1a1a22, 1);
+      g.fillEllipse(21, 17, 6, 8);
+      g.fillEllipse(35, 17, 6, 8);
+      g.fillRect(24, 25, 8, 6);
+      g.lineStyle(2.5, INK, 0.9);
+      for (let i = 0; i < 4; i += 1) g.lineBetween(18, 34 + i * 8, 38, 34 + i * 8);
+      g.lineBetween(28, 32, 28, 64);
+      return true;
+    }
+    // Rei — coroa grande, manto, cetro
+    case "king": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0xd1495b, 1);
+      g.fillTriangle(12, 24, 12, 66, 20, 66);
+      g.fillTriangle(44, 24, 44, 66, 36, 66);
+      g.lineStyle(2, INK, 0.7);
+      g.strokeTriangle(12, 24, 12, 66, 20, 66);
+      g.strokeTriangle(44, 24, 44, 66, 36, 66);
+      g.fillStyle(GOLD, 1);
+      g.fillRoundedRect(12, 8, 32, 12, 3);
+      g.fillTriangle(12, 8, 16, -2, 21, 8);
+      g.fillTriangle(21, 8, 28, -4, 35, 8);
+      g.fillTriangle(35, 8, 40, -2, 44, 8);
+      g.fillStyle(0xd1495b, 1);
+      g.fillCircle(28, 4, 3.4);
+      g.fillStyle(GOLD_DARK, 1);
+      g.fillCircle(16, 12, 2);
+      g.fillCircle(40, 12, 2);
+      g.lineStyle(3, GOLD_DARK, 1);
+      g.lineBetween(50, 30, 50, 64);
+      g.fillStyle(GOLD, 1);
+      g.fillCircle(50, 26, 6);
+      handFace(g, "calm", 28, 40);
+      return true;
+    }
+    // Tentáculos — silhueta assimétrica, alienígena
+    case "tentacle": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0xc0407a, 1);
+      g.fillRoundedRect(14, 8, 30, 22, 8);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 8, 30, 22, 8);
+      g.lineStyle(6, 0x8a3a6a, 1);
+      g.beginPath();
+      g.moveTo(18, 12);
+      g.arc(14, 2, 12, Math.PI * 0.4, Math.PI * 1.25);
+      g.strokePath();
+      g.beginPath();
+      g.moveTo(38, 10);
+      g.arc(42, 0, 11, Math.PI * 1.7, Math.PI * 0.55);
+      g.strokePath();
+      g.lineStyle(4, 0x8a3a6a, 0.9);
+      g.beginPath();
+      g.moveTo(28, 8);
+      g.arc(28, -2, 10, Math.PI * 1.15, Math.PI * 1.85);
+      g.strokePath();
+      g.fillStyle(0xf2c94c, 1);
+      g.fillCircle(12, 8, 2);
+      g.fillCircle(45, 4, 2.4);
+      handFace(g, "calm", 28, 42);
+      return true;
+    }
+    // Relógio — mostrador incorporado, capuz verde-escuro
+    case "clock": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0x2a5a4a, 1);
+      g.fillRoundedRect(14, 10, 28, 18, 5);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 10, 28, 18, 5);
+      g.fillStyle(0xf6f2e8, 1);
+      g.fillCircle(28, 44, 13);
+      g.lineStyle(3, GOLD_DARK, 1);
+      g.strokeCircle(28, 44, 13);
+      g.fillStyle(INK, 1);
+      for (let i = 0; i < 12; i += 1) {
+        const a = (i / 12) * Math.PI * 2;
+        g.fillCircle(28 + Math.cos(a) * 10, 44 + Math.sin(a) * 10, 1);
+      }
+      g.fillCircle(28, 44, 2);
+      g.lineStyle(2.5, 0x8a6238, 0.9);
+      g.lineBetween(40, 26, 44, 40);
+      g.lineBetween(14, 30, 10, 44);
+      return true;
+    }
+    // Máquina conectada — dois corpos + cabo (canvas 96x84)
+    case "machine_link": {
+      const baseY = 78;
+      g.lineStyle(4, INK, 1);
+      g.lineBetween(22, baseY - 8, 20, baseY - 1);
+      g.lineBetween(30, baseY - 8, 32, baseY - 1);
+      g.lineBetween(64, baseY - 8, 62, baseY - 1);
+      g.lineBetween(72, baseY - 8, 74, baseY - 1);
+      g.fillStyle(INK, 1);
+      g.fillEllipse(21, baseY, 8, 4);
+      g.fillEllipse(31, baseY, 8, 4);
+      g.fillEllipse(63, baseY, 8, 4);
+      g.fillEllipse(73, baseY, 8, 4);
+      // corpo 1: recipiente amarelado
+      g.fillStyle(0xd4b45a, 1);
+      g.fillRoundedRect(14, 30, 26, 42, 6);
+      g.lineStyle(3, INK, 0.85);
+      g.strokeRoundedRect(14, 30, 26, 42, 6);
+      g.fillStyle(0xf2df9a, 1);
+      g.fillRoundedRect(18, 34, 18, 12, 3);
+      g.fillStyle(INK, 1);
+      g.fillEllipse(22, 56, 5, 6);
+      g.fillEllipse(32, 56, 5, 6);
+      g.lineStyle(2.5, INK, 1);
+      g.lineBetween(22, 64, 32, 64);
+      // cabo
+      g.lineStyle(4, 0x3a3a48, 1);
+      g.beginPath();
+      g.moveTo(40, 52);
+      g.lineTo(48, 58);
+      g.lineTo(54, 50);
+      g.strokePath();
+      g.fillStyle(0x62c462, 1);
+      g.fillCircle(54, 50, 3.4);
+      // corpo 2: estrutura verde tech com estrela
+      g.fillStyle(0x3a8a5a, 1);
+      g.fillRoundedRect(56, 26, 26, 46, 6);
+      g.lineStyle(3, INK, 0.85);
+      g.strokeRoundedRect(56, 26, 26, 46, 6);
+      g.fillStyle(0xffffff, 0.9);
+      g.fillEllipse(63, 40, 8, 10);
+      g.fillEllipse(75, 40, 8, 10);
+      g.fillStyle(INK, 1);
+      g.fillEllipse(63, 40, 4, 6);
+      g.fillEllipse(75, 40, 4, 6);
+      g.fillStyle(0xff5d5d, 1);
+      g.fillStar ? g.fillStar(69, 60, 5, 8, 3.4) : g.fillCircle(69, 60, 6);
+      g.fillStyle(0x56ccf2, 1);
+      g.fillCircle(69, 74, 3);
+      return true;
+    }
+    // Nervoso azul — olhos inclinados, boca aberta, braços erguidos
+    case "grumpy":
+    case "grumpy_calm": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0x3a7ac4, 1);
+      g.fillRoundedRect(14, 10, 28, 18, 5);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 10, 28, 18, 5);
+      g.lineStyle(4, INK, 1);
+      if (style === "grumpy") {
+        g.lineBetween(12, 46, 4, 36);
+        g.lineBetween(44, 46, 52, 36);
+        g.fillStyle(INK, 1);
+        g.fillCircle(3, 34, 3.4);
+        g.fillCircle(53, 34, 3.4);
+      } else {
+        g.lineBetween(12, 48, 4, 56);
+        g.lineBetween(44, 48, 52, 56);
+        g.fillStyle(INK, 1);
+        g.fillCircle(3, 58, 3.4);
+        g.fillCircle(53, 58, 3.4);
+      }
+      if (style === "grumpy") {
+        g.fillStyle(INK, 1);
+        g.fillEllipse(22, 42, 6, 7);
+        g.fillEllipse(34, 42, 6, 7);
+        g.lineStyle(3, INK, 1);
+        g.lineBetween(16, 35, 25, 39);
+        g.lineBetween(40, 35, 31, 39);
+        g.fillStyle(0x1a1a22, 1);
+        g.fillEllipse(28, 54, 10, 8);
+        g.fillStyle(0xffffff, 1);
+        g.fillTriangle(24, 51, 27, 51, 25.5, 55);
+        g.fillTriangle(29, 51, 32, 51, 30.5, 55);
+      } else {
+        handFace(g, "calm");
+      }
+      return true;
+    }
+    // Dentuço roxo — sorriso GIGANTE faz parte da silhueta
+    case "toothy": {
+      handFeet(g);
+      g.fillStyle(0x2a1a3a, 1);
+      g.fillRoundedRect(12, 20, 32, 48, 8);
+      g.fillStyle(PURPLE, 1);
+      g.fillRoundedRect(14, 10, 28, 16, 5);
+      g.fillStyle(0xffffff, 1);
+      g.fillRoundedRect(15, 38, 26, 16, 5);
+      g.lineStyle(2, 0x1a1a22, 0.7);
+      g.lineBetween(21, 38, 21, 54);
+      g.lineBetween(28, 38, 28, 54);
+      g.lineBetween(35, 38, 35, 54);
+      g.fillStyle(INK, 1);
+      g.fillCircle(21, 30, 3.2);
+      g.fillCircle(35, 30, 3.2);
+      return true;
+    }
+    // Cartola — mágico/apresentador
+    case "magician": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0xe8873a, 1);
+      g.fillRect(12, 22, 32, 10);
+      g.fillStyle(0x23252d, 1);
+      g.fillRect(8, 8, 40, 5);
+      g.fillRect(16, -6, 24, 15);
+      g.fillStyle(0xd1495b, 1);
+      g.fillRect(16, 4, 24, 4);
+      markerArms(g, 0x23252d);
+      handFace(g, "calm");
+      g.fillStyle(0xffffff, 1);
+      g.fillCircle(24, 42.6, 1.6);
+      g.fillCircle(34.4, 42.6, 1.6);
+      return true;
+    }
+    // Construtor — martelo grande, trabalhador
+    case "hammer": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0xe86a7a, 1);
+      g.fillRoundedRect(14, 10, 28, 18, 5);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 10, 28, 18, 5);
+      g.fillStyle(0x8a6238, 1);
+      g.fillRect(42, 20, 5, 34);
+      g.fillStyle(0x6a7080, 1);
+      g.fillTriangle(38, 18, 60, 24, 44, 32);
+      g.lineStyle(2, INK, 0.7);
+      g.strokeTriangle(38, 18, 60, 24, 44, 32);
+      g.lineStyle(4, INK, 1);
+      g.lineBetween(44, 50, 48, 58);
+      g.fillStyle(0xe86a7a, 1);
+      g.fillCircle(49, 60, 3.4);
+      handFace(g, "calm");
+      return true;
+    }
+    // Caótico verde — símbolos girando ao redor
+    case "chaos": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0x62c462, 1);
+      g.fillRoundedRect(14, 10, 28, 18, 5);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 10, 28, 18, 5);
+      g.fillStyle(0xff5d5d, 1);
+      g.fillEllipse(23, 43, 5, 6);
+      g.fillEllipse(33, 43, 5, 6);
+      g.lineStyle(2.5, INK, 1);
+      g.beginPath();
+      g.arc(28, 55, 5, Math.PI * 1.1, Math.PI * 1.9);
+      g.strokePath();
+      g.lineStyle(3, 0xff5d5d, 1);
+      g.lineBetween(14, 36, 24, 40);
+      g.lineBetween(42, 36, 32, 40);
+      g.fillStyle(0xff5d5d, 1);
+      g.fillCircle(4, 20, 3);
+      g.fillStyle(0xf2c94c, 1);
+      g.fillTriangle(50, 26, 56, 32, 47, 34);
+      g.fillStyle(0x56ccf2, 1);
+      g.fillCircle(6, 58, 3.4);
+      g.fillStyle(0x62c462, 1);
+      g.fillRect(48, 52, 6, 6);
+      return true;
+    }
+    // Futebol — bola no pé, faixa de camisa
+    case "soccer": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0x9ac83a, 1);
+      g.fillRoundedRect(14, 10, 28, 18, 5);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 10, 28, 18, 5);
+      g.fillStyle(0x9ac83a, 1);
+      g.fillRect(12, 40, 32, 7);
+      g.fillStyle(0xffffff, 1);
+      g.fillCircle(44, 66, 8);
+      g.lineStyle(2, INK, 0.85);
+      g.strokeCircle(44, 66, 8);
+      g.fillStyle(INK, 1);
+      g.fillCircle(44, 66, 3);
+      for (let i = 0; i < 5; i += 1) {
+        const a = (i / 5) * Math.PI * 2;
+        g.fillCircle(44 + Math.cos(a) * 5.5, 66 + Math.sin(a) * 5.5, 1.6);
+      }
+      handFace(g, "calm");
+      return true;
+    }
+    // Baseball — taco no ombro, boné, concentrado
+    case "baseball": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0x6a7080, 1);
+      g.fillRoundedRect(14, 10, 28, 16, 6);
+      g.fillStyle(0x8a6238, 1);
+      g.fillRect(44, 4, 5, 34);
+      g.fillStyle(0xb0654a, 1);
+      g.fillTriangle(40, 2, 56, 8, 42, 16);
+      g.lineStyle(2, INK, 0.7);
+      g.strokeTriangle(40, 2, 56, 8, 42, 16);
+      g.fillStyle(INK, 1);
+      g.fillEllipse(23, 40, 5, 5);
+      g.fillEllipse(33, 40, 5, 5);
+      g.lineStyle(2.5, INK, 1);
+      g.lineBetween(22, 50, 34, 50);
+      g.lineStyle(4, INK, 1);
+      g.lineBetween(44, 40, 48, 48);
+      return true;
+    }
+    // Boné vermelho/faixa azul + microfone
+    case "cap_mic": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0x35405e, 1);
+      g.fillRect(12, 22, 32, 8);
+      g.fillStyle(0xd1495b, 1);
+      g.fillRoundedRect(14, 8, 28, 16, 6);
+      g.fillTriangle(40, 10, 56, 16, 40, 20);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 8, 28, 16, 6);
+      g.fillStyle(0xd1495b, 1);
+      g.fillCircle(28, 44, 6.4);
+      g.fillStyle(0xffffff, 1);
+      g.fillCircle(28, 44, 3);
+      g.lineStyle(3, 0x23252d, 1);
+      g.lineBetween(46, 30, 50, 48);
+      g.fillStyle(0x23252d, 1);
+      g.fillCircle(51, 52, 5.4);
+      g.fillStyle(0x56ccf2, 1);
+      g.fillCircle(51, 52, 2.4);
+      handFace(g, "calm");
+      return true;
+    }
+    // Dinheiro — símbolos de Coins do jogo
+    case "money": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0x3a8a5a, 1);
+      g.fillRoundedRect(14, 10, 28, 18, 5);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 10, 28, 18, 5);
+      g.fillStyle(GOLD, 1);
+      g.fillCircle(20, 34, 5.4);
+      g.fillCircle(36, 32, 5.4);
+      g.fillStyle(GOLD_DARK, 1);
+      g.fillCircle(20, 34, 2.4);
+      g.fillCircle(36, 32, 2.4);
+      g.fillStyle(GOLD, 1);
+      g.fillCircle(28, 58, 6);
+      g.lineStyle(2, GOLD_DARK, 1);
+      g.strokeCircle(28, 58, 6);
+      g.fillStyle(GOLD_DARK, 1);
+      g.fillText ? g.fillText("¢", 25, 62) : g.fillCircle(28, 58, 2.4);
+      handFace(g, "greedy");
+      return true;
+    }
+    // Fantasma/bruxa — flutuação, chapéu roxo, barra ondulada
+    case "phantom": {
+      handFeet(g, 0, 76);
+      g.fillStyle(0xe8e0f8, 0.95);
+      g.fillRoundedRect(13, 26, 30, 38, 12);
+      g.fillTriangle(13, 62, 19, 70, 25, 62);
+      g.fillTriangle(21, 64, 28, 72, 34, 64);
+      g.fillTriangle(31, 62, 38, 70, 43, 62);
+      g.lineStyle(2.5, INK, 0.7);
+      g.strokeRoundedRect(13, 26, 30, 38, 12);
+      g.fillStyle(PURPLE, 1);
+      g.fillTriangle(28, 0, 12, 26, 44, 26);
+      g.fillStyle(PURPLE_DARK, 1);
+      g.fillRect(14, 22, 28, 5);
+      g.lineStyle(2, INK, 0.8);
+      g.strokeTriangle(28, 0, 12, 26, 44, 26);
+      g.fillStyle(INK, 1);
+      g.fillEllipse(22, 40, 5, 7);
+      g.fillEllipse(34, 40, 5, 7);
+      g.beginPath();
+      g.arc(28, 52, 4, Math.PI, Math.PI * 2);
+      g.strokePath();
+      return true;
+    }
+    // Sombrio — quase todo preto, olhos vermelhos discretos, garras
+    case "shadow_creature": {
+      g.fillStyle(0x14141c, 1);
+      g.fillRoundedRect(12, 16, 32, 52, 10);
+      g.fillTriangle(12, 20, 20, 6, 28, 16);
+      g.fillTriangle(28, 16, 36, 6, 44, 20);
+      g.lineStyle(4, 0x14141c, 1);
+      g.lineBetween(12, 50, 2, 60);
+      g.lineBetween(44, 50, 54, 60);
+      g.fillStyle(0x14141c, 1);
+      g.fillCircle(1, 62, 2.6);
+      g.fillCircle(5, 64, 2.6);
+      g.fillCircle(55, 62, 2.6);
+      g.fillCircle(51, 64, 2.6);
+      g.fillStyle(0x14141c, 1);
+      g.fillEllipse(20, 70, 8, 4);
+      g.fillEllipse(36, 70, 8, 4);
+      g.fillStyle(0xff5d5d, 0.95);
+      g.fillEllipse(22, 40, 5, 7);
+      g.fillEllipse(34, 40, 5, 7);
+      g.fillStyle(0x8a1a1a, 0.55);
+      g.fillCircle(22, 42, 1.2);
+      g.fillCircle(34, 42, 1.2);
+      return true;
+    }
+    // Boca/predador — boca central com dentes e tentáculos
+    case "maw": {
+      handFeet(g);
+      g.fillStyle(0xc04040, 1);
+      g.fillRoundedRect(12, 12, 32, 56, 12);
+      g.lineStyle(3, INK, 0.85);
+      g.strokeRoundedRect(12, 12, 32, 56, 12);
+      g.fillStyle(0x2a1010, 1);
+      g.fillEllipse(28, 42, 26, 22);
+      g.fillStyle(0xffffff, 1);
+      for (let i = 0; i < 5; i += 1) {
+        g.fillTriangle(17 + i * 5.5, 34, 21 + i * 5.5, 34, 19 + i * 5.5, 40);
+        g.fillTriangle(17 + i * 5.5, 52, 21 + i * 5.5, 52, 19 + i * 5.5, 46);
+      }
+      g.lineStyle(5, 0x8a2a4a, 1);
+      g.beginPath();
+      g.moveTo(14, 18);
+      g.arc(8, 12, 10, Math.PI * 0.35, Math.PI * 1.2);
+      g.strokePath();
+      g.beginPath();
+      g.moveTo(42, 16);
+      g.arc(48, 10, 10, Math.PI * 1.75, Math.PI * 0.6);
+      g.strokePath();
+      g.fillStyle(0xffd9b3, 1);
+      g.fillCircle(21, 24, 2.2);
+      g.fillCircle(35, 24, 2.2);
+      return true;
+    }
+    // Prédio — fachada alta, janelas, topo escuro (canvas 64x110)
+    case "building": {
+      const baseY = 106;
+      g.lineStyle(4, INK, 1);
+      g.lineBetween(24, baseY - 8, 22, baseY - 1);
+      g.lineBetween(40, baseY - 8, 42, baseY - 1);
+      g.fillStyle(INK, 1);
+      g.fillEllipse(21, baseY, 9, 4);
+      g.fillEllipse(43, baseY, 9, 4);
+      g.fillStyle(0xb0b8c0, 1);
+      g.fillRoundedRect(14, 16, 36, 84, 3);
+      g.fillStyle(0x23252d, 1);
+      g.fillRect(14, 16, 36, 12);
+      g.lineStyle(3, INK, 0.85);
+      g.strokeRoundedRect(14, 16, 36, 84, 3);
+      g.fillStyle(0xffe08a, 1);
+      for (let row = 0; row < 5; row += 1) {
+        for (let col = 0; col < 3; col += 1) {
+          const lit = (row * 3 + col) % 4 !== 1;
+          g.fillStyle(lit ? 0xffe08a : 0x35405e, 1);
+          g.fillRect(19 + col * 10, 34 + row * 13, 6, 8);
+        }
+      }
+      g.fillStyle(INK, 1);
+      g.fillEllipse(26, 74, 4, 6);
+      g.fillEllipse(38, 74, 4, 6);
+      return true;
+    }
+    // Pirâmide — corpo triangular com detalhes roxos
+    case "pyramid": {
+      handFeet(g);
+      g.fillStyle(0xd4b45a, 1);
+      g.fillTriangle(28, 6, 8, 66, 48, 66);
+      g.fillStyle(0xb89a3a, 1);
+      g.fillTriangle(28, 6, 20, 66, 36, 66);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeTriangle(28, 6, 8, 66, 48, 66);
+      g.fillStyle(PURPLE, 0.9);
+      g.fillCircle(28, 22, 3);
+      g.fillCircle(28, 38, 3);
+      g.fillCircle(28, 54, 3);
+      g.fillStyle(0xffffff, 0.55);
+      g.fillTriangle(28, 10, 18, 60, 28, 60);
+      handFace(g, "calm", 28, 40);
+      return true;
+    }
+    // Dentes laranja — faixa laranja + dentes centrais (predador, não cômico)
+    case "fang": {
+      handFeet(g);
+      g.fillStyle(0xe8873a, 1);
+      g.fillRoundedRect(12, 10, 32, 14, 5);
+      g.fillStyle(PAPER, 1);
+      g.fillRoundedRect(14, 24, 28, 44, 8);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 24, 28, 44, 8);
+      g.fillStyle(0x2a1010, 1);
+      g.fillRoundedRect(18, 36, 20, 18, 4);
+      g.fillStyle(0xffffff, 1);
+      g.fillTriangle(19, 38, 24, 38, 21.5, 46);
+      g.fillTriangle(26, 38, 31, 38, 28.5, 47);
+      g.fillTriangle(33, 38, 38, 38, 35.5, 46);
+      g.fillTriangle(19, 52, 24, 52, 21.5, 45);
+      g.fillTriangle(26, 52, 31, 52, 28.5, 45);
+      g.fillTriangle(33, 52, 38, 52, 35.5, 45);
+      g.fillStyle(INK, 1);
+      g.fillCircle(23, 32, 2.6);
+      g.fillCircle(33, 32, 2.6);
+      return true;
+    }
+    // Caixa roxa — corpo quadrado de contêiner com símbolo
+    case "crate": {
+      handFeet(g);
+      g.fillStyle(0xd8d0e8, 1);
+      g.fillRoundedRect(10, 20, 36, 48, 4);
+      g.fillStyle(PURPLE, 1);
+      g.fillRect(10, 20, 36, 14);
+      g.fillStyle(PURPLE_DARK, 1);
+      g.fillRect(10, 30, 36, 4);
+      g.lineStyle(3, INK, 0.85);
+      g.strokeRoundedRect(10, 20, 36, 48, 4);
+      g.lineStyle(2, INK, 0.4);
+      g.lineBetween(16, 40, 16, 62);
+      g.lineBetween(28, 40, 28, 62);
+      g.lineBetween(40, 40, 40, 62);
+      g.fillStyle(PURPLE_DARK, 1);
+      g.fillCircle(28, 50, 4);
+      g.fillStyle(INK, 1);
+      g.fillCircle(26, 49, 1.2);
+      g.fillCircle(30, 49, 1.2);
+      return true;
+    }
+    // Torre corrompida — MUITO alta, metade preta metade roxa, topo espinhoso
+    case "corrupted_tower": {
+      const baseY = 146;
+      g.lineStyle(4, INK, 1);
+      g.lineBetween(22, baseY - 8, 20, baseY - 1);
+      g.lineBetween(38, baseY - 8, 40, baseY - 1);
+      g.fillStyle(INK, 1);
+      g.fillEllipse(19, baseY, 9, 4);
+      g.fillEllipse(41, baseY, 9, 4);
+      g.fillStyle(PURPLE, 1);
+      g.fillRoundedRect(16, 70, 28, 68, 3);
+      g.fillStyle(0x14141c, 1);
+      g.fillRoundedRect(16, 24, 28, 48, 3);
+      g.lineStyle(3, INK, 0.9);
+      g.strokeRoundedRect(16, 24, 28, 114, 3);
+      g.fillStyle(0x14141c, 1);
+      g.fillTriangle(16, 26, 20, 10, 26, 26);
+      g.fillTriangle(26, 26, 32, 2, 38, 24);
+      g.fillTriangle(38, 26, 44, 12, 44, 26);
+      g.fillStyle(0x62c462, 1);
+      g.fillRect(20, 40, 6, 3);
+      g.fillRect(30, 52, 8, 3);
+      g.fillStyle(0xff5d5d, 1);
+      g.fillRect(22, 88, 8, 3);
+      g.fillStyle(0x56ccf2, 1);
+      g.fillRect(18, 108, 6, 3);
+      g.fillStyle(0xff5d5d, 0.95);
+      g.fillEllipse(24, 34, 5, 7);
+      g.fillEllipse(36, 34, 5, 7);
+      return true;
+    }
+    // Amarelo mecânico — alto, braços com componentes, fios
+    case "mech_yellow": {
+      const baseY = 108;
+      g.lineStyle(4, INK, 1);
+      g.lineBetween(24, baseY - 8, 22, baseY - 1);
+      g.lineBetween(38, baseY - 8, 40, baseY - 1);
+      g.fillStyle(INK, 1);
+      g.fillEllipse(21, baseY, 9, 4);
+      g.fillEllipse(41, baseY, 9, 4);
+      g.fillStyle(0xf2c94c, 1);
+      g.fillRoundedRect(16, 26, 28, 74, 6);
+      g.fillStyle(0xf8e08a, 1);
+      g.fillRoundedRect(18, 12, 24, 18, 6);
+      g.lineStyle(3, INK, 0.85);
+      g.strokeRoundedRect(16, 26, 28, 74, 6);
+      g.strokeRoundedRect(18, 12, 24, 18, 6);
+      g.lineStyle(2.5, 0x3a3a48, 1);
+      g.lineBetween(20, 40, 40, 40);
+      g.lineBetween(20, 52, 40, 52);
+      g.fillStyle(0xff5d5d, 1);
+      g.fillCircle(24, 46, 2.6);
+      g.fillStyle(0x56ccf2, 1);
+      g.fillCircle(35, 58, 2.6);
+      g.fillStyle(0x6a7080, 1);
+      g.fillRoundedRect(2, 40, 12, 20, 3);
+      g.fillRoundedRect(46, 40, 12, 20, 3);
+      g.lineStyle(3, 0x3a3a48, 1);
+      g.lineBetween(8, 40, 16, 32);
+      g.lineBetween(52, 40, 44, 32);
+      g.fillStyle(INK, 1);
+      g.fillEllipse(25, 20, 4, 6);
+      g.fillEllipse(35, 20, 4, 6);
+      return true;
+    }
+    // Invisível — só o contorno quase apagado do corpo
+    case "invisible": {
+      g.lineStyle(2, INK, 0.35);
+      g.strokeRoundedRect(14, 18, 28, 46, 8);
+      g.strokeRoundedRect(16, 6, 24, 13, 4);
+      g.fillStyle(INK, 0.3);
+      g.fillCircle(23, 38, 1.8);
+      g.fillCircle(33, 38, 1.8);
+      g.lineStyle(2, INK, 0.3);
+      g.lineBetween(19, 68, 19, 76);
+      g.lineBetween(37, 68, 37, 76);
+      return true;
+    }
+    // Lâmina carmesim — marker vermelho com lâmina cartunesca
+    case "crimson_blade": {
+      handFeet(g);
+      handBody(g, PAPER);
+      g.fillStyle(0xd1495b, 1);
+      g.fillRoundedRect(14, 10, 28, 18, 5);
+      g.lineStyle(2.5, INK, 0.85);
+      g.strokeRoundedRect(14, 10, 28, 18, 5);
+      g.fillStyle(0xd0d4d8, 1);
+      g.fillTriangle(50, 8, 44, 44, 54, 44);
+      g.lineStyle(2, INK, 0.8);
+      g.strokeTriangle(50, 8, 44, 44, 54, 44);
+      g.fillStyle(0x6a5a48, 1);
+      g.fillRect(45, 44, 9, 12);
+      g.fillStyle(0xd1495b, 0.7);
+      g.fillCircle(48, 20, 2);
+      g.fillCircle(50, 32, 1.6);
+      g.lineStyle(4, INK, 1);
+      g.lineBetween(44, 50, 50, 56);
+      handFace(g, "calm");
+      return true;
+    }
+    default:
+      return false;
+  }
+}
+
+// Itens de quests FIND-N (coletáveis pequenos)
+function gQuestItem(g, variant) {
+  if (variant === "shard") {
+    g.fillStyle(0x2a1a3a, 0.9);
+    g.fillTriangle(14, 4, 6, 24, 20, 26);
+    g.fillTriangle(14, 4, 20, 24, 26, 18);
+    g.fillStyle(PURPLE, 0.9);
+    g.fillTriangle(13, 8, 9, 22, 17, 23);
+    g.fillStyle(0xe0c8ff, 0.8);
+    g.fillCircle(13, 14, 2.4);
+    return true;
+  }
+  if (variant === "remains") {
+    g.fillStyle(PAPER, 1);
+    g.fillRoundedRect(4, 14, 18, 24, 4);
+    g.lineStyle(2.5, INK, 0.85);
+    g.strokeRoundedRect(4, 14, 18, 24, 4);
+    g.fillStyle(INK, 1);
+    g.lineBetween(7, 20, 11, 24);
+    g.lineBetween(11, 20, 7, 24);
+    g.lineBetween(14, 20, 18, 24);
+    g.lineBetween(18, 20, 14, 24);
+    g.lineStyle(2, INK, 0.8);
+    g.lineBetween(8, 30, 17, 30);
+    g.fillStyle(PAPER, 0.9);
+    g.fillRoundedRect(19, 26, 8, 8, 2);
+    g.lineStyle(2, INK, 0.7);
+    g.strokeRoundedRect(19, 26, 8, 8, 2);
+    return true;
+  }
+  if (variant === "cell") {
+    g.fillStyle(0x3a3a48, 1);
+    g.fillRoundedRect(7, 6, 14, 26, 3);
+    g.fillStyle(0x62c462, 1);
+    g.fillRoundedRect(9, 9, 10, 16, 2);
+    g.fillStyle(0xeaffea, 0.8);
+    g.fillCircle(14, 14, 2.4);
+    g.fillStyle(0x3a3a48, 1);
+    g.fillRect(11, 3, 6, 4);
+    g.lineStyle(2, INK, 0.7);
+    g.strokeRoundedRect(7, 6, 14, 26, 3);
+    return true;
+  }
+  if (variant === "coin") {
+    g.fillStyle(GOLD, 1);
+    g.fillCircle(14, 18, 12);
+    g.lineStyle(3, GOLD_DARK, 1);
+    g.strokeCircle(14, 18, 12);
+    g.fillStyle(GOLD_DARK, 1);
+    g.fillCircle(14, 18, 5);
+    g.fillStyle(0xffe08a, 0.9);
+    g.fillCircle(10, 13, 2.4);
+    return true;
+  }
+  return false;
+}
+
 function gMarker(g, color, style) {
   if (gMarkerSilhouette(g, color, style)) return;
+  if (gHandDrawnSilhouette(g, color, style)) return;
 
   markerFeet(g, null);
   markerArms(g, color);
@@ -1938,6 +2748,29 @@ export function generateAllTextures(scene) {
   ensure("question_block", gQuestionBlock, 56, 56);
   ensure("turtle", gTurtle, 70, 44);
   ensure("cloud", gCloud, 72, 40);
+  // itens de quests FIND-N (fragmentos, vestígios, células, moedas escondidas)
+  ensure("quest_shard", (g) => gQuestItem(g, "shard"), 32, 32);
+  ensure("quest_remains", (g) => gQuestItem(g, "remains"), 32, 36);
+  ensure("quest_cell", (g) => gQuestItem(g, "cell"), 28, 36);
+  ensure("quest_coin", (g) => gQuestItem(g, "coin"), 28, 32);
+  // ponteiro do relógio (Clock Marker)
+  ensure("clock_hand", (g) => {
+    g.fillStyle(0x1a1a22, 1);
+    g.fillTriangle(-2, 0, 2, 0, 0, -12);
+  }, 4, 13);
+  // bola do minigame de futebol (Striker Marker)
+  ensure("soccer_ball_tex", (g) => {
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(10, 10, 9);
+    g.lineStyle(2, 0x33333d, 0.9);
+    g.strokeCircle(10, 10, 9);
+    g.fillStyle(0x33333d, 1);
+    g.fillCircle(10, 10, 3);
+    for (let i = 0; i < 5; i += 1) {
+      const a = (i / 5) * Math.PI * 2;
+      g.fillCircle(10 + Math.cos(a) * 5.5, 10 + Math.sin(a) * 5.5, 1.6);
+    }
+  }, 20, 20);
 }
 
 export function markerTextureKey(difficulty, style) {
@@ -1945,13 +2778,15 @@ export function markerTextureKey(difficulty, style) {
 }
 
 // Texturas de marker sob demanda — a dificuldade define a cor (por isso entra
-// na chave). Funciona em qualquer cena (o TextureManager é global ao jogo).
-export function ensureMarkerTexture(scene, difficulty, style = "classic") {
-  const key = markerTextureKey(difficulty, style);
+// na chave). `size` permite canvas custom (torre corrompida, prédio, mecha,
+// máquina conectada). Funciona em qualquer cena (o TextureManager é global).
+export function ensureMarkerTexture(scene, difficulty, style = "classic", size = null) {
+  const suffix = size ? `_${size.width}x${size.height}` : "";
+  const key = `${markerTextureKey(difficulty, style)}${suffix}`;
   if (scene.textures.exists(key)) return key;
   const g = graphics(scene);
   gMarker(g, difficultyColor(difficulty), style);
-  g.generateTexture(key, 56, 80);
+  g.generateTexture(key, size ? size.width : 56, size ? size.height : 80);
   g.destroy();
   return key;
 }

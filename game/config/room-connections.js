@@ -79,6 +79,7 @@ export const ROOM_CONNECTIONS = Object.freeze({
   },
 
   room_02_casino_gallery: {
+    digitalCircus: { to: "digital_circus", requiredMarkers: 0, interaction: "E", arriveAt: "from_gallery", cinematic: "circus" },
     archive: ARCHIVE_PENDING
       ? { to: null, pending: true }
       : { to: ARCHIVE_ROOM, arriveAt: "from_gallery", cinematic: "painting" },
@@ -94,6 +95,10 @@ export const ROOM_CONNECTIONS = Object.freeze({
       condition: "E",
       arriveAt: "from_room_03"
     }
+  },
+
+  digital_circus: {
+    gallery: { to: "room_02_casino_gallery", requiredMarkers: 0, interaction: "E", arriveAt: "from_digital_circus", cinematic: "circus" }
   },
 
   secret_pool_room: {
@@ -219,6 +224,7 @@ export const ROOM_NAMES = Object.freeze({
   room_06_secret_computer: "Área Secreta",
   room_04_city_casino: "Cidade & Casino",
   room_02_casino_gallery: "Galeria do Casino",
+  digital_circus: "Digital Circus",
   room_03_casino_pool: "Salão de Sinuca",
   room_01_market: "Feira",
   secret_digital_stage: "Digital Stage",

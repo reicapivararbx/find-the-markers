@@ -110,7 +110,11 @@ export const Sfx = {
     noise({ duration: 0.12, volume: 0.045 });
     tone({ freq: 180, endFreq: 90, duration: 0.14, type: "sawtooth", volume: 0.05, delay: 0.02 });
   },
-  keypad: () => tone({ freq: 640, duration: 0.04, type: "square", volume: 0.05 })
+  keypad: () => tone({ freq: 640, duration: 0.04, type: "square", volume: 0.05 }),
+  kick: () => {
+    tone({ freq: 180, endFreq: 90, duration: 0.1, type: "square", volume: 0.09 });
+    noise({ duration: 0.08, volume: 0.04, delay: 0.01 });
+  }
 };
 
 // Ambientes discretos no mesmo AudioContext/Sfx do jogo. Cada sala possui

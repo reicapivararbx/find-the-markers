@@ -78,6 +78,10 @@ export class InputController {
     if (this._destroyed) return;
     this._destroyed = true;
     this.releaseAll();
+    // A room restart emits shutdown, not destroy. Remove both registrations
+    // so old controllers are not retained until the whole game is destroyed.
+    this.scene?.events?.off("shutdown", this.onShutdown);
+    this.scene?.events?.off("destroy", this.onShutdown);
     const kb = this.scene?.input?.keyboard;
     if (kb && this.keys) {
       for (const key of Object.values(this.keys)) {

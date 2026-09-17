@@ -94,7 +94,7 @@ test("all room default/entry spawns are walkable against empty solids (in bounds
     const spawns = room.spawns || {};
     for (const [key, sp] of Object.entries(spawns)) {
       assert.ok(
-        isPositionWalkable(sp.x, sp.y, [], VIEW),
+        isPositionWalkable(sp.x, sp.y, [], room.bounds || VIEW),
         `${id} spawn:${key} (${sp.x},${sp.y}) must be in bounds`
       );
     }

@@ -3,11 +3,72 @@
 // Suporta modos: touch (padrão), hidden, quest, puzzle — ver marker-registry.
 import { GAMEPLAY, PHYSICS } from "../config/game-config.js";
 import { isCollectible, lockedReason } from "../config/marker-registry.js";
+import { isQuestCompleted } from "../progression/quests.js";
 import { bus, Events } from "../core/event-bus.js";
 import { Sfx } from "../core/audio-manager.js";
 import { ensureMarkerTexture } from "../assets/textures.js";
 
 const STAND_OFFSET = 40; // centro visual do sprite acima dos pés
+
+// Idle por personalidade (markers conceituais dos desenhos à mão).
+function handDrawnIdleTween(style, def) {
+  switch (style) {
+    case "overgrown":
+      return { y: def.y - 3, angle: { from: -1.2, to: 1.2 }, duration: 1500 };
+    case "skeleton":
+      return { y: def.y - 3, angle: { from: -3, to: 3 }, duration: 620 };
+    case "king":
+      return { y: def.y - 6, duration: 1150 };
+    case "tentacle":
+      return { y: def.y - 5, angle: { from: -2.5, to: 2.5 }, duration: 1250 };
+    case "clock":
+      return { y: def.y - 2, duration: 1350 };
+    case "machine_link":
+      return { y: def.y - 2, alpha: { from: 0.88, to: 1 }, duration: 1000 };
+    case "grumpy":
+    case "grumpy_calm":
+      return { y: def.y - 4, angle: { from: -1.5, to: 1.5 }, duration: 900 };
+    case "toothy":
+      return { y: def.y - 4, duration: 1000 };
+    case "magician":
+      return { y: def.y - 5, angle: { from: -2, to: 2 }, duration: 1050 };
+    case "hammer":
+      return { y: def.y - 3, angle: { from: -1, to: 1 }, duration: 1250 };
+    case "chaos":
+      return { y: def.y - 6, angle: { from: -4, to: 4 }, duration: 760 };
+    case "soccer":
+    case "baseball":
+      return { y: def.y - 5, angle: { from: -2, to: 2 }, duration: 950 };
+    case "cap_mic":
+      return { y: def.y - 6, duration: 1000 };
+    case "money":
+      return { y: def.y - 4, duration: 1100 };
+    case "phantom":
+      return { y: def.y - 9, alpha: { from: 0.78, to: 1 }, duration: 1150 };
+    case "shadow_creature":
+      return { y: def.y - 3, alpha: { from: 0.82, to: 1 }, duration: 1300 };
+    case "maw":
+    case "fang":
+      return { y: def.y - 3, scaleY: { from: 0.985, to: 1.015 }, duration: 900 };
+    case "building":
+    case "pyramid":
+    case "crate":
+      return { y: def.y - 2, duration: 1300 };
+    case "corrupted_tower":
+      return { y: def.y - 3, alpha: { from: 0.85, to: 1 }, duration: 850 };
+    case "mech_yellow":
+      return { y: def.y - 3, duration: 1200 };
+    case "invisible":
+      return { y: def.y - 2, duration: 1500 };
+    case "crimson_blade":
+      return { y: def.y - 5, duration: 1050 };
+    case "lilac":
+    case "spotted":
+      return { y: def.y - 4, duration: 1000 };
+    default:
+      return null;
+  }
+}
 
 function idleTweenFor(style, def) {
   const y = def.y;
@@ -138,8 +199,14 @@ export class MarkerEntity {
     this.hud = hud;
     this.collected = false;
     this.destroyed = false;
+    // Requisitos dos conceituais: quest FIND-N e/ou puzzleState (unlockKey).
+    // mode "hidden" sem requisitos continua sendo o clássico (caixas dos créditos).
+    const unlockOk = !def.unlockKey || Boolean(saveManager.save.puzzleStates[def.unlockKey]);
+    const questOk = !def.questId || isQuestCompleted(saveManager.save, def.questId);
+    const classicHidden = def.mode === "hidden" && !def.unlockKey && !def.questId;
     this.hidden =
-      (def.mode === "hidden" && !saveManager.save.puzzleStates.creditsBoxesSolved) ||
+      (def.mode === "hidden" &&
+        (classicHidden ? !saveManager.save.puzzleStates.creditsBoxesSolved : !(unlockOk && questOk))) ||
       (def.mode === "miku" &&
         !saveManager.save.mikuMarkerUnlocked &&
         !saveManager.save.puzzleStates.mikuPuzzleSolved) ||
@@ -148,8 +215,12 @@ export class MarkerEntity {
         !saveManager.save.puzzleStates.capybaraCodeMarkerUnlocked &&
         !saveManager.save.puzzleStates.mysteriousCapybaraSolved);
     this.blockFeedbackAt = 0;
+    this.behavior = def.behavior || null;
+    this._disguiseRevealed = false;
+    this._nextAmbientAt = 0;
+    this._nextFootprintAt = 0;
 
-    const key = ensureMarkerTexture(scene, def.difficulty, def.style);
+    const key = ensureMarkerTexture(scene, def.difficulty, def.style, def.textureSize || null);
     const baseY = def.y;
     const depth = baseY + PHYSICS.depthBias;
 
@@ -184,7 +255,7 @@ export class MarkerEntity {
       );
       this.scene.physics.add.existing(this.zone, true);
 
-      const idle = idleTweenFor(def.style, def);
+      const idle = handDrawnIdleTween(def.style, def) || idleTweenFor(def.style, def);
       this.scene.tweens.add({
         targets: this.sprite,
         ...idle,
@@ -198,9 +269,21 @@ export class MarkerEntity {
     if (this.hidden) this.sprite.setVisible(false);
     else if (def.mode === "puzzle") {
       this.sprite.setAlpha(0.55);
+    } else if (def.questId || def.unlockKey) {
+      // visível mas "trancado": teaser no mundo, coleta bloqueada com motivo
+      this.sprite.setAlpha(0.55);
     } else if (def.mode === "slot") {
       this.sprite.setVisible(false);
       if (this.shadow) this.shadow.setVisible(false);
+    }
+
+    // ponteiro do Clock Marker (mostrador no centro (28,34) do canvas 56x80)
+    if (def.style === "clock") {
+      this.hand = scene.add
+        .image(def.x, def.y - 46, "clock_hand")
+        .setOrigin(0.5, 1)
+        .setDepth(depth + 2);
+      if (this.hidden) this.hand.setVisible(false);
     }
 
     if ((def.style === "menu_champion" || def.style === "champion") && !this.hidden) {
@@ -294,6 +377,169 @@ export class MarkerEntity {
     return true;
   }
 
+  // Comportamentos por frame dos conceituais (RoomScene chama quando def.behavior).
+  update(px, py, delta) {
+    if (this.collected || this.destroyed || !this.behavior) return;
+    const now = this.scene.time.now;
+    const d = Math.hypot(px - this.def.x, py - this.def.y);
+    switch (this.behavior) {
+      case "invisible": {
+        if (this.hidden) return;
+        if (!this._disguiseRevealed) {
+          if (d < 70) {
+            this._disguiseRevealed = true;
+            this.reveal();
+            this.hud?.toast?.("Algo estava ali o tempo todo…", { icon: "👀", duration: 2200 });
+          } else {
+            // duas pistas: aproximação com brilho sutil + pegadas que aparecem
+            this.sprite.setAlpha(d < 170 ? 0.16 : 0.06);
+            if (d < 220 && now > this._nextAmbientAt) {
+              this._nextAmbientAt = now + 5200;
+              Sfx.transition(); // vento curto
+            }
+            if (d < 260 && now > this._nextFootprintAt) {
+              this._nextFootprintAt = now + 2100;
+              this._spawnFootprints();
+            }
+          }
+        }
+        break;
+      }
+      case "disguise": {
+        if (this.hidden) return;
+        if (!this._disguiseRevealed && d < 170) {
+          this._disguiseRevealed = true;
+          Sfx.reveal();
+          this.scene.tweens.add({
+            targets: this.sprite,
+            scaleX: 1.08,
+            scaleY: 0.94,
+            duration: 130,
+            yoyo: true,
+            repeat: 1,
+            ease: "Sine.inOut"
+          });
+          const h = this.def.textureSize?.height || 80;
+          const mark = this.scene.add
+            .text(this.def.x, this.def.y - h - 8, "!", {
+              fontFamily: '"Comic Sans MS", sans-serif',
+              fontSize: "22px",
+              fontStyle: "bold",
+              color: "#f2c94c",
+              stroke: "#33333d",
+              strokeThickness: 3
+            })
+            .setOrigin(0.5)
+            .setDepth(this.def.y + 40);
+          this.scene.tweens.add({
+            targets: mark,
+            y: mark.y - 18,
+            alpha: 0,
+            duration: 900,
+            onComplete: () => mark.destroy()
+          });
+        }
+        break;
+      }
+      case "corrupt": {
+        if (this.hidden) return;
+        if (now > this._nextAmbientAt) {
+          this._nextAmbientAt = now + 420;
+          this.sprite.x = this.def.x + (Math.random() * 4 - 2);
+          if (d < 300) Sfx.glitch();
+        }
+        break;
+      }
+      case "glint": {
+        if (this.hidden) return;
+        if (now > this._nextAmbientAt) {
+          this._nextAmbientAt = now + 2600;
+          const h = this.def.textureSize?.height || 80;
+          const star = this.scene.add
+            .text(this.def.x + (Math.random() * 22 - 11), this.def.y - h + 16, "✦", {
+              fontFamily: "sans-serif",
+              fontSize: "13px",
+              color: "#ffe08a"
+            })
+            .setAlpha(0.9)
+            .setDepth(this.def.y + 40);
+          this.scene.tweens.add({
+            targets: star,
+            y: star.y - 14,
+            alpha: 0,
+            duration: 800,
+            onComplete: () => star.destroy()
+          });
+        }
+        break;
+      }
+      case "chaos": {
+        if (this.hidden) return;
+        if (now > this._nextAmbientAt) {
+          this._nextAmbientAt = now + 1700;
+          const symbols = ["✦", "?", "!", "▲", "…"];
+          const colors = ["#ff5d5d", "#f2c94c", "#56ccf2", "#62c462"];
+          const dot = this.scene.add
+            .text(
+              this.def.x + (Math.random() * 70 - 35),
+              this.def.y - 30,
+              symbols[Math.floor(Math.random() * symbols.length)],
+              {
+                fontFamily: "sans-serif",
+                fontSize: "11px",
+                color: colors[Math.floor(Math.random() * colors.length)]
+              }
+            )
+            .setAlpha(0.7)
+            .setDepth(this.def.y + 30);
+          this.scene.tweens.add({
+            targets: dot,
+            y: dot.y - 26,
+            alpha: 0,
+            duration: 1100,
+            onComplete: () => dot.destroy()
+          });
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  _spawnFootprints() {
+    for (let i = 0; i < 2; i += 1) {
+      const fp = this.scene.add
+        .ellipse(
+          this.def.x + (Math.random() * 70 - 35),
+          this.def.y - 4 + (Math.random() * 24 - 12),
+          7,
+          4,
+          0x35405e,
+          0.4
+        )
+        .setDepth(this.def.y - 1);
+      this.scene.tweens.add({ targets: fp, alpha: 0, duration: 3400, onComplete: () => fp.destroy() });
+    }
+  }
+
+  // Ponteiro do Clock Marker (usado pelo puzzle do relógio).
+  setClockHour(hour) {
+    if (!this.hand) return;
+    this.scene.tweens.add({
+      targets: this.hand,
+      rotation: ((hour % 12) / 12) * Math.PI * 2,
+      duration: 160,
+      ease: "Sine.inOut"
+    });
+  }
+
+  // Troca a textura (Marker Nervoso: irritado -> calmo).
+  swapStyle(style) {
+    const key = ensureMarkerTexture(this.scene, this.def.difficulty, style, this.def.textureSize || null);
+    this.sprite.setTexture(key);
+  }
+
   collect() {
     if (this.collected || this.destroyed) return;
     this.collected = true;
@@ -363,13 +609,17 @@ export class MarkerEntity {
       !this.hidden &&
       this.def.mode !== "puzzle" &&
       this.def.mode !== "miku" &&
-      this.def.mode !== "capybara"
+      this.def.mode !== "capybara" &&
+      !this.def.questId &&
+      !this.def.unlockKey
     ) {
       return;
     }
     this.hidden = false;
     if (this.shadow) this.shadow.setVisible(true);
     if (this.aura) this.aura.setVisible(true);
+    if (this.hand) this.hand.setVisible(true);
+    if (this.def.questId || this.def.unlockKey) this.sprite.setAlpha(1);
     if (!this.sprite.visible) {
       this.sprite.setVisible(true);
       this.sprite.setScale(0.2);
@@ -408,6 +658,7 @@ export class MarkerEntity {
     this.destroyed = true;
     if (this.container) this.container.destroy();
     if (this.wingFollow) this.wingFollow.destroy();
+    if (this.hand) this.hand.destroy();
     if (this.sprite) this.sprite.destroy();
     if (this.shadow) this.shadow.destroy();
     if (this.aura) this.aura.destroy();

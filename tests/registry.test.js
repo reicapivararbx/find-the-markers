@@ -111,7 +111,9 @@ test("cada sala com markers tem seus próprios markers registrados", () => {
 });
 
 function assertOrganicArea(roomId, expectedStyles) {
-  const markers = markersForRoom(roomId).filter((m) => m.mode === "touch");
+  // markers de expansão (ids prefixo_NN) — os conceituais dos desenhos à mão
+  // convivem nas mesmas salas com ids próprios e não entram nesta asserção.
+  const markers = markersForRoom(roomId).filter((m) => m.mode === "touch" && /^[a-z]+_\d{2}$/.test(m.id));
   assert.equal(markers.length, 10);
   const styles = markers.map((m) => m.style);
   assert.equal(new Set(styles).size, 10, `${roomId}: silhuetas únicas`);

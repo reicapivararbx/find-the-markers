@@ -37,6 +37,9 @@ export class Interactable {
     } else if (!near && this.near) {
       this.near = false;
       hud.clearInteraction(this);
+    } else if (near && typeof this.prompt === "function") {
+      // prompt dinâmico (ex.: células restantes): reapresenta a cada frame perto
+      hud.setInteraction(this);
     }
 
     if (near && interactJustDown) {

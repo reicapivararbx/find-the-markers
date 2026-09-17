@@ -13,6 +13,8 @@
 // style: variação visual do sprite (desenho à mão do PDF).
 // Coordenadas: top-down — (x, y) = pés no chão walkable.
 import { EXPANSION_MARKERS } from "./expansion-markers.js";
+import { HAND_DRAWN_MARKERS, QUEST_BY_ID } from "./hand-drawn-markers.js";
+import { isQuestCompleted } from "../progression/quests.js";
 
 export const MARKERS = Object.freeze([
   // ---- room_09_spawn (7 + menu champion) ----
@@ -104,7 +106,11 @@ export const MARKERS = Object.freeze([
     area: "Salão Secreto"
   },
 
-  ...EXPANSION_MARKERS
+  ...EXPANSION_MARKERS,
+
+  // Markers conceituais dos desenhos à mão (game/config/hand-drawn-markers.js).
+  // Preservam a ordem canônica dos 10 primeiros (sequência do medidor).
+  ...HAND_DRAWN_MARKERS
 ]);
 
 export const MARKER_BY_ID = Object.freeze(
@@ -123,9 +129,14 @@ export function markersForRoom(roomId) {
 export function isCollectible(marker, save) {
   if (!marker || !save) return false;
   if (save.collectedMarkerIds.includes(marker.id)) return false;
+  // Requisitos genéricos dos markers conceituais: quest FIND-N concluída
+  // e/ou puzzleState destravado (relógio, máquina, minigames, mecha).
+  if (marker.questId && !isQuestCompleted(save, marker.questId)) return false;
+  if (marker.unlockKey && !save.puzzleStates[marker.unlockKey]) return false;
   switch (marker.mode) {
     case "hidden":
-      return save.puzzleStates.creditsBoxesSolved;
+      // clássico (caixas dos créditos) OU conceitual com requisitos já validados acima
+      return marker.unlockKey || marker.questId ? true : save.puzzleStates.creditsBoxesSolved;
     case "puzzle":
       return save.puzzleStates.difficultySolved;
     case "quest":
@@ -148,6 +159,12 @@ export function isCollectible(marker, save) {
 }
 
 export function lockedReason(marker, save) {
+  if (marker.questId) {
+    return QUEST_BY_ID[marker.questId]?.lockedMessage || "Complete o desafio primeiro.";
+  }
+  if (marker.unlockKey) {
+    return marker.lockedMessage || "Algo precisa ser ativado primeiro.";
+  }
   switch (marker.mode) {
     case "hidden":
       return "Algo está escondido aqui…";

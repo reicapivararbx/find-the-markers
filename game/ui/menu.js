@@ -1,5 +1,6 @@
 import { state } from "../state.js";
-import { TOTAL_MARKERS, MARKER_BY_ID } from "../config/marker-registry.js";
+import { TOTAL_MARKERS, MARKER_BY_ID, MARKERS } from "../config/marker-registry.js";
+import { ROOM_NAMES } from "../config/room-connections.js";
 import { Sfx } from "../core/audio-manager.js";
 
 const CHAMPION_TARGET = 67;
@@ -31,6 +32,15 @@ export class MenuUI {
     this.locked = false;
 
     this.continueBtn.addEventListener("click", () => this.callbacks?.onContinue());
+    document.querySelector("#menu-open-dex")?.addEventListener("click", () => {
+      if (state.dex) { state.dex.open("markers"); Sfx.interact(); }
+    });
+    document.querySelector("#menu-open-areas")?.addEventListener("click", () => {
+      if (state.dex) { state.dex.open("areas"); Sfx.interact(); }
+    });
+    document.querySelector("#menu-open-progress")?.addEventListener("click", () => {
+      if (state.dex) { state.dex.open("progresso"); Sfx.interact(); }
+    });
     this.newBtn.addEventListener("click", () => this.showNewConfirm());
     this.newYes.addEventListener("click", () => {
       this.hideConfirms();
@@ -78,9 +88,16 @@ export class MenuUI {
     if (this.saveCard && this.saveSummary) {
       if (hasProgress && sm) {
         const n = sm.markerCount;
-        const coins = sm.save.coins || 0;
         this.saveCard.hidden = false;
-        this.saveSummary.textContent = `${n}/${TOTAL_MARKERS} markers · ${coins} coins`;
+        this.saveSummary.textContent = `${n}/${TOTAL_MARKERS} MARKERS`;
+        const meta = document.querySelector("#menu-continue-meta");
+        if (meta) {
+          const area = ROOM_NAMES[sm.save.currentRoom] || "Início";
+          const last = sm.save.lastCollectedMarkerId
+            ? MARKERS.find((m) => m.id === sm.save.lastCollectedMarkerId)?.name
+            : null;
+          meta.textContent = `${area}${last ? ` · último: ${last}` : ""}`;
+        }
       } else {
         this.saveCard.hidden = true;
       }

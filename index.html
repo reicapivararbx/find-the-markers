@@ -44,8 +44,14 @@
             Explore as áreas, encontre os markers, resolva puzzles e desbloqueie novas regiões.
           </p>
           <div id="menu-save-card" class="menu-save-card" hidden>
-            <span class="menu-save-label">Save</span>
+            <span class="menu-save-label">CONTINUAR</span>
             <span id="menu-save-summary" class="menu-save-summary">0 markers</span>
+            <span id="menu-continue-meta" class="menu-continue-meta">—</span>
+          </div>
+          <div class="menu-quicknav">
+            <button id="menu-open-dex" class="button button-ghost" type="button">🎒 MARKER DEX</button>
+            <button id="menu-open-areas" class="button button-ghost" type="button">🗺️ ÁREAS</button>
+            <button id="menu-open-progress" class="button button-ghost" type="button">🏆 PROGRESSO</button>
           </div>
           <div class="menu-actions">
             <button id="btn-continue" class="button button-primary" type="button">
@@ -138,12 +144,46 @@
         </button>
       </section>
 
-      <!-- ================= COLEÇÃO ================= -->
-      <section id="collection-panel" aria-label="Coleção de markers">
+      <!-- ================= MARKER DEX ================= -->
+      <section id="collection-panel" aria-label="Marker Dex">
         <header>
-          <h2>Coleção <span id="collection-count">0/40</span></h2>
-          <button id="btn-close-collection" class="icon-button" type="button" aria-label="Fechar coleção">×</button>
+          <h2>MARKER DEX <span id="collection-count">0/40</span></h2>
+          <button id="btn-close-collection" class="icon-button" type="button" aria-label="Fechar Dex">×</button>
         </header>
+        <div id="dex-summary">
+          <p id="dex-summary-text">MARKERS ENCONTRADOS 0/40</p>
+          <span id="dex-summary-bar" class="dex-bar"></span>
+        </div>
+        <nav id="dex-tabs" class="dex-tabs" aria-label="Seções do Dex">
+          <button type="button" data-tab="markers" class="is-active">Markers</button>
+          <button type="button" data-tab="areas">Áreas</button>
+          <button type="button" data-tab="progresso">Progresso</button>
+        </nav>
+        <div class="dex-toolbar">
+          <input id="dex-search" type="search" placeholder="Buscar Marker… (nome, área, raridade)" aria-label="Buscar marker">
+          <div id="dex-status-filters" class="dex-chips" role="group" aria-label="Filtrar por status">
+            <button type="button" data-status="todos" class="is-active">Todos</button>
+            <button type="button" data-status="encontrados">Encontrados</button>
+            <button type="button" data-status="nao_encontrados">Não encontrados</button>
+            <button type="button" data-status="secretos">Secretos</button>
+          </div>
+          <select id="dex-difficulty" aria-label="Filtrar por dificuldade">
+            <option value="todas">Todas as dificuldades</option>
+            <option>Effortless</option>
+            <option>Easy</option>
+            <option>Medium</option>
+            <option>Hard</option>
+            <option>Difficult</option>
+            <option>Challenging</option>
+            <option>Insane</option>
+            <option>Why</option>
+            <option>Astonishing</option>
+            <option>NOT!</option>
+            <option>Champion</option>
+            <option>Finale</option>
+          </select>
+        </div>
+        <div id="dex-detail" hidden></div>
         <div id="collection-grid"></div>
       </section>
 

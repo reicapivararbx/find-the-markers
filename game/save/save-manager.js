@@ -1,6 +1,8 @@
 // Persistência versionada em localStorage, com storage injetável (testes).
 import { SAVE_STORAGE_KEY, SAVE_VERSION, AREA_SEAL_IDS } from "../config/game-config.js";
 import { bus, Events } from "../core/event-bus.js";
+import { QUEST_BY_ID } from "../config/hand-drawn-markers.js";
+import { recordQuestFind, questProgress } from "../progression/quests.js";
 
 export function createDefaultSave() {
   return {
@@ -240,10 +242,32 @@ export class SaveManager {
   collectMarker(markerId) {
     if (this.hasCollected(markerId)) return false;
     this.save.collectedMarkerIds.push(markerId);
+    // Dex: data da descoberta + último marker (saves antigos não têm datas)
+    this.save.markerLog[markerId] = new Date().toISOString();
+    this.save.lastCollectedMarkerId = markerId;
     this.persist();
     bus.emit(Events.MARKER_COLLECTED, markerId);
     bus.emit(Events.MARKER_COUNT_CHANGED, this.markerCount);
     return true;
+  }
+
+  // Quests FIND-N: progresso por item, persistido só ao encontrar (nunca por frame).
+  questFind(questId, itemId) {
+    const result = recordQuestFind(this.save, questId, itemId);
+    if (!result.ok || !result.isNew) return result;
+    this.persist();
+    bus.emit(Events.QUEST_PROGRESS, { questId, ...result });
+    if (result.justCompleted) {
+      bus.emit(Events.QUEST_COMPLETED, {
+        questId,
+        rewardMarkerId: QUEST_BY_ID[questId]?.rewardMarkerId ?? null
+      });
+    }
+    return result;
+  }
+
+  questProgress(questId) {
+    return questProgress(this.save, questId);
   }
 
   discoverEgg(eggId) {
