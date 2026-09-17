@@ -332,7 +332,8 @@ async function main() {
           const idsByRoom = {
             room_04_city_casino: { casino: "casino_door", digitalStage: "digital_stage_door" },
             room_03_casino_pool: { secretPool: "pool_hall_white_door" },
-            room_02_casino_gallery: { archive: "archive_painting", exitCasino: "casino_exit" }
+            room_02_casino_gallery: { archive: "archive_painting", exitCasino: "casino_exit", digitalCircus: "digital_circus_painting" },
+            digital_circus: { gallery: "digital_circus_exit" }
           };
           const wanted = idsByRoom[roomId]?.[key];
           const target = scene?.updatables?.find?.((u) => u.id === wanted);
