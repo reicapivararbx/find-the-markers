@@ -134,7 +134,7 @@ async function main() {
 
   // Espera a cena ativa chegar em `roomId` (warp/restart é assíncrono).
   // Tolerante a "execution context destroyed" durante o restart da cena.
-  async function waitForRoom(roomId, timeoutMs = 6000) {
+  async function waitForRoom(roomId, timeoutMs = 12000) {
     const deadline = Date.now() + timeoutMs;
     while (Date.now() < deadline) {
       try {
@@ -159,7 +159,7 @@ async function main() {
     await page.waitForSelector("#btn-continue", { timeout: 15000 });
     await page.click("#btn-continue");
     await page.waitForFunction(() => window.FTMGame?.scene?.isActive?.("RoomScene") && window.FTM?.rt?.()?.room, { timeout: 20000 });
-    await sleep(600);
+    await sleep(2500); // settle pós-boot: primeiras texturas/laziness do headless
 
     // ---- 1. Carregar TODAS as salas + ESC global + sem erros ----
     const roomIds = await page.evaluate(async () => {
@@ -202,9 +202,9 @@ async function main() {
       // tecla 250ms (headless tem frames esparsos) com retries.
       const escPress = async () => {
         await page.keyboard.down("Escape");
-        await sleep(250);
+        await sleep(1200); // frames headless podem espaçar segundos sob carga
         await page.keyboard.up("Escape");
-        await sleep(350);
+        await sleep(400);
       };
       const overlayOpen = () =>
         page.evaluate(() => document.querySelector("#pause-overlay")?.classList.contains("is-open") ?? false);
@@ -270,14 +270,14 @@ async function main() {
       await sleep(150); // physics step dispara overlap/interact
       // Espera com retry do posicionamento: um setPos pode cair num frame
       // morto do restart; re-envia uma vez antes de desistir.
-      let ok = arrivedInRoom ? await waitForRoom(expectedRoom, 4500) : false;
+      let ok = arrivedInRoom ? await waitForRoom(expectedRoom, 14000) : false; // 7fps headless: fade ~280ms leva segundos
       if (arrivedInRoom && !ok) {
         try {
           await page.evaluate(([x, y]) => {
             if (window.FTMScene?.player?.sprite?.body) window.FTM.setPos(x, y);
           }, [tx, ty]);
         } catch (e) { /* contexto recarregando */ }
-        ok = await waitForRoom(expectedRoom, 5000);
+        ok = await waitForRoom(expectedRoom, 10000);
       }
       await sleep(900); // ping-pong: o room precisa continuar estável
       const after = await page.evaluate(() => window.FTM.rt());
@@ -289,7 +289,7 @@ async function main() {
 
     async function pressE() {
       await page.keyboard.down("e");
-      await sleep(450); // headless tem frames esparsos: hold curto perde o justDown
+      await sleep(800); // headless tem frames esparsos: hold curto perde o justDown
       await page.keyboard.up("e");
       await sleep(200);
     }

@@ -19,6 +19,7 @@ ssh "$HOST" "sudo test -d $DEST && sudo cp -a $DEST $DEST.bak.$STAMP && echo bac
 echo "== 3/4 rsync =="
 rsync -az --delete \
   --exclude .git --exclude .omo --exclude tests/artifacts \
+  --exclude '20260911_*.jpg' --exclude 'Screenshot_*.png' \
   --exclude '*.bak.*' \
   --rsync-path="sudo rsync" \
   ./ "$HOST:$DEST/"
